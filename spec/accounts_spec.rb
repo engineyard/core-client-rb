@@ -27,11 +27,14 @@ describe 'accounts' do
       it "should create an account" do
         name = Faker::Name.first_name
 
-        account = hmac_client.accounts.create!(owner: user, name: name, signup_via: "deis")
+        account = hmac_client.accounts.create!(owner: user, name: name)
+
+        # signup_via is foyer only
+        # account = hmac_client.accounts.create!(owner: user, name: name, signup_via: "deis")
+        # expect(account.signup_via).to eq("deis")
 
         expect(account.name).to eq(name)
         expect(account.support_plan).to eq("standard")
-        expect(account.signup_via).to eq("deis")
 
         users = account.users.all
         expect(users.size).to eq(1)

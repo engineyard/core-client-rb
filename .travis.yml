@@ -1,0 +1,22 @@
+---
+notifications:
+  email: false
+  webhooks:
+    - https://ensemble.engineyard.com/travis
+
+addons:
+  code_climate:
+    repo_token:
+      secure: "SCFPa7xtyR6UOrfh3YIv7kvfhGy9vkQ9469HARUoCYmfQUY87I1zdehfCKh/pm8bwGOpQbsxwmxe9a5QrH5xXZdndbm1Ry0vhfYEXaiVfE4qZrq1TbrWbYxG5lPuXs04FGtLP0Xqm8wGnfS95PmG2KA8OjrT+vn1MCXbYPICvK4="
+
+language: ruby
+cache: bundler
+
+rvm:
+  - 1.9.3
+  - 2.1.5
+
+env:
+  - COVERAGE=true
+
+script: bundle exec rake

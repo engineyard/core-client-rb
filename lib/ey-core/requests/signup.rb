@@ -1,6 +1,12 @@
 class Ey::Core::Client
   class Real
-    def create_signup(params={})
+    def signup(user, account, features = nil)
+      params = {
+        "user" => user,
+        "account" => account,
+      }
+      params["features"] = features if features
+
       request(
         :method => :post,
         :path   => "/signups",
@@ -10,14 +16,14 @@ class Ey::Core::Client
   end # Real
 
   class Mock
-    def create_signup(params={})
+    def signup(user, account, features = nil)
       if self.authentication != :hmac
         response(status: 403)
       end
 
       user_id = self.uuid
 
-      user = params["user"].dup
+      user = user.dup
       user["token"] = SecureRandom.hex(20)
 
       user.merge!({
@@ -30,7 +36,7 @@ class Ey::Core::Client
       self.data[:users][user_id] = user
 
       account_id = self.uuid
-      account = mock_account_setup(account_id, params["account"].dup)
+      account = mock_account_setup(account_id, account.dup)
 
       self.data[:accounts][account_id] = account.merge(:account_users => [user_id], :account_owners => [user_id])
 

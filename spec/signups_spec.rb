@@ -27,7 +27,7 @@ describe 'signups' do
       }
       features = [ public_feature.id ]
 
-      signup = client.signup(user_params, account_params, features).body["signup"]
+      signup = client.signup(user: user_params, account: account_params, features: features).body["signup"]
       user = client.users.get(signup["user_id"])
       account = client.accounts.get(signup["account_id"])
 

@@ -27,7 +27,7 @@ describe 'signups' do
       }
       features = [ public_feature.id ]
 
-      signup = client.signup(user: user_params, account: account_params, features: features).body["signup"]
+      signup = client.signup(user: user_params, account: account_params, features: features, redirect_url: "http://redirect.example.com").body["signup"]
       user = client.users.get(signup["user_id"])
       account = client.accounts.get(signup["account_id"])
 
@@ -38,6 +38,8 @@ describe 'signups' do
 
       expect(user.accounts).to contain_exactly(account)
       expect(account.features.map(&:id)).to include(*features)
+
+      expect(signup["upgrade_url"]).not_to be_nil
     end
   end
 end

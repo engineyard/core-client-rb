@@ -48,8 +48,9 @@ class Ey::Core::Client
       response(
         :body => {
           "signup" => {
-            "user_id"    => user_id,
-            "account_id" => account_id,
+            "user_id"     => user_id,
+            "account_id"  => account_id,
+            "upgrade_url" => "http://login.localdev.engineyard.com:9292/session-tokens/#{self.uuid}/upgrade",
           },
         },
         :status  => 201,

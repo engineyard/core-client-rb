@@ -296,6 +296,7 @@ class Ey::Core::Client < Cistern::Service
   request :reboot_server
   request :run_cluster_component_action
   request :run_environment_application_action
+  request :signup
   request :update_addon
   request :update_addon_attachment
   request :update_alert

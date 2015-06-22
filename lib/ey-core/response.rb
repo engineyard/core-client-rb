@@ -16,14 +16,16 @@ class Ey::Core::Response
   end
 
   BadRequest        = Class.new(Error)
-  NotFound          = Class.new(Error)
-  Unprocessable     = Class.new(Error)
   Conflict          = Class.new(Error)
+  NotFound          = Class.new(Error)
   RateLimitExceeded = Class.new(Error)
+  Unauthorized      = Class.new(Error)
   Unexpected        = Class.new(Error)
+  Unprocessable     = Class.new(Error)
 
   EXCEPTION_MAPPING = {
     400 => BadRequest,
+    401 => Unauthorized,
     404 => NotFound,
     409 => Conflict,
     422 => Unprocessable,

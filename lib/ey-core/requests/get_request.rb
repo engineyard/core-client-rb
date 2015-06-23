@@ -16,6 +16,7 @@ class Ey::Core::Client
       id = params["id"]
 
       request = self.find(:requests, id)
+      request["callback_url"] = "#{self.url}/requests/#{id}/callback"
 
       response_hash = if request["finished_at"].nil? # finish a previously unfinished request
                         resource_key, key, resource, resource_url = request.delete("resource")

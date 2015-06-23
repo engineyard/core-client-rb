@@ -13,11 +13,11 @@ RSpec.describe Ey::Core::Client do
     cluster.cluster_updates.create!.ready!
   }
 
-  it "should list unfinished requests" do
-    expect(client.requests.all(finished_at: nil)).to be_empty
+  context "with a request" do
+    let!(:request) { cluster.cluster_updates.create! }
 
-    request = cluster.cluster_updates.create!
-
-    expect(client.requests.all(finished_at: nil)).to contain_exactly(request)
+    it "should list unfinished requests" do
+      expect(client.requests.all(finished_at: nil)).to contain_exactly(request)
+    end
   end
 end

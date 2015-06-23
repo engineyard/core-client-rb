@@ -3,16 +3,21 @@ class Ey::Core::Client::Request < Ey::Core::Model
 
   identity :id
 
-  attribute :created_at, type: :time
-  attribute :finished_at, type: :time
+  attribute :callback_url
+  attribute :created_at,        type: :time
+  attribute :finished_at,       type: :time
   attribute :message
-  attribute :progress, type: :integer
-  attribute :resource_url, aliases: "resource"
+  attribute :progress,          type: :integer
+  attribute :resource_url,      aliases: "resource"
   attribute :stage
-  attribute :started_at, type: :time
-  attribute :successful, type: :boolean
+  attribute :started_at,        type: :time
+  attribute :successful,        type: :boolean
   attribute :type
-  attribute :updated_at, type: :time
+  attribute :updated_at,        type: :time
+
+  def callback
+    merge_attributes(connection.request_callback(self.id).body["request"])
+  end
 
   def ready!(timeout = self.service.timeout, interval = self.service.poll_interval)
     wait_for!(timeout, interval) { ready? }

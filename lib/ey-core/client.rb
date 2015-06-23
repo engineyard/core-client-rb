@@ -49,7 +49,6 @@ class Ey::Core::Client < Cistern::Service
   collection :servers
   collection :server_events
   collection :server_usages
-  collection :session_tokens
   collection :slots
   collection :slot_components
   collection :ssl_certificates
@@ -110,7 +109,6 @@ class Ey::Core::Client < Cistern::Service
   model :server
   model :server_event
   model :server_usage
-  model :session_token
   model :slot
   model :slot_component
   model :ssl_certificate
@@ -151,7 +149,6 @@ class Ey::Core::Client < Cistern::Service
   request :create_membership
   request :create_message
   request :create_provider
-  request :create_session_token
   request :create_slots
   request :create_ssl_certificate
   request :create_storage

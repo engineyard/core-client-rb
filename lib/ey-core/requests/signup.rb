@@ -6,7 +6,7 @@ class Ey::Core::Client
       request(
         :method => :post,
         :path   => "/signups",
-        :params => params,
+        :body   => params,
       )
     end
   end # Real

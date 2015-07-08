@@ -1,6 +1,6 @@
 module ResourceHelper
   def load_blueprint(options={})
-    logical_database = create_logical_database(client: options[:client])
+    logical_database = create_logical_database(client: options[:client], provider: account.providers.first)
 
     application = account.applications.create!(name: "application#{SecureRandom.hex(4)}", repository: "git://github.com/engineyard/todo.git", type: "rails3")
     environment = account.environments.create!(name: "environment#{SecureRandom.hex(4)}")
@@ -82,7 +82,7 @@ module ResourceHelper
   end
 
   def create_database_service(options={})
-    provider = options.fetch(:provider) { create_provider(options.merge(client: client)) }
+    provider = options[:provider] || create_provider(options.merge(client: client))
 
     database_service_params = Hashie::Mash.new(
       :name     => Faker::Name.first_name,

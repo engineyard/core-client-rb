@@ -111,5 +111,11 @@ describe "database services" do
 
       expect(client.get_environment_database_services(environment_id: environment.id).body["database_services"].first["id"]).to eq(environment_database_service.id)
     end
+
+    it 'should list database services in an account' do
+      environment_database_service, environment = load_blueprint
+
+      expect(client.database_services.all(account: environment.account.id).map(&:id)).to include(environment_database_service.id)
+    end
   end
 end

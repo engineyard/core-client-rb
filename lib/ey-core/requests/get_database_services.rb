@@ -22,6 +22,12 @@ class Ey::Core::Client
         params["provider"] = url_for("/providers/#{provider_id}")
       end
 
+      if account_id = resource_identity(params.delete("account"))
+        if provider = self.data[:providers].values.detect{|p| p["account"].index(account_id)}
+          params["provider"] = url_for("/providers/#{provider["id"]}")
+        end
+      end
+
       resources = if environment_id = resource_identity(params.delete("environment") || params.delete("environment_id"))
                     self.data[:connectors].
                       select { |_,c| c["_environment"] == url_for("/environments/#{environment_id}") }.

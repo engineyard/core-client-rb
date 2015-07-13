@@ -601,6 +601,7 @@ class Ey::Core::Client < Cistern::Service
                   }
                   {
                     :accounts                    => {},
+                    :account_referrals           => {},
                     :addons                      => {},
                     :addresses                   => {},
                     :alerts                      => {},

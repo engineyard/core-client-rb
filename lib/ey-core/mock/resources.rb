@@ -115,6 +115,7 @@ module Ey::Core::Mock
         "notes"            => "#{account_url}/notes",
         "owners"           => "#{account_url}/owners",
         "providers"        => "#{account_url}/providers",
+        "referrals"        => "#{account_url}/referrals",
         "requests"         => "#{account_url}/requests",
         "ssl_certificates" => "#{account_url}/ssl-certificates",
         "resource_url"     => account_url,

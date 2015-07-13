@@ -40,6 +40,20 @@ module ResourceHelper
     )
   end
 
+  def create_account_referral(client, options={})
+    referred = options.delete(:referred) || create_account(client: client)
+    referrer = options.delete(:referrer) || create_account(client: client)
+
+    account_referral_id = SecureRandom.uuid
+    referral = client.data[:account_referrals][account_referral_id] = {
+      "id" => account_referral_id,
+      "referrer" => client.url_for("accounts/#{referrer.identity}"),
+      "referred" => client.url_for("accounts/#{referred.identity}"),
+    }
+
+    client.account_referrals.new(referral)
+  end
+
   def create_firewall(client, options={})
     provider = options.fetch(:provider) { create_provider(client: client) }
 

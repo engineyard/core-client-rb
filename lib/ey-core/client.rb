@@ -5,6 +5,7 @@ class Ey::Core::Client < Cistern::Service
 
   collection :accounts
   collection :account_cancellations
+  collection :account_referrals
   collection :addons
   collection :addon_attachments
   collection :addresses
@@ -61,6 +62,7 @@ class Ey::Core::Client < Cistern::Service
   collection :volumes
 
   model :account
+  model :account_referral
   model :account_trial
   model :alert
   model :billing
@@ -184,6 +186,7 @@ class Ey::Core::Client < Cistern::Service
   request :get_account_cancellation
   request :get_account_trial
   request :get_accounts
+  request :get_account_referrals
   request :get_addon
   request :get_addon_attachment
   request :get_addon_attachments
@@ -598,6 +601,7 @@ class Ey::Core::Client < Cistern::Service
                   }
                   {
                     :accounts                    => {},
+                    :account_referrals           => {},
                     :addons                      => {},
                     :addresses                   => {},
                     :alerts                      => {},
@@ -754,4 +758,3 @@ class Ey::Core::Client < Cistern::Service
     end
   end # Mock
 end # Ey::Core::Client
-

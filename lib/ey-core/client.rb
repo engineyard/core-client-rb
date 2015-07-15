@@ -510,18 +510,6 @@ class Ey::Core::Client < Cistern::Service
     include Ey::Core::Mock::Helper
     extend Ey::Core::Mock::Util
 
-    def self.share_ey_sso_backend!
-      @share_ey_sso_backend = true
-    end
-
-    def self.share_ey_sso_backend?
-      @share_ey_sso_backend
-    end
-
-    def share_ey_sso_backend?
-      self.class.share_ey_sso_backend?
-    end
-
     def self.for(type, options={})
       case type
       when :server

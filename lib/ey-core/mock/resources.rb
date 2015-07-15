@@ -39,23 +39,6 @@ module Ey::Core::Mock
     def find(collection, id_or_url)
       id = resource_identity(id_or_url)
 
-      if share_ey_sso_backend? && id
-        case collection
-        when :accounts then
-          if sso_account = EY::SSO::Account.get(id)
-            self.data[:accounts][id] ||= mock_account_setup(sso_account.id, :name => sso_account.name)
-          end
-        when :users
-          if sso_user = EY::SSO::User.get(id)
-            self.data[:users][id] ||= {
-              "id"       => id,
-              "email"    => sso_user.email,
-              "accounts" => url_for("/users/#{id}/accounts"),
-            }
-          end
-        end
-      end
-
       # polymorphic associations suck
       if collection.is_a?(Array)
         resource = collection.map do |key|

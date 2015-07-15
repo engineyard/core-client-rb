@@ -20,18 +20,6 @@ class Ey::Core::Client
                   user_url.split('/').last
                 end
 
-      if share_ey_sso_backend? && user_id
-        if sso_user = EY::SSO::User.get(user_id)
-          if sso_user.accounts.exists?
-            sso_user.accounts.each do |sso_account|
-              self.data[:accounts][sso_account.id] ||= mock_account_setup(sso_account.id, :name => sso_account.name)
-              self.data[:accounts][sso_account.id][:account_users] ||= []
-              self.data[:accounts][sso_account.id][:account_users] << user_id
-            end
-          end
-        end
-      end
-
       resources = if user_id
                     find(:users, user_id)
                     self.data[:accounts].select{|k,v| v[:account_users] && v[:account_users].include?(user_id)}

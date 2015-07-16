@@ -655,9 +655,18 @@ class Ey::Core::Client < Cistern::Service
       end
     end
 
+    class << self
+      attr_accessor :delay
+    end
+
     def self.reset!
       @data = nil
       @serial_id = 1
+      @delay = 1
+    end
+
+    def delay
+      self.class.delay
     end
 
     def data

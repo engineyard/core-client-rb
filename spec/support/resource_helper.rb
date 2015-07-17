@@ -40,6 +40,12 @@ module ResourceHelper
     )
   end
 
+  def create_cost(client, options={})
+    account = options.delete(:account) || create_account(client: client)
+
+    
+  end
+
   def create_account_referral(client, options={})
     referred = options.delete(:referred) || create_account(client: client)
     referrer = options.delete(:referrer) || create_account(client: client)

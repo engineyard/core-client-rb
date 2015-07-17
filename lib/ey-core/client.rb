@@ -21,6 +21,7 @@ class Ey::Core::Client < Cistern::Service
   collection :component_actions
   collection :components
   collection :connectors
+  collection :costs
   collection :database_server_revisions
   collection :database_server_snapshots
   collection :database_servers
@@ -82,6 +83,7 @@ class Ey::Core::Client < Cistern::Service
   model :component
   model :component_action
   model :connector
+  model :cost
   model :database_server
   model :database_server_snapshot
   model :database_server_revision
@@ -220,6 +222,7 @@ class Ey::Core::Client < Cistern::Service
   request :get_connector
   request :get_connectors
   request :get_contacts
+  request :get_costs
   request :get_current_user
   request :get_database_server
   request :get_database_server_revisions
@@ -608,6 +611,7 @@ class Ey::Core::Client < Cistern::Service
                     :connectors                  => {},
                     :contacts                    => {},
                     :contact_assignments         => [],
+                    :costs                       => [],
                     :database_server_firewalls   => [],
                     :database_server_revisions   => {},
                     :database_server_snapshots   => {},

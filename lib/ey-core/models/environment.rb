@@ -12,6 +12,7 @@ class Ey::Core::Client::Environment < Ey::Core::Model
   has_one :project
 
   has_many :clusters
+  has_many :costs
   has_many :keypairs
   has_many :servers
   has_many :applications

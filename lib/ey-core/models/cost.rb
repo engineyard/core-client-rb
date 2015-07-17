@@ -11,5 +11,6 @@ class Ey::Core::Client::Cost < Ey::Core::Model
   attribute :description
   attribute :value
 
+  has_one :account
   has_one :environment
 end

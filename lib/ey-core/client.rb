@@ -32,6 +32,7 @@ class Ey::Core::Client < Cistern::Service
   collection :firewalls
   collection :firewall_rules
   collection :features
+  collection :gems
   collection :keypairs
   collection :keypair_deployments
   collection :legacy_alerts
@@ -93,6 +94,7 @@ class Ey::Core::Client < Cistern::Service
   model :feature
   model :firewall
   model :firewall_rule
+  model :gem
   model :keypair
   model :keypair_deployment
   model :load_balancer
@@ -244,6 +246,7 @@ class Ey::Core::Client < Cistern::Service
   request :get_firewalls
   request :get_firewall_rule
   request :get_firewall_rules
+  request :get_gem
   request :get_keypair
   request :get_keypairs
   request :get_keypair_deployment

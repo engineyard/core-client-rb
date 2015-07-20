@@ -50,7 +50,7 @@ module ResourceHelper
     value = options[:value] || "1763"
     environment = options[:environment] || nil
 
-    cost = client.data[:costs] = {
+    cost = client.data[:costs] << {
       billing_month:         "2015-07",
       data_type:             "cost",
       level:                 level,

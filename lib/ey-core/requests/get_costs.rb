@@ -2,7 +2,7 @@ class Ey::Core::Client
   class Real
     def get_costs(params={})
       request(
-        :url  => params.delete("url"),
+        :url  => params["url"],
         :path => "/accounts/#{params[:id]}/costs"
       )
     end

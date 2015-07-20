@@ -40,6 +40,31 @@ module ResourceHelper
     )
   end
 
+  def create_cost(client, options={})
+    account = options[:account] || create_account(client: client)
+    level = options[:level] || "summarized"
+    finality = options[:finality] || "estimated"
+    related_resource_type = options[:related_resource_type] || "account"
+    category = options[:category] || "non-server"
+    description = options[:description] || "AWS Other Services"
+    value = options[:value] || "1763"
+    environment = options[:environment] || nil
+
+    cost = client.data[:costs] << {
+      billing_month:         "2015-07",
+      data_type:             "cost",
+      level:                 level,
+      finality:              finality,
+      related_resource_type: related_resource_type,
+      category:              category,
+      units:                 "USD cents",
+      description:           description,
+      value:                 value,
+      account:               client.url_for("accounts/#{account.identity}"),
+      environment:           environment
+    }
+  end
+
   def create_account_referral(client, options={})
     referred = options.delete(:referred) || create_account(client: client)
     referrer = options.delete(:referrer) || create_account(client: client)

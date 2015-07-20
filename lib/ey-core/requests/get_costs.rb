@@ -3,7 +3,7 @@ class Ey::Core::Client
     def get_costs(params={})
       request(
         "url"  => params["url"],
-        "path" => "/accounts/#{params[:id]}/costs"
+        "path" => "/accounts/#{params["id"]}/costs"
       )
     end
   end

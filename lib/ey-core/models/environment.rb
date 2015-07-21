@@ -5,6 +5,7 @@ class Ey::Core::Client::Environment < Ey::Core::Model
 
   attribute :classic, type: :boolean
   attribute :name
+  attribute :created_at, type: :time
   attribute :deleted_at, type: :time
   attribute :monitor_url
 

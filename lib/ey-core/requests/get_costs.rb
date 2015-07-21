@@ -1,9 +1,13 @@
 class Ey::Core::Client
   class Real
     def get_costs(params={})
+      url = params.delete("url")
+      account_id = params.delete("id")
+
       request(
-        :url  => params["url"],
-        :path => "/accounts/#{params["id"]}/costs"
+        url:   url,
+        path:  "/accounts/#{account_id}/costs",
+        query: params
       )
     end
   end
@@ -13,8 +17,8 @@ class Ey::Core::Client
       extract_url_params!(params)
 
       response(
-        :body   => {"costs" => self.data[:costs]},
-        :status => 200
+        body:   {"costs" => self.data[:costs]},
+        status: 200
       )
     end
   end

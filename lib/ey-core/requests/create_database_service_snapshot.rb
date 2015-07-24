@@ -16,15 +16,18 @@ class Ey::Core::Client
     def create_database_service_snapshot(_params={})
       params = Cistern::Hash.stringify_keys(_params)
 
-      database_service_id = resource_identity(params["url"]) || require_parameters(params, "database_service")
+      server_or_service_id = resource_identity(params["url"]) || require_parameters(params, "database_service")
 
-      database_service = if (database_server = self.data[:database_servers][database_service_id])
+      database_service = if (database_server = self.data[:database_servers][server_or_service_id])
                            find(:database_services, resource_identity(database_server["database_service"]))
                          else
                            find(:database_services, database_service_id)
                          end
 
       database_server ||= self.data[:database_servers].values.find { |ds| url_for("/database-services/#{database_service["id"]}") == ds["database_service"] }
+      database_service_id = database_service["id"]
+
+      find(:database_services, database_service_id)
 
       request_id  = self.uuid
       resource_id = self.uuid

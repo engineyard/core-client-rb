@@ -202,6 +202,7 @@ class Ey::Core::Client < Cistern::Service
   request :get_alert
   request :get_alerting_environments
   request :get_alerts
+  request :get_api_token
   request :get_application
   request :get_application_archive
   request :get_application_archives
@@ -340,19 +341,27 @@ class Ey::Core::Client < Cistern::Service
                  Ey::Core::MemoryCache
                else options[:cache]
                end
-      @token = options[:token] || token_dotfile[@url] || token_dotfile[@url.gsub(/\/$/, "")] # matching with or without trailing slash
+
+      @authentication = nil
+      @token = if options.has_key?(:token) && options[:token].nil?
+                 @authentication = :none
+               else
+                 options[:token] || token_dotfile[@url] || token_dotfile[@url.gsub(/\/$/, "")] # matching with or without trailing slash
+               end
 
       # For HMAC
       @auth_id  = options[:auth_id]
       @auth_key = options[:auth_key]
 
-      if !@auth_id && !@auth_key && !@token
-        raise "Missing token. Use Ey::Core::Client.new(token: mytoken) or add \"'#{@url}': mytoken\" to your ~/.ey-core file" unless @token
-      elsif options[:token] || (@token && !@auth_id) # token was explicitly provided
-        @authentication = :token
-      else
-        @authentication = :hmac
-        @token = nil
+      unless @authentication == :none
+        if !@auth_id && !@auth_key && !@token
+          raise "Missing token. Use Ey::Core::Client.new(token: mytoken) or add \"'#{@url}': mytoken\" to your ~/.ey-core file" unless @token
+        elsif options[:token] || (@token && !@auth_id) # token was explicitly provided
+          @authentication = :token
+        else
+          @authentication = :hmac
+          @token = nil
+        end
       end
 
       @logger = options[:logger] || Logger.new(nil)
@@ -446,10 +455,12 @@ class Ey::Core::Client < Cistern::Service
           :interval_randomness => 0.05,
           :backoff_factor      => 2
 
-        if @token
-          builder.use Ey::Core::TokenAuthentication, @token
-        else
-          builder.use :hmac, @auth_id, @auth_key
+        unless @authentication == :none
+          if @token
+            builder.use Ey::Core::TokenAuthentication, @token
+          else
+            builder.use :hmac, @auth_id, @auth_key
+          end
         end
 
         builder.use Ey::Core::Logger, @logger

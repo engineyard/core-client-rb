@@ -15,5 +15,9 @@ module Ey::Core::Mock
     def ip_address
       Array.new(4){rand(256)}.join('.')
     end
+
+    def api_token
+      SecureRandom.hex(20)
+    end
   end
 end

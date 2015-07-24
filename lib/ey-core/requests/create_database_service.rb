@@ -20,7 +20,7 @@ class Ey::Core::Client
 
       require_parameters(params["database_service"], "name")
       request_id  = self.uuid
-      resource_id = self.serial_id
+      resource_id = self.uuid
 
       database_service = params["database_service"].dup
       database_service["id"] = resource_id

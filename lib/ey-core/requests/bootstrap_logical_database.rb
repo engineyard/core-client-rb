@@ -24,7 +24,7 @@ class Ey::Core::Client
 
       if database_service.is_a?(Hash)
         require_parameters(params["database_service"], "name")
-        database_service["id"] = self.serial_id
+        database_service["id"] = self.uuid
       else
         database_service = find(:database_services, database_service)
         existing_database_service = true

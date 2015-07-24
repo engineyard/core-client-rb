@@ -3,7 +3,7 @@ module Ey::Core::Mock
     def create_database_service_resource(params)
       database_service    = params["database_service"]
       logical_database    = params["logical_database"]
-      database_service_id = database_service["id"]
+      database_service_id = database_service.fetch("id")
       database_server     = params["database_server"]
       provider_id         = params["provider_id"]
 
@@ -30,7 +30,6 @@ module Ey::Core::Mock
         "deleted_at"   => nil,
       )
 
-
       engine, location, _ = require_parameters(database_server, "engine", "location", "flavor", "version")
       database_server_id = self.uuid
 
@@ -39,7 +38,6 @@ module Ey::Core::Mock
              when /mysql/i then 3306
              else 9922
              end
-
 
       database_server.merge!(
         "id"               => database_server_id,
@@ -71,9 +69,10 @@ module Ey::Core::Mock
           "location"       => location.gsub(/[a-z]$/, ""),
           "rules"          => url_for("/firewalls/#{firewall_id}/rules")
         }
+
         self.data[:database_server_firewalls] << [database_server_id, firewall_id]
-        self.data[:database_servers][database_server.fetch("id")] = database_server
-        self.data[:database_services][database_service.fetch("id")] = database_service
+        self.data[:database_servers][database_server_id] = database_server
+        self.data[:database_services][database_service_id] = database_service
 
         contacts.each { |contact|
           self.data[:contacts][contact.fetch("id")] = contact
@@ -84,6 +83,8 @@ module Ey::Core::Mock
           self.data[:logical_databases][logical_database.fetch("id")] = logical_database
         end
 
+        database_server.delete("resource_url")
+        database_service.delete("resource_url")
         r.delete("resource_url")
       end
     end

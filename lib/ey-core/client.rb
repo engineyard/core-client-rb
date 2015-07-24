@@ -145,6 +145,7 @@ class Ey::Core::Client < Cistern::Service
   request :create_connector
   request :create_database_server
   request :create_database_service
+  request :create_database_service_snapshot
   request :create_environment
   request :create_firewall
   request :create_firewall_rule
@@ -597,8 +598,23 @@ class Ey::Core::Client < Cistern::Service
                     }
                   }
                   possible_provider_locations = {
-                    "azure" => [{"id"=>"East US", "name"=>"East US"}, {"id"=>"North Europe", "name"=>"North Europe"}, {"id"=>"West Europe", "name"=>"West Europe"}, {"id"=>"West US", "name"=>"West US"}, {"id"=>"Japan East", "name"=>"Japan East"}],
-                    "aws" => [{"id"=>"us-east-1", "name"=>"Eastern United States"}, {"id"=>"us-west-1", "name"=>"Western US (Northern CA)"}, {"id"=>"us-west-2", "name"=>"Western US (Oregon)"}, {"id"=>"sa-east-1", "name"=>"South America"}, {"id"=>"eu-west-1", "name"=>"Europe"}, {"id"=>"ap-southeast-1", "name"=>"Singapore"}, {"id"=>"ap-southeast-2", "name"=>"Australia"}, {"id"=>"ap-northeast-1", "name"=>"Japan"}]
+                    "azure" => [
+                      { "id" => "East US",      "name" => "East US" },
+                      { "id" => "North Europe", "name" => "North Europe" },
+                      { "id" => "West Europe",  "name" => "West Europe" },
+                      { "id" => "West US",      "name" => "West US" },
+                      { "id" => "Japan East",   "name" => "Japan East" }
+                    ],
+                    "aws" => [
+                      { "id" => "us-east-1",      "name" => "Eastern United States" },
+                      { "id" => "us-west-1",      "name" => "Western US (Northern CA)" },
+                      { "id" => "us-west-2",      "name" => "Western US (Oregon)" },
+                      { "id" => "sa-east-1",      "name" => "South America" },
+                      { "id" => "eu-west-1",      "name" => "Europe" },
+                      { "id" => "ap-southeast-1", "name" => "Singapore" },
+                      { "id" => "ap-southeast-2", "name" => "Australia" },
+                      { "id" => "ap-northeast-1", "name" => "Japan" }
+                    ]
                   }
                   {
                     :accounts                    => {},

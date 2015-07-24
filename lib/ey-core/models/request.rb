@@ -51,6 +51,8 @@ class Ey::Core::Client::Request < Ey::Core::Model
         connection.providers.get!(id).database_server_snapshots
       elsif collection == "database-servers"
         connection.database_servers.get!(id).snapshots
+      else
+        connection.database_server_snapshots.get!(resource_id)
       end
     when /database_server/
       self.connection.database_servers.get!(resource_id)

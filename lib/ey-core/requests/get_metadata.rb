@@ -4,7 +4,7 @@ class Ey::Core::Client
       url = params["url"]
 
       request(
-        :path => "metadata",
+        :path => "/check/dump",
         :url  => url,
       )
     end

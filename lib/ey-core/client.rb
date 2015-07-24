@@ -3,16 +3,16 @@ class Ey::Core::Client < Cistern::Service
   model_path "ey-core/models"
   request_path "ey-core/requests"
 
-  collection :accounts
   collection :account_cancellations
   collection :account_referrals
-  collection :addons
+  collection :accounts
   collection :addon_attachments
+  collection :addons
   collection :addresses
   collection :alerts
-  collection :applications
   collection :application_archives
   collection :application_deployments
+  collection :applications
   collection :backup_files
   collection :backups
   collection :cluster_components
@@ -21,39 +21,40 @@ class Ey::Core::Client < Cistern::Service
   collection :component_actions
   collection :components
   collection :connectors
+  collection :contacts
   collection :costs
+  collection :database_plan_usages
   collection :database_server_revisions
   collection :database_server_snapshots
+  collection :database_server_usages
   collection :database_servers
   collection :database_services
-  collection :database_server_usages
-  collection :database_plan_usages
-  collection :environments
   collection :environment_plan_usages
-  collection :firewalls
-  collection :firewall_rules
+  collection :environments
   collection :features
+  collection :firewall_rules
+  collection :firewalls
   collection :gems
-  collection :keypairs
   collection :keypair_deployments
+  collection :keypairs
   collection :legacy_alerts
-  collection :load_balancers
-  collection :load_balancer_services
   collection :load_balancer_nodes
+  collection :load_balancer_services
+  collection :load_balancers
   collection :logical_databases
   collection :logs
   collection :memberships
   collection :messages
-  collection :contacts
   collection :plan_usages
-  collection :providers
   collection :provider_locations
+  collection :providers
   collection :requests
-  collection :servers
   collection :server_events
   collection :server_usages
-  collection :slots
+  collection :servers
+  collection :services
   collection :slot_components
+  collection :slots
   collection :ssl_certificates
   collection :storage_users
   collection :storages
@@ -64,33 +65,33 @@ class Ey::Core::Client < Cistern::Service
   collection :volumes
 
   model :account
+  model :account_cancellation
   model :account_referral
   model :account_trial
-  model :alert
-  model :billing
-  model :account_cancellation
   model :addon
   model :addon_attachment
   model :address
-  model :legacy_alert
+  model :alert
   model :application
   model :application_archive
   model :application_deployment
   model :backup
   model :backup_file
+  model :billing
   model :cluster
   model :cluster_component
   model :cluster_update
   model :component
   model :component_action
   model :connector
+  model :contact
   model :cost
-  model :database_server
-  model :database_server_snapshot
-  model :database_server_revision
-  model :database_service
-  model :database_server_usage
   model :database_plan_usage
+  model :database_server
+  model :database_server_revision
+  model :database_server_snapshot
+  model :database_server_usage
+  model :database_service
   model :environment
   model :environment_plan_usage
   model :feature
@@ -99,15 +100,14 @@ class Ey::Core::Client < Cistern::Service
   model :gem
   model :keypair
   model :keypair_deployment
+  model :legacy_alert
   model :load_balancer
-  model :load_balancer_service
   model :load_balancer_node
+  model :load_balancer_service
   model :log
   model :logical_database
   model :membership
   model :message
-  model :metadata
-  model :contact
   model :plan_usage
   model :provider
   model :provider_location
@@ -115,6 +115,7 @@ class Ey::Core::Client < Cistern::Service
   model :server
   model :server_event
   model :server_usage
+  model :service
   model :slot
   model :slot_component
   model :ssl_certificate
@@ -410,6 +411,12 @@ class Ey::Core::Client < Cistern::Service
 
     def url_for(path)
       File.join(@url.to_s, path.to_s)
+    end
+
+    # @deprecated will be removed in 3.x
+    # @see {#services}
+    def metadata
+      services.get("core")
     end
   end
 

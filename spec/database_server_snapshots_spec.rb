@@ -16,5 +16,12 @@ describe "as a client" do
         expect(snapshots.count).not_to eq(0)
       }.to change { database_server.snapshots.count }
     end
+
+    it "creates a snapshot" do
+      snapshot = database_server.snapshots.create.resource!
+
+      expect(snapshot.database_server).to eq(database_server)
+      expect(snapshot.name).to be
+    end
   end
 end

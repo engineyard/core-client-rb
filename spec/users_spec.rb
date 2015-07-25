@@ -1,6 +1,16 @@
 require 'spec_helper'
 
 describe 'users' do
+  context "without authentication" do
+    let(:client) { create_unauthenticated_client }
+
+    it "gets an api token" do
+      username = ENV["EMAIL"]    || "email"
+      password = ENV["PASSWORD"] || "password"
+      expect(client.get_api_token(username, password).body["api_token"]).not_to be_nil
+    end
+  end
+
   context "with an HMAC client" do
     let!(:client) { create_hmac_client }
 

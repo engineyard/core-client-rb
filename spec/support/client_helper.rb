@@ -44,6 +44,10 @@ module ClientHelper
 
     Ey::Core::Client.new(merged_attributes)
   end
+
+  def create_unauthenticated_client
+    Ey::Core::Client.new(token: nil)
+  end
 end
 
 RSpec.configure do |config|

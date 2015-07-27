@@ -25,6 +25,7 @@ class Ey::Core::Client::Account < Ey::Core::Model
 
   has_one :cancellation, assoc_name: 'account_cancellation', collection: :account_cancellations
   has_one :account_trial
+  has_one :support_trial
 
   assoc_writer :owner
 

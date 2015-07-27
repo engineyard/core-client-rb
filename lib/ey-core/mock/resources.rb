@@ -105,6 +105,7 @@ module Ey::Core::Mock
         "users"            => "#{account_url}/users",
         "costs"            => "#{account_url}/costs",
         "account_trial"    => "#{account_url}/trial",
+        "support_trial"    => nil,
       })
       resource
     end

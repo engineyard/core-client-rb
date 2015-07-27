@@ -23,7 +23,7 @@ class Ey::Core::Client
     def get_database_server_snapshots(params={})
       extract_url_params!(params)
 
-      headers, database_server_snapshots_page = search_and_page(params, :database_server_snapshots, search_keys: %w[database_server provider provisioned_id])
+      headers, database_server_snapshots_page = search_and_page(params, :database_server_snapshots, search_keys: %w[database_server database_service provider provisioned_id])
 
       response(
         :body    => {"database_server_snapshots" => database_server_snapshots_page},

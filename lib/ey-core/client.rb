@@ -323,14 +323,18 @@ class Ey::Core::Client < Cistern::Service
   request :update_untracked_server
   request :upload_file
 
-  recognizes :token, :url, :logger, :adapter, :builder, :connection_options, :auth_id, :auth_key, :cache
+  recognizes :token, :url, :logger, :adapter, :builder, :connection_options, :auth_id, :auth_key, :cache, :config_file
 
   module Shared
     attr_reader :authentication, :url, :cache
 
     def setup(options)
       token_dotfile = begin
-                        YAML.load_file(File.expand_path("~/.ey-core"))
+                        if options[:config_file]
+                          YAML.load_file(options[:config_file]) || {} # if the file is empty, yaml returns false
+                        else
+                          YAML.load_file(File.expand_path("~/.ey-core"))
+                        end
                       rescue Errno::ENOENT
                         {}
                       end

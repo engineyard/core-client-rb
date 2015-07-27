@@ -39,7 +39,7 @@ class Ey::Core::Client
       self.data[:accounts][account_id] = account.merge(:account_users => [user_id], :account_owners => [user_id])
 
       (params["features"] || []).each do |resource_id|
-        feature = self.data[:features][resource_id]
+        feature = self.data[:features][resource_id] ||= {}
 
         account_url = url_for("/accounts/#{account_id}")
         feature["account"] = account_url

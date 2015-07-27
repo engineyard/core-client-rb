@@ -121,6 +121,7 @@ class Ey::Core::Client < Cistern::Service
   model :ssl_certificate
   model :storage
   model :storage_user
+  model :support_trial
   model :task
   model :token
   model :untracked_server
@@ -294,6 +295,7 @@ class Ey::Core::Client < Cistern::Service
   request :get_storages
   request :get_storage_user
   request :get_storage_users
+  request :get_support_trial
   request :get_task
   request :get_tasks
   request :get_untracked_server
@@ -686,6 +688,7 @@ class Ey::Core::Client < Cistern::Service
                     :ssl_certificates            => {},
                     :storages                    => {},
                     :storage_users               => {},
+                    :support_trials              => {},
                     :tasks                       => {},
                     :temp_files                  => {},
                     :untracked_servers           => {},

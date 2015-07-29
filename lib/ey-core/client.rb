@@ -166,14 +166,13 @@ class Ey::Core::Client < Cistern::Service
   request :create_token
   request :create_untracked_server
   request :create_user
-  request :detach_address
   request :destroy_addon
   request :destroy_cluster
-  request :destroy_environment
-  request :destroy_database_service
   request :destroy_database_server
+  request :destroy_database_server_snapshot
+  request :destroy_database_service
+  request :destroy_environment
   request :destroy_firewall
-  request :destroy_user
   request :destroy_firewall_rule
   request :destroy_load_balancer
   request :destroy_logical_database
@@ -182,6 +181,8 @@ class Ey::Core::Client < Cistern::Service
   request :destroy_ssl_certificate
   request :destroy_storage
   request :destroy_storage_user
+  request :destroy_user
+  request :detach_address
   request :disable_feature
   request :discover_database_server
   request :discover_database_server_snapshots

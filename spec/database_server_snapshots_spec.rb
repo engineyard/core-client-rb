@@ -21,7 +21,11 @@ describe "as a client" do
       snapshot = database_server.snapshots.create.resource!
 
       expect(snapshot.database_server).to eq(database_server)
+      expect(snapshot.database_service).to eq(database_service)
       expect(snapshot.provisioned_id).to be
+
+      expect(database_service.snapshots).to contain_exactly(snapshot)
+      expect(database_server.snapshots).to  contain_exactly(snapshot)
     end
   end
 end

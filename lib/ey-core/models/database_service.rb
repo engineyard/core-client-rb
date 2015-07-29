@@ -9,9 +9,11 @@ class Ey::Core::Client::DatabaseService < Ey::Core::Model
   attribute :service_level
 
   has_one :provider
-  has_many :servers,   model: :database_servers
-  has_many :databases, model: :logical_databases
+
   has_many :contacts
+  has_many :databases, model: :logical_databases
+  has_many :servers,   model: :database_servers
+  has_many :snapshots, model: :database_server_snapshots
 
   # @todo remove me next major revision
   attr_accessor :database_server

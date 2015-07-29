@@ -26,6 +26,7 @@ module Ey::Core::Mock
         "servers"      => url_for("/database-services/#{database_service_id}/servers"),
         "databases"    => url_for("/database-services/#{database_service_id}/databases"),
         "messages"     => url_for("/database-services/#{database_service_id}/messages"),
+        "snapshots"    => url_for("/database-services/#{database_service_id}/snapshots"),
         "contacts"     => url_for("/database-services/#{database_service_id}/contacts"),
         "deleted_at"   => nil,
       )

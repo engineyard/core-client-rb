@@ -27,5 +27,15 @@ describe "as a client" do
       expect(database_service.snapshots).to contain_exactly(snapshot)
       expect(database_server.snapshots).to  contain_exactly(snapshot)
     end
+
+    context "with a snapshot" do
+      let!(:snapshot) { database_server.snapshots.create.resource! }
+
+      it "destroys" do
+        expect {
+          snapshot.destroy!.resource!
+        }.to change { snapshot.reload.deleted_at }.from(nil)
+      end
+    end
   end
 end

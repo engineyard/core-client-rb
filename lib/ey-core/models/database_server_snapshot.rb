@@ -17,7 +17,7 @@ class Ey::Core::Client::DatabaseServerSnapshot < Ey::Core::Model
 
   attr_accessor :name
 
-  def save
+  def save!
     if new_record?
       create_params = if collection.url
                         { "url" => collection.url }
@@ -33,5 +33,11 @@ class Ey::Core::Client::DatabaseServerSnapshot < Ey::Core::Model
         connection.create_database_service_snapshot(create_params.merge("name" => self.name)).body["request"]
       )
     end
+  end
+
+  def destroy!
+    connection.requests.new(
+      connection.destroy_database_server_snapshot("id" => self.identity).body["request"]
+    )
   end
 end

@@ -71,7 +71,7 @@ By default, specs are run against the core mock. In order to run them against aw
 ## Releasing
 
     $ gem install gem-release
-    $ gem bump -trv (major|minor|patch)
+    $ gem bump -trv (major|minor|patch) --host https://geminst:XXX@nextgem.engineyard.com/
 
 ## Contributing
 

@@ -1,6 +1,6 @@
 class Ey::Core::Client
   class Real
-    def password_resets(_params)
+    def reset_password(_params)
       params = Cistern::Hash.stringify_keys(_params)
 
       request(
@@ -12,7 +12,7 @@ class Ey::Core::Client
   end # Real
 
   class Mock
-    def password_resets(_params)
+    def reset_password(_params)
       params = Cistern::Hash.stringify_keys(_params)
 
       unless self.data[:users].map{ |_, user| user["email"] }.include?(params["email"])

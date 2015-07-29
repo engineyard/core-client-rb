@@ -1,5 +1,5 @@
 module Ey
   module Core
-    VERSION = "2.7.7"
+    VERSION = "2.7.8"
   end
 end

@@ -7,6 +7,7 @@ class Ey::Core::Client::ServerUsage < Ey::Core::Model
   attribute :flavor
   attribute :dedicated
   attribute :location
+  attribute :deis
 
   has_one :environment
   has_one :provider

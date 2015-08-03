@@ -305,6 +305,7 @@ class Ey::Core::Client < Cistern::Service
   request :get_users
   request :get_volumes
   request :request_callback
+  request :reset_password
   request :run_cluster_application_action
   request :reboot_server
   request :run_cluster_component_action

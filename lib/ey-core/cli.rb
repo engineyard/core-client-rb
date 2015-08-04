@@ -2,6 +2,7 @@ require 'optparse'
 require 'ostruct'
 require 'ey-core'
 require 'awesome_print'
+require 'pry'
 
 Cistern.formatter = Cistern::Formatter::AwesomePrint
 
@@ -63,13 +64,18 @@ class Ey::Core::Cli
 
     set_client(options)
 
-    set_resource(action, resource_name, resource_id)
+    set_resource(action, resource_name, resource_id) if resource_name && resource_id
 
     [action, (options.to_hash || {})]
   end
 
   def run
     public_send(action)
+  end
+
+  def console
+    Pry.config.prompt = proc { |obj, nest_level, _| "ey-core:> " }
+    self.pry
   end
 
   def show
@@ -90,11 +96,16 @@ class Ey::Core::Cli
     Ey::Core::Cli.say(response.ai)
   end
 
+  def current_user
+    @current_user ||= @client.users.current
+  end
+
   def set_client(options)
     @client ||= Ey::Core::Client.new(options)
   end
 
   def set_resource(action, resource_name, resource_id)
+    action = 'show' if action == 'console'
     action || raise(ArgumentError.new("Missing action"))
     Ey::Core::Client.models.find { |m,_| m.to_s == resource_name } || raise(ArgumentError.new("Unknown resource: #{resource_name}"))
     %w[show destroy].include?(action) || raise(ArgumentError.new("Unknown action: #{action}"))

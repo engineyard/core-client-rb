@@ -8,6 +8,7 @@ class Ey::Core::Client::ServerUsage < Ey::Core::Model
   attribute :dedicated
   attribute :location
   attribute :deis
+  attribute :provisioned_id
 
   has_one :environment
   has_one :provider

@@ -579,16 +579,25 @@ class Ey::Core::Client < Cistern::Service
     def self.data
       @data ||= Hash.new do |h,k|
         h[k] = begin
-                  cc_id  = self.uuid
-                  dc_id  = self.uuid
-                  app_id = self.uuid
-                  deis_id = self.uuid
+                  cc_id     = self.uuid
+                  custom_id = self.uuid
+                  dc_id     = self.uuid
+                  app_id    = self.uuid
+                  deis_id   = self.uuid
                   components = {
                     cc_id => {
                       "created_at" => Time.now.to_s,
                       "deleted_at" => nil,
                       "id"         => cc_id,
                       "name"       => "cluster_cookbooks",
+                      "updated_at" => Time.now.to_s,
+                      "uri"        => "git://github.com/engineyard/cluster_cookbooks.git",
+                    },
+                    custom_id => {
+                      "created_at" => Time.now.to_s,
+                      "deleted_at" => nil,
+                      "id"         => custom_id,
+                      "name"       => "custom_cookbooks",
                       "updated_at" => Time.now.to_s,
                       "uri"        => "git://github.com/engineyard/cluster_cookbooks.git",
                     },

@@ -13,6 +13,18 @@ class Ey::Core::Client
   end # Real
 
   class Mock
+    APP_TYPE_LANGUAGES = {
+      "java" => "java",
+      "merb" => "ruby",
+      "nodejs" => "nodejs",
+      "php" => "php",
+      "rack" => "ruby",
+      "rails2" => "ruby",
+      "rails3" => "ruby",
+      "rails4" => "ruby",
+      "sinatra" => "ruby",
+    }
+
     def create_application(params={})
       resource_id  = self.serial_id
       url          = params.delete("url")
@@ -23,10 +35,15 @@ class Ey::Core::Client
 
       resource = params["application"].dup
 
+      unless language = APP_TYPE_LANGUAGES[resource["type"].to_s]
+        raise response(status: 422, body: "Unknown app type: #{resource["type"]}")
+      end
+
       resource.merge!(
         "account"    => url_for("/accounts/#{account_id}"),
         "archives"   => url_for("/applications/#{resource_id}/archives"),
         "keypairs"   => url_for("/applications/#{resource_id}/keypairs"),
+        "language"   => language,
         "created_at" => Time.now,
         "updated_at" => Time.now,
         "id"         => resource_id,

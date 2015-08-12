@@ -10,7 +10,7 @@ describe 'applications' do
   let(:repository)   { "#{Faker::Name.first_name}@#{Faker::Internet.domain_name}:#{app_name}/#{app_name}.git" }
 
   it "should create an application" do
-    application = account.applications.create!(name: app_name, type: "rails3", language: "ruby", repository: repository)
+    application = account.applications.create!(name: app_name, type: "rails3", repository: repository)
 
     expect(application.id).not_to be_nil
     expect(application.name).to eq(app_name)
@@ -50,5 +50,16 @@ describe 'applications' do
 
     expect(client.applications.all(repository: repository).size).to eq(1)
     expect(client.applications.first(repository: repository)).to eq(application)
+  end
+
+  it "has the correct language for all app types" do
+    expect(account.applications.create!(name: "merb_app", type: "merb", repository: repository).language).to eq("ruby")
+    expect(account.applications.create!(name: "rack_app", type: "rack", repository: repository).language).to eq("ruby")
+    expect(account.applications.create!(name: "rails2_app", type: "rails2", repository: repository).language).to eq("ruby")
+    expect(account.applications.create!(name: "rails3_app", type: "rails3", repository: repository).language).to eq("ruby")
+    expect(account.applications.create!(name: "rails4_app", type: "rails4", repository: repository).language).to eq("ruby")
+    expect(account.applications.create!(name: "sinatra_app", type: "sinatra", repository: repository).language).to eq("ruby")
+    expect(account.applications.create!(name: "php_app", type: "php", repository: repository).language).to eq("php")
+    expect(account.applications.create!(name: "nodejs_app", type: "nodejs", repository: repository).language).to eq("nodejs")
   end
 end

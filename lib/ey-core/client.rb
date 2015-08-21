@@ -491,6 +491,10 @@ class Ey::Core::Client < Cistern::Service
       body    = options[:body]
       headers = options[:headers] || {}
 
+      if (method != :get) && !params.empty?
+        raise "It's bad form to use URL query parameters with a non-GET request, please use :body"
+      end
+
       default_content_type = if !body && !params.empty?
                                "application/x-www-form-urlencoded"
                              else

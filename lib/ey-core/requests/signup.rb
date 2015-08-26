@@ -13,10 +13,6 @@ class Ey::Core::Client
 
   class Mock
     def signup(_params)
-      if self.authentication != :hmac
-        response(status: 403)
-      end
-
       params = Cistern::Hash.stringify_keys(_params)
 
       user_id = self.uuid

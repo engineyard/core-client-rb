@@ -8,12 +8,12 @@ describe 'Costs' do
     expect(account.costs.all).to be_empty
   end
 
-  it 'should get costs for an account' do
+  it 'should get costs for an account', :mock_only do
     create_cost(client, account: account)
     expect(account.costs.all).not_to be_empty
   end
 
-  it 'should search costs' do
+  it 'should search costs', :mock_only do
     create_cost(client, account: account, level: 'total')
     create_cost(client, account: account, level: 'summarized')
     costs = account.costs.select { |c| c.level == 'total' }

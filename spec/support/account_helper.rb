@@ -1,6 +1,6 @@
 module AccountHelper
   def create_account(options={})
-    creator = options[:creator] || create_hmac_client
+    creator = options[:creator] || create_client
     client  = options[:client]
 
     attributes = options[:account] || {}
@@ -24,7 +24,7 @@ module AccountHelper
   end
 
   def create_user(options={})
-    creator = options[:creator] || create_hmac_client
+    creator = options[:creator] || create_client
     client  = options[:client]
 
     attributes = options[:user] || {}

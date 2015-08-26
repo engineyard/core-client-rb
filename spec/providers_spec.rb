@@ -66,7 +66,7 @@ describe 'providers' do
     end
 
     context "with two clients pointed to the same cloud", :mock_only do
-      let!(:client_1) { create_hmac_client(url: "http://client.example.com") }
+      let!(:client_1) { create_client(url: "http://client.example.com") }
       let!(:owner)    { client_1.users.create!(name: Faker::Name.name, email: Faker::Internet.email) }
       let!(:client_1_account_1) { client_1.accounts.create!(owner: owner, name: Faker::Name.first_name)}
       let!(:client_1_account_2) { client_1.accounts.create!(owner: owner, name: Faker::Name.first_name)}
@@ -83,7 +83,7 @@ describe 'providers' do
         expect(client_1_account_1.providers.all.count).to eq(1)
         expect(client_1_account_2.providers.all.count).to eq(1)
 
-        client_2 = create_hmac_client(url: "http://client.example.com")
+        client_2 = create_client(url: "http://client.example.com")
 
         client_2_account_1 = client_2.accounts.get(client_1_account_1.id)
         expect(client_2_account_1).not_to be_nil

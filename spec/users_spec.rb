@@ -4,15 +4,15 @@ describe 'users' do
   context "without authentication" do
     let(:client) { create_unauthenticated_client }
 
-    it "gets an api token" do
+    it "gets an api token", :mock_only do
       username = ENV["EMAIL"]    || "email"
       password = ENV["PASSWORD"] || "password"
       expect(client.get_api_token(username, password).body["api_token"]).not_to be_nil
     end
   end
 
-  context "with an HMAC client" do
-    let!(:client) { create_hmac_client }
+  context "when authenticated" do
+    let!(:client) { create_client }
 
     it "should create a user" do
       name  = Faker::Name.name
@@ -51,16 +51,6 @@ describe 'users' do
         }.to raise_exception(Ey::Core::Response::Unprocessable, /Email has already been taken/)
       end
     end
-  end
-
-  context "with a token client" do
-    let(:client) { create_client }
-
-    it "should not create a user" do
-      expect {
-        client.users.create!(name: Faker::Name.name, email: Faker::Internet.email)
-      }.to raise_exception(Ey::Core::Response::Error)
-    end
 
     it "should get current user" do
       expect(client.users.current).to be_a(Ey::Core::Client::User)
@@ -74,7 +64,7 @@ describe 'users' do
       name  = Faker::Name.name
       email = Faker::Internet.email
 
-      user = create_hmac_client.users.create!(name: name, email: email)
+      user = create_client.users.create!(name: name, email: email)
       user = client.users.get(user.identity)
       expect(user.deleted_at).to be_nil
 

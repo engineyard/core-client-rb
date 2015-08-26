@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe 'billing', :mock_only do
-  let!(:consumer_client) { create_hmac_client }
+  let!(:consumer_client) { create_client }
 
   context "with account" do
     let!(:user)       { consumer_client.users.create!(name: Faker::Name.name, email: Faker::Internet.email) }

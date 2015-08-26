@@ -2,11 +2,11 @@ require 'spec_helper'
 
 describe 'slot components' do
   describe "as a user" do
-    let!(:hmac_client) { create_hmac_client }
+    let!(:client) { create_client }
     let!(:client)       { create_client }
-    let!(:user)        { hmac_client.users.create!(name: Faker::Name.name, email: Faker::Internet.email) }
+    let!(:user)        { client.users.create!(name: Faker::Name.name, email: Faker::Internet.email) }
     let!(:account) do
-      hmac_account = hmac_client.accounts.create!(owner: user, name: Faker::Name.first_name, type: "beta")
+      hmac_account = client.accounts.create!(owner: user, name: Faker::Name.first_name, type: "beta")
       client.accounts.get(hmac_account.id)
     end
 

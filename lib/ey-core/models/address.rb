@@ -7,6 +7,7 @@ class Ey::Core::Client::Address < Ey::Core::Model
   attribute :ip_address
   attribute :provisioned_id
   attribute :location
+  attribute :disappeared_at, type: :time
 
   has_one :provider
   has_one :server
@@ -35,12 +36,23 @@ class Ey::Core::Client::Address < Ey::Core::Model
       params = {
         "provider" => self.provider_id,
         "address"  => {
-          "location" => self.location,
+          "location"       => self.location,
+          "provisioned_id" => self.provisioned_id
         },
       }
 
       self.connection.requests.new(self.connection.create_address(params).body["request"])
-    else raise NotImplementedError
+    else
+      requires :identity
+
+      params = {
+        "id" => self.identity,
+        "address" => {
+          "disappeared_at" => self.disappeared_at,
+        }
+      }
+
+      merge_attributes(self.connection.update_address(params).body["address"])
     end
   end
 end

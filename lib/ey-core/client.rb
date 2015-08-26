@@ -60,6 +60,7 @@ class Ey::Core::Client < Cistern::Service
   collection :storages
   collection :tasks
   collection :tokens
+  collection :untracked_addresses
   collection :untracked_servers
   collection :users
   collection :volumes
@@ -124,6 +125,7 @@ class Ey::Core::Client < Cistern::Service
   model :support_trial
   model :task
   model :token
+  model :untracked_address
   model :untracked_server
   model :user
   model :volume
@@ -165,6 +167,7 @@ class Ey::Core::Client < Cistern::Service
   request :create_storage_user
   request :create_task
   request :create_token
+  request :create_untracked_address
   request :create_untracked_server
   request :create_user
   request :destroy_addon
@@ -312,6 +315,7 @@ class Ey::Core::Client < Cistern::Service
   request :run_cluster_component_action
   request :run_environment_application_action
   request :signup
+  request :update_address
   request :update_addon
   request :update_addon_attachment
   request :update_alert

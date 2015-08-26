@@ -16,7 +16,7 @@ class Ey::Core::Client
     def get_addresses(params={})
       extract_url_params!(params)
 
-      headers, addresses_page = search_and_page(params, :addresses, search_keys: %w[provisioned_id ip_address server location])
+      headers, addresses_page = search_and_page(params, :addresses, search_keys: %w[provisioned_id ip_address server location provider])
 
       response(
         :body    => {"addresses" => addresses_page},

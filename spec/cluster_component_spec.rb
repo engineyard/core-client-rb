@@ -1,10 +1,10 @@
 require 'spec_helper'
 
 describe "cluster components" do
-  let!(:hmac_client) { create_hmac_client }
-  let!(:user) { hmac_client.users.create!(name: Faker::Name.name, email: Faker::Internet.email) }
   let!(:client) { create_client }
-  let!(:account) { client.accounts.get(hmac_client.accounts.create!(owner: user, name: Faker::Name.first_name, type: "beta").id) }
+  let!(:user)        { client.users.create!(name: Faker::Name.name, email: Faker::Internet.email) }
+  let!(:client)      { create_client }
+  let!(:account)     { client.accounts.get(client.accounts.create!(owner: user, name: Faker::Name.first_name, type: "beta").id) }
 
   let!(:provider) { account.providers.all.first || account.providers.create!(type: "aws").resource! }
   let!(:app_component) { client.components.all(name: "default_deployer").one }

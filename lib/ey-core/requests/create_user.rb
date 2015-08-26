@@ -12,10 +12,6 @@ class Ey::Core::Client
 
   class Mock
     def create_user(params={})
-      if self.authentication != :hmac
-        response(status: 403)
-      end
-
       if self.data[:users].map{ |_, user| user["email"] }.include?(params["user"]["email"])
         response(
           :status => 422,

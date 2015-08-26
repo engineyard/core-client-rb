@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe "reset_password" do
   context "with an HMAC client" do
-    let!(:client) { create_hmac_client }
+    let!(:client) { create_client }
 
     it "should create a password reset request" do
       email = create_user.email

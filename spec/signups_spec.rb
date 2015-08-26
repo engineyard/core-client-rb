@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe 'signups' do
   context "with a hmac client" do
-    let!(:client) { create_hmac_client }
+    let!(:client) { create_client }
 
     let!(:public_feature) do
       if Ey::Core::Client.mocking?

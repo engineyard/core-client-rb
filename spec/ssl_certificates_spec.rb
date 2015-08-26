@@ -1,8 +1,8 @@
 require 'spec_helper'
 
 describe 'as a user' do
-  let!(:hmac_client) { create_hmac_client }
-  let!(:user)        { hmac_client.users.create!(name: Faker::Name.name, email: Faker::Internet.email) }
+  let!(:client) { create_client }
+  let!(:user)        { client.users.create!(name: Faker::Name.name, email: Faker::Internet.email) }
   let(:client)       { create_client }
   let(:account)      { client.accounts.create!(owner: user, name: Faker::Name.first_name) }
 

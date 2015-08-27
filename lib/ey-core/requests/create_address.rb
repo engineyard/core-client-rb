@@ -18,7 +18,7 @@ class Ey::Core::Client
       self.find(:providers, provider_id)
 
       resource = params["address"].dup
-      ip_address = self.ip_address
+      ip_address = resource["provisioned_id"] || self.ip_address
       resource.merge!(
         "id"             => resource_id,
         "provisioned_id" => ip_address,

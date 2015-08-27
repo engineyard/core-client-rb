@@ -50,7 +50,7 @@ module ResourceHelper
     value = options[:value] || "1763"
     environment = options[:environment] || nil
 
-    cost = client.data[:costs] << {
+    client.data[:costs] << {
       billing_month:         "2015-07",
       data_type:             "cost",
       level:                 level,
@@ -163,7 +163,7 @@ module ResourceHelper
   def create_server_event(client, attributes={})
     attributes = Cistern::Hash.stringify_keys(attributes)
 
-    raise "type needed" unless attributes["type"]
+    attributes.fetch("type")
 
     if server = attributes.delete("server")
       attributes["server"] = client.url_for("/servers/#{server.id}")
@@ -179,11 +179,19 @@ module ResourceHelper
   def create_logical_database(options={})
     database_service = options.fetch(:database_service) { create_database_service(options) }
 
-    database_service.databases.create!({
+    database_service.databases.create!(
       :name     => SecureRandom.hex(6),
       :username => "ey#{SecureRandom.hex(6)}",
       :password => SecureRandom.hex(8),
-    }).resource!
+    ).resource!
+  end
+
+  def create_deis_cluster(options={})
+    account = options.fetch(:account) { create_account(options) }
+
+    account.deis_clusters.create!(
+      :name => SecureRandom.hex(6),
+    ).resource!
   end
 
   def create_untracked_server(options={})

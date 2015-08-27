@@ -86,12 +86,14 @@ module Ey::Core::Mock
       account_url = url_for("/accounts/#{resource_id}")
       resource.merge!({
         "id"               => resource_id,
+        "account_trial"    => "#{account_url}/trial",
         "addons"           => "#{account_url}/addons",
         "addresses"        => "#{account_url}/addressses",
         "applications"     => "#{account_url}/applications",
-        "created_at"       => Time.now.to_s,
-        "updated_at"       => Time.now.to_s,
         "cancelled_at"     => nil,
+        "costs"            => "#{account_url}/costs",
+        "created_at"       => Time.now.to_s,
+        "deis_clusters"    => "#{account_url}/deis-clusters",
         "environments"     => "#{account_url}/environments",
         "features"         => "#{account_url}/features",
         "memberships"      => "#{account_url}/memberships",
@@ -100,12 +102,11 @@ module Ey::Core::Mock
         "providers"        => "#{account_url}/providers",
         "referrals"        => "#{account_url}/referrals",
         "requests"         => "#{account_url}/requests",
-        "ssl_certificates" => "#{account_url}/ssl-certificates",
         "resource_url"     => account_url,
-        "users"            => "#{account_url}/users",
-        "costs"            => "#{account_url}/costs",
-        "account_trial"    => "#{account_url}/trial",
+        "ssl_certificates" => "#{account_url}/ssl-certificates",
         "support_trial"    => nil,
+        "updated_at"       => Time.now.to_s,
+        "users"            => "#{account_url}/users",
       })
       resource
     end

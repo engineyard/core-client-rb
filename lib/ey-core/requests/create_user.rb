@@ -1,4 +1,3 @@
-require 'securerandom'
 class Ey::Core::Client
   class Real
     def create_user(params={})

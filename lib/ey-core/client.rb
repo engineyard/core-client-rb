@@ -1,7 +1,7 @@
 class Ey::Core::Client < Cistern::Service
   collection_path "ey-core/collections"
-  model_path "ey-core/models"
-  request_path "ey-core/requests"
+  model_path      "ey-core/models"
+  request_path    "ey-core/requests"
 
   collection :account_cancellations
   collection :account_referrals
@@ -29,6 +29,7 @@ class Ey::Core::Client < Cistern::Service
   collection :database_server_usages
   collection :database_servers
   collection :database_services
+  collection :deis_clusters
   collection :environment_plan_usages
   collection :environments
   collection :features
@@ -93,6 +94,7 @@ class Ey::Core::Client < Cistern::Service
   model :database_server_snapshot
   model :database_server_usage
   model :database_service
+  model :deis_cluster
   model :environment
   model :environment_plan_usage
   model :feature
@@ -149,6 +151,7 @@ class Ey::Core::Client < Cistern::Service
   request :create_database_server
   request :create_database_service
   request :create_database_service_snapshot
+  request :create_deis_cluster
   request :create_environment
   request :create_firewall
   request :create_firewall_rule
@@ -196,9 +199,9 @@ class Ey::Core::Client < Cistern::Service
   request :finish_backup
   request :get_account
   request :get_account_cancellation
+  request :get_account_referrals
   request :get_account_trial
   request :get_accounts
-  request :get_account_referrals
   request :get_addon
   request :get_addon_attachment
   request :get_addon_attachments
@@ -235,18 +238,18 @@ class Ey::Core::Client < Cistern::Service
   request :get_contacts
   request :get_costs
   request :get_current_user
+  request :get_database_plan_usages
   request :get_database_server
   request :get_database_server_revisions
   request :get_database_server_snapshot
-  request :get_legacy_alert
-  request :get_legacy_alerts
   request :get_database_server_snapshots
+  request :get_database_server_usages
   request :get_database_servers
   request :get_database_servers_firewalls
   request :get_database_service
   request :get_database_services
-  request :get_database_server_usages
-  request :get_database_plan_usages
+  request :get_deis_cluster
+  request :get_deis_clusters
   request :get_environment
   request :get_environment_database_services
   request :get_environment_logical_databases
@@ -255,24 +258,26 @@ class Ey::Core::Client < Cistern::Service
   request :get_feature
   request :get_features
   request :get_firewall
-  request :get_firewalls
   request :get_firewall_rule
   request :get_firewall_rules
+  request :get_firewalls
   request :get_gem
   request :get_keypair
-  request :get_keypairs
   request :get_keypair_deployment
   request :get_keypair_deployments
+  request :get_keypairs
+  request :get_legacy_alert
+  request :get_legacy_alerts
   request :get_load_balancer
-  request :get_load_balancers
-  request :get_load_balancer_service
-  request :get_load_balancer_services
   request :get_load_balancer_node
   request :get_load_balancer_nodes
+  request :get_load_balancer_service
+  request :get_load_balancer_services
+  request :get_load_balancers
   request :get_log
   request :get_logical_database
-  request :get_logs
   request :get_logical_databases
+  request :get_logs
   request :get_membership
   request :get_message
   request :get_messages
@@ -280,16 +285,16 @@ class Ey::Core::Client < Cistern::Service
   request :get_plan_usages
   request :get_possible_provider_locations
   request :get_provider
-  request :get_providers
   request :get_provider_location
   request :get_provider_locations
+  request :get_providers
   request :get_request
   request :get_requests
   request :get_server
-  request :get_server_usages
-  request :get_servers
   request :get_server_event
   request :get_server_events
+  request :get_server_usages
+  request :get_servers
   request :get_slot
   request :get_slot_component
   request :get_slot_components
@@ -297,9 +302,9 @@ class Ey::Core::Client < Cistern::Service
   request :get_ssl_certificate
   request :get_ssl_certificates
   request :get_storage
-  request :get_storages
   request :get_storage_user
   request :get_storage_users
+  request :get_storages
   request :get_support_trial
   request :get_task
   request :get_tasks
@@ -308,16 +313,16 @@ class Ey::Core::Client < Cistern::Service
   request :get_user
   request :get_users
   request :get_volumes
+  request :reboot_server
   request :request_callback
   request :reset_password
   request :run_cluster_application_action
-  request :reboot_server
   request :run_cluster_component_action
   request :run_environment_application_action
   request :signup
-  request :update_address
   request :update_addon
   request :update_addon_attachment
+  request :update_address
   request :update_alert
   request :update_application_archive
   request :update_billing
@@ -650,71 +655,73 @@ class Ey::Core::Client < Cistern::Service
                     ]
                   }
                   {
-                    :accounts                    => {},
                     :account_referrals           => {},
+                    :accounts                    => {},
                     :addons                      => {},
                     :addresses                   => {},
+                    :agents                      => {},
                     :alerts                      => {},
-                    :applications                => {},
                     :application_archives        => {},
                     :application_deployments     => {},
+                    :applications                => {},
                     :backup_files                => {},
                     :backups                     => {},
                     :billing                     => {},
                     :cluster_components          => {},
+                    :cluster_firewalls           => [],
                     :cluster_updates             => {},
                     :clusters                    => {},
-                    :cluster_firewalls           => [],
                     :component_actions           => {},
                     :components                  => components,
                     :connectors                  => {},
-                    :contacts                    => {},
                     :contact_assignments         => [],
+                    :contacts                    => {},
                     :costs                       => [],
+                    :database_plan_usages        => Hash.new { |h1,k1| h1[k1] = {} },
                     :database_server_firewalls   => [],
                     :database_server_revisions   => {},
                     :database_server_snapshots   => {},
+                    :database_server_usages      => Hash.new { |h1,k1| h1[k1] = {} },
                     :database_servers            => {},
                     :database_services           => {},
-                    :database_server_usages      => Hash.new { |h1,k1| h1[k1] = {} },
-                    :database_plan_usages        => Hash.new { |h1,k1| h1[k1] = {} },
-                    :environment_plan_usages     => Hash.new { |h1,k1| h1[k1] = {} },
+                    :deis_clusters               => {},
                     :deleted                     => Hash.new {|x,y| x[y] = {}},
+                    :environment_plan_usages     => Hash.new { |h1,k1| h1[k1] = {} },
                     :environments                => {},
                     :features                    => {},
-                    :firewalls                   => {},
                     :firewall_rules              => {},
-                    :keypairs                    => {},
+                    :firewalls                   => {},
                     :keypair_deployments         => {},
+                    :keypairs                    => {},
                     :legacy_alerts               => {},
-                    :load_balancers              => {},
-                    :load_balancer_services      => {},
                     :load_balancer_nodes         => {},
-                    :logs                        => {},
+                    :load_balancer_services      => {},
+                    :load_balancers              => {},
                     :logical_databases           => {},
+                    :logs                        => {},
                     :memberships                 => {},
                     :messages                    => {},
                     :plan_usages                 => Hash.new { |h1,k1| h1[k1] = {} },
                     :possible_provider_locations => possible_provider_locations,
                     :projects                    => {},
-                    :providers                   => {},
                     :provider_locations          => {},
+                    :providers                   => {},
                     :requests                    => {},
-                    :servers                     => {},
                     :server_events               => {},
                     :server_usages               => Hash.new { |h1,k1| h1[k1] = {} },
-                    :slots                       => {},
+                    :servers                     => {},
                     :slot_components             => {},
+                    :slots                       => {},
                     :ssl_certificates            => {},
-                    :storages                    => {},
                     :storage_users               => {},
+                    :storages                    => {},
                     :support_trials              => {},
                     :tasks                       => {},
                     :temp_files                  => {},
                     :untracked_servers           => {},
                     :users                       => {},
                     :volumes                     => {},
-                    }
+                  }
                 end
       end
     end

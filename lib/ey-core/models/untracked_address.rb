@@ -12,7 +12,7 @@ class Ey::Core::Client::UntrackedAddress < Ey::Core::Model
     request_attributes = {
       "provider" => self.provider_id,
       "url"      => self.collection.url,
-      "address"  => {
+      "untracked_address"  => {
         "location" => self.location,
         "provisioned_id" => self.provisioned_id,
         "provisioner_id" => self.provisioner_id,

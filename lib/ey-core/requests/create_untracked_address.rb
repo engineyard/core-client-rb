@@ -17,7 +17,7 @@ class Ey::Core::Client
       provider_id ||= params["provider"] || (url && path_params(url)["providers"])
       find(:providers, provider_id)
 
-      resource = params["address"].dup
+      resource = params["untracked_address"].dup
 
       require_parameters(resource, "location", "provisioned_id", "provisioner_id")
       existing_address = self.data[:addresses].find {|id, a| a['provisioned_id'] == resource["provisioned_id"] }

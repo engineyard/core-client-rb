@@ -19,7 +19,7 @@ Gem::Specification.new do |gem|
   gem.licenses      = ["MIT"]
 
   gem.add_dependency "addressable", "~> 2.2"
-  gem.add_dependency "cistern", "~> 0.11", ">= 0.11.1"
+  gem.add_dependency "cistern", "~> 0.12"
   gem.add_dependency "ey-hmac", "~> 2.0"
   gem.add_dependency "sshkey",  "~> 1.6"
   gem.add_dependency "faraday", "~> 0.9"

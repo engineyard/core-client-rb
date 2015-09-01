@@ -9,6 +9,7 @@ class Ey::Core::Client < Cistern::Service
   collection :addon_attachments
   collection :addons
   collection :addresses
+  collection :agents
   collection :alerts
   collection :application_archives
   collection :application_deployments
@@ -73,6 +74,7 @@ class Ey::Core::Client < Cistern::Service
   model :addon
   model :addon_attachment
   model :address
+  model :agent
   model :alert
   model :application
   model :application_archive
@@ -208,6 +210,8 @@ class Ey::Core::Client < Cistern::Service
   request :get_addons
   request :get_address
   request :get_addresses
+  request :get_agent
+  request :get_agents
   request :get_alert
   request :get_alerting_environments
   request :get_alerts
@@ -437,8 +441,8 @@ class Ey::Core::Client < Cistern::Service
       values.size == 1 ? values.first : values
     end
 
-    def url_for(path)
-      File.join(@url.to_s, path.to_s)
+    def url_for(*args)
+      File.join(@url.to_s, *args.map(&:to_s))
     end
 
     # @deprecated will be removed in 3.x

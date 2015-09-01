@@ -11,17 +11,6 @@ class Ey::Core::Client::Agent < Ey::Core::Model
   has_one :cluster, model: :deis_cluster
 
   def save!
-    if self.identity
-      raise NotImplementedError
-    else
-      requires :name
-
-      merge_attributes(
-        connection.create_deis_cluster(
-          "deis_cluster" => { "name" => self.name },
-          "url"          => self.collection.url,
-        ).body["deis_cluster"]
-      )
-    end
+    raise NotImplementedError
   end
 end

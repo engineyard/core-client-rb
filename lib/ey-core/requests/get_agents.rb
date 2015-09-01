@@ -1,4 +1,4 @@
-class Ey::Core::Client::GetDeisClusters < Cistern::Request
+class Ey::Core::Client::GetAgents < Cistern::Request
   include Ey::Core::Request
 
   service Ey::Core::Client
@@ -7,7 +7,7 @@ class Ey::Core::Client::GetDeisClusters < Cistern::Request
     request(
       :params => params,
       :query  => Ey::Core.paging_parameters(params),
-      :path   => "/deis-clusters",
+      :path   => "/agents",
       :url    => params.delete("url"),
     )
   end
@@ -15,10 +15,14 @@ class Ey::Core::Client::GetDeisClusters < Cistern::Request
   def mock
     extract_url_params!(params)
 
-    headers, deis_clusters_page = search_and_page(params, :deis_clusters, search_keys: %w[account name])
+    if params["deis_cluster"]
+      params["cluster"] = params.delete("deis_cluster")
+    end
+
+    headers, deis_clusters_page = search_and_page(params, :agents, search_keys: %w[host cluster])
 
     response(
-      :body    => {"deis_clusters" => deis_clusters_page},
+      :body    => {"agents" => deis_clusters_page},
       :status  => 200,
       :headers => headers
     )

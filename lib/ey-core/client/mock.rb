@@ -279,4 +279,22 @@ class Ey::Core::Client::Mock
     @@serial_id ||= 0
     @@serial_id += 1
   end
+
+  def add_agent(cluster, options={})
+    deis_cluster = find(:deis_clusters, cluster.identity)
+
+    host = options[:host] || self.ip_address
+
+    agent_id = SecureRandom.uuid
+    agent = self.data[:agents][agent_id] = {
+      "id"           => agent_id,
+      "host"         => host,
+      "cluster"      => url_for("deis-clusters", deis_cluster["id"]),
+      "created_at"   => Time.now.to_s,
+      "updated_at"   => Time.now.to_s,
+      "last_seen_at" => options.fetch(:last_seen_at, Time.now.to_s),
+    }
+
+    self.agents.new(agent)
+  end
 end # Mock

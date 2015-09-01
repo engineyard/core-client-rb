@@ -9,11 +9,11 @@ module Ey::Core::Mock
     end
 
     def uuid
-      [8,4,4,4,12].map{|i| Cistern::Mock.random_hex(i)}.join("-")
+      SecureRandom.uuid
     end
 
     def ip_address
-      Array.new(4){rand(256)}.join('.')
+      Array.new(4) { rand(256) }.join('.')
     end
 
     def api_token

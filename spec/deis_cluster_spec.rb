@@ -21,5 +21,13 @@ describe Ey::Core::Client do
     it "fetches a the cluster" do
       expect(client.deis_clusters.get!(cluster.identity)).to eq(cluster)
     end
+
+    context "with an agent", :mock_only do
+      let!(:agent) { client.add_agent(cluster) }
+
+      it "lists cluster's agents" do
+        expect(cluster.agents.all).to contain_exactly(agent)
+      end
+    end
   end
 end

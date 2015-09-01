@@ -5,6 +5,10 @@ class Ey::Core::Client::Membership < Ey::Core::Model
 
   attribute :role
   attribute :email
+  attribute :redirect_url
+
+  attribute :accepted_at
+  attribute :rejected_at
 
   attribute :created_at
   attribute :deleted_at
@@ -12,7 +16,7 @@ class Ey::Core::Client::Membership < Ey::Core::Model
 
   has_one :account
   has_one :user
-  has_one :requester
+  has_one :requester, collection: :users, resource: :user
 
   def accept!
     params = {
@@ -28,11 +32,14 @@ class Ey::Core::Client::Membership < Ey::Core::Model
     if new_record?
       params = {
         "membership" => {
-          "account"      => self.account.id,
-          "user"         => self.user.id,
+          "account"      => self.account_id,
+          "user"         => self.user_id,
           "role"         => self.role,
+          "email"        => self.email,
+          "redirect_url" => self.redirect_url,
         }
       }
+
       merge_attributes(self.connection.create_membership(params).body["membership"])
     else
       raise "Updating memberships is not yet supported"

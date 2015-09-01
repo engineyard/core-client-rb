@@ -33,42 +33,6 @@ describe 'accounts' do
       expect(account2.name).to match(/azure/)
     end
 
-    it "should be able to invite collaborators", :mock_only do
-      account = client.accounts.create!(owner: user, name: Faker::Name.first_name, type: "normal")
-      collaborator  = client.users.create!(name: Faker::Name.name, email: Faker::Internet.email)
-
-      collaborator.reload
-      expect(collaborator.accounts.all).to be_empty
-      account.reload
-      expect(account.users.all.size).to eq 1
-      expect(account.users.all.map(&:id)).to eq [user.id]
-      expect(account.owners.all.size).to eq 1
-      expect(account.owners.all.map(&:id)).to eq [user.id]
-
-      invite = user_client.memberships.create!(account: account, role: "collaborator", user: collaborator)
-
-      collaborator.reload
-      expect(collaborator.accounts.all).to be_empty
-      account.reload
-      expect(account.users.all.size).to eq 1
-      expect(account.users.all.map(&:id)).to eq [user.id]
-      expect(account.owners.all.size).to eq 1
-      expect(account.owners.all.map(&:id)).to eq [user.id]
-
-      collaborator_client = create_client(user: collaborator)
-      membership = collaborator_client.memberships.get(invite.id)
-      membership.accept!
-
-      collaborator.reload
-      expect(collaborator.accounts.all.size).to eq 1
-      expect(collaborator.accounts.first.id).to eq account.id
-      account.reload
-      expect(account.users.all.size).to eq 2
-      expect(account.users.all.map(&:id).sort).to eq [user.id, collaborator.id].sort
-      expect(account.owners.all.size).to eq 1
-      expect(account.owners.all.map(&:id)).to eq [user.id]
-    end
-
     it "should cancel an account" do
       account = client.accounts.create!(owner: user, name: Faker::Name.first_name)
       c = account.cancel!(:requested_by => user)

@@ -1,23 +1,25 @@
 class Ey::Core::Client
   class Real
-    def request_callback(id)
+    def request_callback(options={})
+      (url = options["url"]) || (id = options.fetch("id"))
+
       request(
         :path   => "/requests/#{id}/callback",
-        :method => :post
+        :method => :post,
+        :url    => url,
       )
     end
   end
 
   class Mock
-    def request_callback(id)
-      request_id = self.uuid
+    def request_callback(options={})
+      request_id = resource_identity(options)
 
-      request = find(:requests, id).dup
+      request = find(:requests, request_id).dup
       request.delete("resource")
 
       response(
-        :body   => {"request" => request},
-        :status => 200,
+        :body => {"request" => request},
       )
     end
   end

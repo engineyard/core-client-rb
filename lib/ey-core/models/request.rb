@@ -16,7 +16,9 @@ class Ey::Core::Client::Request < Ey::Core::Model
   attribute :updated_at,        type: :time
 
   def callback
-    merge_attributes(connection.request_callback(self.id).body["request"])
+    requires :callback_url
+
+    merge_attributes(connection.request_callback("url" => self.callback_url).body["request"])
   end
 
   def ready!(timeout = self.service.timeout, interval = self.service.poll_interval)

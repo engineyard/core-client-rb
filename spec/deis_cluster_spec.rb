@@ -30,8 +30,9 @@ describe Ey::Core::Client do
       end
 
       it "lists agent's alerts" do
+        alert = nil
         expect {
-          agent.alerts.create!(
+          alert = agent.alerts.create!(
             :description => SecureRandom.hex(6),
             :finished_at => nil, # never finish
             :message     => SecureRandom.uuid,
@@ -40,6 +41,10 @@ describe Ey::Core::Client do
             :severity    => "warning",
           )
         }.to change { agent.alerts.size }.by(1)
+
+        alert = client.alerts.get!(alert.identity)
+
+        expect(alert.agent).to eq(agent)
       end
     end
   end

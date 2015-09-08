@@ -16,7 +16,7 @@ class Ey::Core::Client::Alert < Ey::Core::Model
   attribute :started_at, type: :time
   attribute :updated_at, type: :time
 
-  attr_writer :database_server, :server, :resource
+  attr_writer :database_server, :server, :agent, :resource
 
   def resource
     type, identity = resource_keys
@@ -34,6 +34,12 @@ class Ey::Core::Client::Alert < Ey::Core::Model
     type, identity = resource_keys
 
     (type == "servers" || nil) && self.connection.servers.get!(identity)
+  end
+
+  def agent
+    type, identity = resource_keys
+
+    (type == "agents" || nil) && self.connection.agents.get!(identity)
   end
 
   def database_server

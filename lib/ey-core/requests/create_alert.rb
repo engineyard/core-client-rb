@@ -19,6 +19,7 @@ class Ey::Core::Client
 
       database_server_id = resource_identity(params["database_server"] || params["database_server_id"])
       server_id          = resource_identity(params["server"]          || params["server_id"])
+      agent_id           = resource_identity(params["agent"]           || params["agent_id"])
 
       alert_params = require_parameters(params, "alert")
       name, external_id, message, severity = require_parameters(alert_params, *%w[name external_id message severity])
@@ -45,8 +46,10 @@ class Ey::Core::Client
                      url_for("/database-servers/#{database_server_id}")
                    elsif server_id
                      url_for("/servers/#{server_id}")
+                   elsif agent_id
+                     url_for("/agents/#{agent_id}")
                    else
-                     raise response(status: 422, body: "Requires either server or database_server")
+                     raise response(status: 422, body: "Requires a resource")
                    end
                   )
 

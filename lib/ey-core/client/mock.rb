@@ -288,11 +288,12 @@ class Ey::Core::Client::Mock
     agent_id = SecureRandom.uuid
     agent = self.data[:agents][agent_id] = {
       "id"           => agent_id,
-      "host"         => host,
+      "alerts"       => url_for("agents", agent_id, "alerts"),
       "cluster"      => url_for("deis-clusters", deis_cluster["id"]),
       "created_at"   => Time.now.to_s,
-      "updated_at"   => Time.now.to_s,
+      "host"         => host,
       "last_seen_at" => options.fetch(:last_seen_at, Time.now.to_s),
+      "updated_at"   => Time.now.to_s,
     }
 
     self.agents.new(agent)

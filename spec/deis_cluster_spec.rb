@@ -28,6 +28,19 @@ describe Ey::Core::Client do
       it "lists cluster's agents" do
         expect(cluster.agents.all).to contain_exactly(agent)
       end
+
+      it "lists agent's alerts" do
+        expect {
+          agent.alerts.create!(
+            :description => SecureRandom.hex(6),
+            :finished_at => nil, # never finish
+            :message     => SecureRandom.uuid,
+            :name        => SecureRandom.uuid,
+            :external_id => SecureRandom.uuid,
+            :severity    => "warning",
+          )
+        }.to change { agent.alerts.size }.by(1)
+      end
     end
   end
 end

@@ -9,6 +9,7 @@ class Ey::Core::Client::Agent < Ey::Core::Model
   attribute :last_seen_at, type: :time
 
   has_one :cluster, model: :deis_cluster
+  has_many :alerts
 
   def save!
     raise NotImplementedError

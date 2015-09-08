@@ -29,7 +29,11 @@ class Ey::Core::Client
         params["resource"] = url_for("/servers/#{server_id}")
       end
 
-      headers, alerts_page = search_and_page(params, :alerts, search_keys: %w[resource external_id name severity finished_at started_at], deleted_key: "finished_at")
+      if agent_id = resource_identity(params.delete("agent"))
+        params["resource"] = url_for("/agents/#{agent_id}")
+      end
+
+      headers, alerts_page = search_and_page(params, :alerts, search_keys: %w[resource external_id name severity agent finished_at started_at], deleted_key: "finished_at")
 
       response(
         :body    => {"alerts" => alerts_page},

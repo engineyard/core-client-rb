@@ -5,51 +5,7 @@ describe "database services" do
   let!(:account)  { create_account(client: client) }
   let!(:provider) { create_provider(account: account) }
 
-  it 'should create a database service with contacts and service level' do
-    name     = Faker::Name.first_name
-    location = "us-west-2c"
-    service_level = "level-2"
-    contact_info = {
-      :name         => Faker::Name.name,
-      :email        => Faker::Internet.email,
-      :title        => Faker::Name.title,
-      :phone_number => Faker::PhoneNumber.phone_number,
-    }
-
-    database_service_params = Hashie::Mash.new(
-      :provider      => provider,
-      :name          => name,
-      :service_level => service_level,
-      :contacts      => [contact_info],
-      :servers       => {
-        :location  => location,
-        :flavor    => "db.m3.large",
-        :engine    => "postgres",
-        :version   => "9.3.5",
-        :modifiers => { :multi_az => true },
-      })
-
-
-    database_service = client.database_services.create(database_service_params).resource!
-
-    expect(database_service.id).to be
-    expect(database_service.name).to eq(database_service_params.name)
-    expect(database_service.provider).to eq(provider)
-    expect(database_service.servers.size).to eq(1)
-
-
-    expect(database_service.service_level).to eq('level-2')
-    expect(database_service.contacts).not_to be_nil
-
-    contact = database_service.contacts.first
-    expect(contact.name).to         eq(contact_info[:name])
-    expect(contact.title).to        eq(contact_info[:title])
-    expect(contact.email).to        eq(contact_info[:email])
-    expect(contact.phone_number).to eq(contact_info[:phone_number])
-
-  end
-
-  it "should create a database service" do
+  it "creates a database service" do
     name     = Faker::Name.first_name
     location = "us-west-2c"
 
@@ -92,7 +48,7 @@ describe "database services" do
     let!(:database_service) { create_database_service(provider: provider, client: client) }
     let!(:logical_database) { create_logical_database(client: client, database_service: database_service) }
 
-    it "should destroy a database service" do
+    it "destroys a database service" do
 
       firewall = database_service.servers.first.firewalls.first
 
@@ -104,15 +60,14 @@ describe "database services" do
         and change { firewall.reload.deleted_at }.from(nil)
     end
 
-    it 'should list database services in an environment' do
+    it "shows the environment's database service in an environment" do
       environment_database_service, environment = load_blueprint
 
-      expect(environment.database_services).to contain_exactly(environment_database_service)
-
-      expect(client.get_environment_database_services(environment_id: environment.id).body["database_services"].first["id"]).to eq(environment_database_service.id)
+      expect(environment.database_service).to eq(environment_database_service)
     end
 
-    it 'should list database services in an account' do
+
+    it 'lists database services in an account' do
       environment_database_service, environment = load_blueprint
 
       expect(client.database_services.all(account: environment.account.id).map(&:id)).to include(environment_database_service.id)

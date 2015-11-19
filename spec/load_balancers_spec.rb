@@ -5,7 +5,7 @@ describe 'as a user' do
   let!(:account)  { create_account(client: client) }
   let!(:provider) { create_provider(account: account) }
 
-  it "should create a load balancer" do
+  it "creates a load balancer" do
     name = Faker::Name.first_name
     location = "us-east-1"
 
@@ -23,7 +23,7 @@ describe 'as a user' do
   context "with a load balancer" do
     let!(:load_balancer) { client.load_balancers.create!(provider: provider, name: Faker::Name.first_name, location: "us-east-1").resource! }
 
-    it "should destroy a load balancer" do
+    it "destroys a load balancer" do
       expect { load_balancer.destroy }.to change { client.load_balancers.all.size }.by(-1)
       expect(load_balancer.reload.deleted_at).not_to be_nil
     end

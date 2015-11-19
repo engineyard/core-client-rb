@@ -10,6 +10,7 @@ class Ey::Core::Client::Account < Ey::Core::Model
   attribute :support_plan
   attribute :signup_via
   attribute :plan_type
+  attribute :type
 
   has_many :applications
   has_many :deis_clusters
@@ -53,9 +54,8 @@ class Ey::Core::Client::Account < Ey::Core::Model
       params["account"]["name_prefix"] = self.name_prefix
     end
 
-    if self.signup_via
-      params["account"]["signup_via"] = self.signup_via
-    end
+    params["account"]["signup_via"] = self.signup_via if self.signup_via
+    params["account"]["type"]       = self.type       if self.type
 
     if new_record?
       merge_attributes(self.connection.create_account(params).body["account"])

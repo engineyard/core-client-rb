@@ -15,12 +15,12 @@ class Ey::Core::Client
 
   class Mock
     def create_environment(params={})
-      resource_id = self.serial_id
-      url         = params.delete("url")
+      resource_id       = self.serial_id
+      app_deployment_id = self.serial_id
+      application_id    = params["environment"].delete("application_id")
+      url               = params.delete("url")
+      application       = find(:applications, application_id)
 
-      if project_id = params["project"] || url && path_params(url)["projects"]
-        account_id = resource_identity(find(:projects, project_id)["account"])
-      end
       account_id ||= params["account"] || url && path_params(url)["accounts"]
 
       find(:accounts, account_id)
@@ -32,21 +32,33 @@ class Ey::Core::Client
       resource.merge!(
         "account"               => url_for("/accounts/#{account_id}"),
         "applications"          => url_for("/environments/#{resource_id}/applications"),
-        "classic"               => false,
+        "classic"               => true,
         "clusters"              => url_for("/environments/#{resource_id}/clusters"),
         "created_at"            => Time.now,
-        "database_services_url" => url_for("/environments/#{resource_id}/database-services"),
         "id"                    => resource_id,
         "internal_private_key"  => internal_key[:private_key],
         "internal_public_key"   => internal_key[:public_key],
         "keypairs"              => url_for("/environments/#{resource_id}/keypairs"),
         "logical_databases_url" => url_for("/environments/#{resource_id}/logical-databases"),
-        "project"               => project_id && url_for("/projects/#{project_id}"),
         "servers"               => url_for("/environments/#{resource_id}/servers"),
         "updated_at"            => Time.now,
       )
 
       self.data[:environments][resource_id] = resource
+
+      if service_id = params["environment"]["database_service"]
+        self.requests.new(create_logical_database(
+          "database_service" => service_id,
+          "logical_database" => {
+            "name" => "#{resource["name"]}_#{application["name"]}"
+          }
+        ).body["request"]).ready!
+      end
+
+      self.data[:application_deployments][app_deployment_id] = {
+        :environment_id => resource_id,
+        :application_id => application_id,
+      }
 
       response(
         :body   => {"environment" => resource},

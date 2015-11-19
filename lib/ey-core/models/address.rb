@@ -37,7 +37,6 @@ class Ey::Core::Client::Address < Ey::Core::Model
         "provider" => self.provider_id,
         "address"  => {
           "location"       => self.location,
-          "provisioned_id" => self.provisioned_id
         },
       }
 

@@ -10,7 +10,6 @@ class Ey::Core::Client::DatabaseService < Ey::Core::Model
 
   has_one :provider
 
-  has_many :contacts
   has_many :databases, model: :logical_databases
   has_many :servers,   model: :database_servers
   has_many :snapshots, model: :database_server_snapshots
@@ -21,7 +20,6 @@ class Ey::Core::Client::DatabaseService < Ey::Core::Model
   def save!
     requires :name, :provider_id
 
-    contact_info = self.contacts.map { |c| c.is_a?(Ey::Core::Client::Contact) ? c.attributes : c }
     server_info  = self.servers.map { |c| c.is_a?(Ey::Core::Client::DatabaseServer) ? c.attributes : c }
 
     server_info += [database_server] if database_server
@@ -39,7 +37,6 @@ class Ey::Core::Client::DatabaseService < Ey::Core::Model
       "database_service" => {
         "name"          => self.name,
         "service_level" => self.service_level,
-        "contacts"      => contact_info,
       },
     }
 

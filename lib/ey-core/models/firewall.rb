@@ -9,28 +9,29 @@ class Ey::Core::Client::Firewall < Ey::Core::Model
   attribute :deleted_at, type: :time
 
   has_one :provider
+  has_one :environment
 
-  has_many :clusters
   has_many :firewall_rules, aliases: "rules"
 
   def rules
     firewall_rules
   end
 
-
   attr_accessor :cluster
 
   def save!
-    requires :name, :provider_id
+    raise "Not implemented"
+
+    # Todo: this is not currently supported in the API
+    requires :name, :provider_id, :environment_id
 
     params = {
       "url"      => self.collection.url,
       "firewall" => {
         "name"     => self.name,
-        "location" => self.location,
       },
-      "cluster"  => self.cluster,
-      "provider" => self.provider_id,
+      "environment" => self.environment,
+      "provider"    => self.provider_id,
     }
 
     if new_record?

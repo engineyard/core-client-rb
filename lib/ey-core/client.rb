@@ -1,4 +1,6 @@
 class Ey::Core::Client < Cistern::Service
+  NotPermitted = Class.new(StandardError)
+
   collection_path "ey-core/collections"
   model_path      "ey-core/models"
   request_path    "ey-core/requests"
@@ -6,22 +8,14 @@ class Ey::Core::Client < Cistern::Service
   collection :account_cancellations
   collection :account_referrals
   collection :accounts
-  collection :addon_attachments
   collection :addons
   collection :addresses
-  collection :agents
   collection :alerts
   collection :application_archives
   collection :application_deployments
   collection :applications
   collection :backup_files
-  collection :backups
-  collection :cluster_components
-  collection :cluster_updates
-  collection :clusters
-  collection :component_actions
   collection :components
-  collection :connectors
   collection :contacts
   collection :costs
   collection :database_plan_usages
@@ -30,7 +24,6 @@ class Ey::Core::Client < Cistern::Service
   collection :database_server_usages
   collection :database_servers
   collection :database_services
-  collection :deis_clusters
   collection :environment_plan_usages
   collection :environments
   collection :features
@@ -55,8 +48,6 @@ class Ey::Core::Client < Cistern::Service
   collection :server_usages
   collection :servers
   collection :services
-  collection :slot_components
-  collection :slots
   collection :ssl_certificates
   collection :storage_users
   collection :storages
@@ -72,22 +63,14 @@ class Ey::Core::Client < Cistern::Service
   model :account_referral
   model :account_trial
   model :addon
-  model :addon_attachment
   model :address
-  model :agent
   model :alert
   model :application
   model :application_archive
   model :application_deployment
-  model :backup
   model :backup_file
   model :billing
-  model :cluster
-  model :cluster_component
-  model :cluster_update
   model :component
-  model :component_action
-  model :connector
   model :contact
   model :cost
   model :database_plan_usage
@@ -96,7 +79,6 @@ class Ey::Core::Client < Cistern::Service
   model :database_server_snapshot
   model :database_server_usage
   model :database_service
-  model :deis_cluster
   model :environment
   model :environment_plan_usage
   model :feature
@@ -121,8 +103,6 @@ class Ey::Core::Client < Cistern::Service
   model :server_event
   model :server_usage
   model :service
-  model :slot
-  model :slot_component
   model :ssl_certificate
   model :storage
   model :storage_user
@@ -136,6 +116,7 @@ class Ey::Core::Client < Cistern::Service
 
   request :attach_address
   request :authorized_channel
+  request :boot_environment
   request :bootstrap_logical_database
   request :cancel_account
   request :create_account
@@ -144,16 +125,10 @@ class Ey::Core::Client < Cistern::Service
   request :create_alert
   request :create_application
   request :create_application_archive
-  request :create_backup
   request :create_backup_file
-  request :create_cluster
-  request :create_cluster_component
-  request :create_cluster_update
-  request :create_connector
   request :create_database_server
   request :create_database_service
   request :create_database_service_snapshot
-  request :create_deis_cluster
   request :create_environment
   request :create_firewall
   request :create_firewall_rule
@@ -166,7 +141,6 @@ class Ey::Core::Client < Cistern::Service
   request :create_message
   request :create_password_reset
   request :create_provider
-  request :create_slots
   request :create_ssl_certificate
   request :create_storage
   request :create_storage_user
@@ -175,8 +149,9 @@ class Ey::Core::Client < Cistern::Service
   request :create_untracked_address
   request :create_untracked_server
   request :create_user
+  request :deploy_environment_application
+  request :deprovision_environment
   request :destroy_addon
-  request :destroy_cluster
   request :destroy_database_server
   request :destroy_database_server_snapshot
   request :destroy_database_service
@@ -198,20 +173,15 @@ class Ey::Core::Client < Cistern::Service
   request :discover_provider_location
   request :download_file
   request :enable_feature
-  request :finish_backup
   request :get_account
   request :get_account_cancellation
   request :get_account_referrals
   request :get_account_trial
   request :get_accounts
   request :get_addon
-  request :get_addon_attachment
-  request :get_addon_attachments
   request :get_addons
   request :get_address
   request :get_addresses
-  request :get_agent
-  request :get_agents
   request :get_alert
   request :get_alerting_environments
   request :get_alerts
@@ -222,23 +192,11 @@ class Ey::Core::Client < Cistern::Service
   request :get_application_deployment
   request :get_application_deployments
   request :get_applications
-  request :get_backup
   request :get_backup_file
   request :get_backup_files
-  request :get_backups
   request :get_billing
-  request :get_cluster
-  request :get_cluster_component
-  request :get_cluster_components
-  request :get_cluster_update
-  request :get_cluster_updates
-  request :get_clusters
   request :get_component
-  request :get_component_action
-  request :get_component_actions
   request :get_components
-  request :get_connector
-  request :get_connectors
   request :get_contacts
   request :get_costs
   request :get_current_user
@@ -252,8 +210,6 @@ class Ey::Core::Client < Cistern::Service
   request :get_database_servers_firewalls
   request :get_database_service
   request :get_database_services
-  request :get_deis_cluster
-  request :get_deis_clusters
   request :get_environment
   request :get_environment_database_services
   request :get_environment_logical_databases
@@ -299,10 +255,6 @@ class Ey::Core::Client < Cistern::Service
   request :get_server_events
   request :get_server_usages
   request :get_servers
-  request :get_slot
-  request :get_slot_component
-  request :get_slot_components
-  request :get_slots
   request :get_ssl_certificate
   request :get_ssl_certificates
   request :get_storage
@@ -321,22 +273,15 @@ class Ey::Core::Client < Cistern::Service
   request :request_callback
   request :reset_password
   request :run_cluster_application_action
-  request :run_cluster_component_action
   request :run_environment_application_action
   request :signup
   request :update_addon
-  request :update_addon_attachment
   request :update_address
   request :update_alert
   request :update_application_archive
   request :update_billing
-  request :update_cluster
-  request :update_cluster_component
-  request :update_connector
   request :update_membership
   request :update_server
-  request :update_slot
-  request :update_slot_component
   request :update_ssl_certificate
   request :update_untracked_server
   request :upload_file

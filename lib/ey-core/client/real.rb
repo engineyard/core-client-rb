@@ -82,7 +82,7 @@ class Ey::Core::Client::Real
   end
 
   def accept_type
-    "application/vnd.engineyard.v2+json"
+    "application/vnd.engineyard.v3+json"
   end
 
   def reset!

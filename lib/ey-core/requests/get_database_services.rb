@@ -43,7 +43,7 @@ class Ey::Core::Client
                     }
                   end
 
-      headers, database_services_page = search_and_page(params, :database_services, search_keys: %w[provider name], resources: resources)
+      headers, database_services_page = search_and_page(params, :database_services, search_keys: %w[provider name environment], resources: resources)
 
       response(
         :body    => {"database_services" => database_services_page},

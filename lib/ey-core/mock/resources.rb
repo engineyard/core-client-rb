@@ -51,36 +51,6 @@ module Ey::Core::Mock
       end
     end
 
-    def load_addon_attachments(account_id, addon_name)
-      found_attachments = []
-
-      environments = search(self.data[:environments], account: url_for("/accounts/#{account_id}"))
-      clusters     = search(self.data[:clusters], environment: environments.keys.map {|e| url_for("/environments/#{e}") })
-
-      cluster_components = self.data[:cluster_components].select {|_,cc| cc["application"] }
-      cluster_components = search(cluster_components, cluster: clusters.keys.map {|c| url_for("/clusters/#{c}") })
-
-      cluster_components.each do |id, cc|
-        cluster     = find(:clusters, cc["cluster"])
-        environment = find(:environments, cluster["environment"])
-
-        if application = find(:applications, cc["application"]) rescue nil
-          key_found, _ = (cc["configuration"]["vars"] || {}).detect { |k,v| v == "Addon:#{addon_name}" }
-
-          found_attachments << {
-            "app_id"         => application["id"],
-            "environment_id" => environment["id"],
-            "id"             => "ClusterComponent:#{id}",
-            "key"            => key_found,
-            "suggested_name" => "#{environment["name"]}_#{application["name"]}",
-          }
-        end
-
-      end
-
-      found_attachments
-    end
-
     def mock_account_setup(resource_id, resource)
       resource["support_plan"] ||= "standard"
       account_url = url_for("/accounts/#{resource_id}")

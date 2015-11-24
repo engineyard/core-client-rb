@@ -20,18 +20,11 @@ class Ey::Core::Client
       extract_url_params!(params)
 
       params["service"] = params.delete("database_service") if params["database_service"]
+      if environment_id = resource_identity(params.delete("environment") || params.delete("environment_id"))
+        params["service"] = url_for("/database-services/#{find(:environments, environment_id)["database_service"]}")
+      end
 
-      resources = if environment_id = resource_identity(params.delete("environment") || params.delete("environment_id"))
-                    self.data[:connectors].
-                      select { |_,c| c["_environment"] == url_for("/environments/#{environment_id}") }.
-                      select { |_,c| c["source"].match("logical-databases") }.
-                      inject({}) { |r, (_, connector)|
-                        source_id = resource_identity(connector["source"])
-                        r.merge(source_id => self.find(:logical_databases, source_id))
-                      }
-                  end
-
-      headers, logical_databases_page = search_and_page(params, :logical_databases, resources: resources, search_keys: %w[name username service ])
+      headers, logical_databases_page = search_and_page(params, :logical_databases, search_keys: %w[name username service ])
 
       response(
         :body    => {"logical_databases" => logical_databases_page},

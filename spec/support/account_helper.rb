@@ -4,6 +4,7 @@ module AccountHelper
     client  = options[:client]
 
     attributes = options[:account] || {}
+    attributes[:type] ||= "beta" # get around awsm billing requirements for tests
     attributes[:name] ||= SecureRandom.hex(6)
 
     if client

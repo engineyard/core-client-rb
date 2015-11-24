@@ -15,7 +15,7 @@ RSpec.configure do |config|
     if Ey::Core::Client.mocking?
       Ey::Core::Client::Mock.reset!
     elsif defined?(client) && client
-      client.reset!
+      client.reset! unless ENV["RESET"] == "false"
     end
   end
 

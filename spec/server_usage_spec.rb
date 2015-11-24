@@ -4,7 +4,7 @@ describe "server_usage", :mock_only do
   let!(:client)      { create_client }
   let!(:account)     { create_account(client: client, account: { owner: create_user(client: client)}) }
   let!(:provider)    { create_provider(account: account) }
-  let!(:environment) { client.environments.create(name: SecureRandom.hex(10), account: account) }
+  let!(:environment) { create_environment(account: account, name: SecureRandom.hex(10)) }
 
   before(:each) do
     now             = Time.now

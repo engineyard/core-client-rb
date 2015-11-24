@@ -1,18 +1,11 @@
 require 'spec_helper'
 
 describe 'logs', :mock_only  do
-  let(:client)       { create_client }
-  let!(:account)     { create_account(client: client) }
-  let!(:provider)    { create_provider(account: account) }
-  let!(:environment) { account.environments.create!(account: account, name: Faker::Name.first_name) }
-  let!(:cluster)     { client.clusters.create!(environment: environment, provider: provider, name: Faker::Name.first_name, location: "us-west-2") }
-
+  let(:client)        { create_client }
+  let!(:account)      { create_account(client: client) }
+  let!(:provider)     { create_provider(account: account) }
+  let!(:environment)  { create_environment(account: account, name: Faker::Name.first_name) }
   let(:server_client) { create_server_client(client.servers.all.first) }
-
-  before do
-    cluster.slots.create(quantity: 1)
-    cluster.cluster_updates.create!.ready!
-  end
 
   describe "create log" do
     it "can upload a file" do

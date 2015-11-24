@@ -3,31 +3,29 @@ class Ey::Core::Client::Server < Ey::Core::Model
 
   identity :id, type: :integer
 
-  attribute :created_at, type: :time
-  attribute :deleted_at, type: :time
+  attribute :created_at,       type: :time
+  attribute :deleted_at,       type: :time
   attribute :deprovisioned_at, type: :time
-  attribute :disappeared_at, type: :time
-  attribute :devices, type: :array
-  attribute :enabled, type: :boolean
-  attribute :flavor_id, squash: ["flavor", "id"]
+  attribute :devices,          type: :array
+  attribute :disappeared_at,   type: :time
+  attribute :enabled,          type: :boolean
+  attribute :flavor_id,        squash: ["flavor", "id"]
   attribute :keymaster_id
-  attribute :legacy_role
   attribute :location
   attribute :name
   attribute :private_hostname
-  attribute :provisioned_at, type: :time
+  attribute :provisioned_at,   type: :time
   attribute :provisioned_id
   attribute :public_hostname
-  attribute :ssh_port, type: :integer
+  attribute :role
+  attribute :ssh_port,         type: :integer
   attribute :state
-  attribute :updated_at, type: :time
+  attribute :updated_at,       type: :time
 
   has_one :account
   has_one :address, collection: "addresses"
-  has_one :cluster
   has_one :environment
   has_one :provider
-  has_one :slot
 
   has_many :alerts
   has_many :volumes
@@ -37,29 +35,38 @@ class Ey::Core::Client::Server < Ey::Core::Model
   def reboot
     requires :identity
 
-    params = {
-      "url" => self.collection.url,
-      "id"  => self.identity,
-    }
-
     connection.requests.new(
-      self.connection.reboot_server(params).body["request"]
+      self.connection.reboot_server("id" => self.identity).body["request"]
     )
   end
 
   def save!
-    requires :identity
+    if new_record?
+      raise "adding servers is not yet implemented"
+      requires :flavor_id, :role, :environment
 
-    server_attributes = Cistern::Hash.slice(Cistern::Hash.stringify_keys(self.attributes), "provisioned_at", "deprovisioned_at", "disappeared_at")
-    server_attributes.merge!("status" => self.state) if self.state
-
-    connection.update_server(
-      "id"     => self.identity,
-      "server" => server_attributes,
-    )
+      server_attributes = {
+        "flavor" => self.flavor_id,
+        "role"   => self.role,
+      }
+      server_attributes.merge!("location" => self.location)
+      connection.create_server(server_attributes)
+    else
+      requires :identity
+      server_attributes = Cistern::Hash.slice(Cistern::Hash.stringify_keys(self.attributes), "provisioned_at", "deprovisioned_at", "disappeared_at")
+      server_attributes.merge!("status" => self.state) if self.state
+      connection.update_server(
+        "id"     => self.identity,
+        "server" => server_attributes,
+      )
+    end
   end
 
   def destroy!
+    if environment.servers.count == 1
+      raise Ey::Core::Client::NotPermitted, "Terminating the last server in an environment is not allowed.  You must deprovision or destroy the environment instead."
+    end
+
     requires :identity
 
     connection.requests.new(

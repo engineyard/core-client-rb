@@ -8,9 +8,6 @@ class Ey::Core::Client::Addon < Ey::Core::Model
   attribute :sso_url
 
   has_one  :account
-  has_many :addon_attachments, aliases: ["addon_attachments", "attachments"]
-
-  alias :attachments :addon_attachments
 
   def resource_url
     "#{collection.url}/#{id}"
@@ -37,9 +34,4 @@ class Ey::Core::Client::Addon < Ey::Core::Model
     self.connection.destroy_addon("url" => self.resource_url)
     nil
   end
-
-  def attach!(key, app, env)
-    self.attachments.create!("key" => key, "app_id" => app.id, "environment_id" => env.id)
-  end
-
 end

@@ -1,43 +1,32 @@
 module ResourceHelper
   def load_blueprint(options={})
-    logical_database = create_logical_database(client: options[:client], provider: account.providers.first)
+    application      = create_application(account: account)
+    database_service = create_database_service(provider: account.providers.first)
+    environment      = create_environment(account: account, application: application, database_service: database_service, environment: {name: "environment#{SecureRandom.hex(4)}"})
 
-    application = account.applications.create!(name: "application#{SecureRandom.hex(4)}", repository: "git://github.com/engineyard/todo.git", type: "rails3")
-    environment = account.environments.create!(name: "environment#{SecureRandom.hex(4)}")
-    www_cluster = environment.clusters.create!(provider: provider, location: "us-west-2", name: "app#{SecureRandom.hex(4)}", release_label: "ubuntu-1.0")
-    app_component =  client.components.first(name: "default_deployer")
-    www_cluster_component = www_cluster.cluster_components.create!(component: app_component, configuration: { application: application.id})
+    [database_service, environment]
+  end
 
-    logical_database.connect(www_cluster_component)
+  def create_application(options={})
+    account = options.delete(:account) || create_account(options)
+    options = Cistern::Hash.stringify_keys(options)
 
-    [logical_database.service, environment]
+    options["name"]       ||= "application#{SecureRandom.hex(4)}"
+    options["repository"] ||= "git://github.com/engineyard/todo.git"
+    options["type"]       ||= "rails4"
+
+    account.applications.create!(options)
   end
 
   def create_server(client, options={})
     options = Cistern::Hash.stringify_keys(options)
 
-    if provider = options.delete("provider")
-      options["provider"] = client.url_for("/providers/#{provider.id}")
-    end
-
-    if environment = options.delete("environment")
-      options["environment"] = client.url_for("/environments/#{environment.id}")
-    end
-
-    server_id      = options["id"] ||= client.serial_id
-    provisioned_id = options["provisioned_id"] ||= client.uuid[0..6]
-
-    client.servers.new(
-      client.data[:servers][server_id] = {
-        "events"           => client.url_for("/servers/#{server_id}/events"),
-        "private_hostname" => "#{provisioned_id}.private.example.org",
-        "provider"         => provider,
-        "public_hostname"  => "#{provisioned_id}.public.example.org",
-        "ssh_port"         => 22,
-        "state"            => "running",
-        "token"            => SecureRandom.hex(16),
-      }.merge(options)
+    request = environment.servers.create(
+      "flavor" => "m3.medium",
+      "role"   => "util",
     )
+
+    request.resource!
   end
 
   def create_cost(client, options={})
@@ -93,33 +82,6 @@ module ResourceHelper
     ).resource!
   end
 
-  def create_cluster(options={})
-    client = (defined?(client) && client) || options.fetch(:client)
-
-    environment = options[:environment] || create_environment(options)
-    provider    = options[:provider] || create_provider(options.merge(account: environment.account))
-
-    cluster_params = options[:cluster] || {}
-    name     = cluster_params.delete(:name) || SecureRandom.hex(6)
-    location = cluster_params.delete(:location) || "us-west-2"
-
-    client.clusters.create!(
-      :name        => name,
-      :location    => location,
-      :environment => environment,
-      :provider    => provider,
-    )
-  end
-
-  def create_cluster_update(options={})
-    client = (defined?(client) && client) || options.fetch(:client)
-    cluster = options[:cluster] || create_cluster(options)
-
-    cluster.slots.create({ quantity: 2, flavor: "m3.large" }.merge(options[:slot] || {}))
-
-    cluster.cluster_updates.create!.resource!
-  end
-
   def create_database_service(options={})
     provider = options[:provider] || create_provider(options.merge(client: client))
 
@@ -141,10 +103,27 @@ module ResourceHelper
   def create_environment(options={})
     account = options[:account] || create_account(options)
 
-    environment = options[:environment] || {}
-    environment[:name] ||= SecureRandom.hex(3)
+    unless account.providers.first || options[:provider]
+      create_provider(account: account)
+    end
 
-    account.environments.create!(environment)
+    environment             = options[:environment] || {}
+    application             = options[:application] || create_application(account: account)
+    database_service        = options[:database_service]
+    configuration           = Cistern::Hash.stringify_keys(options[:configuration] || {})
+    configuration["type"] ||= "solo"
+    environment[:name]    ||= options.fetch(:name, SecureRandom.hex(3))
+    environment[:region]  ||= "us-west-2"
+
+    environment.merge!(application_id: application.id, account: account)
+    environment.merge!(database_service: database_service) if database_service
+    environment = client.environments.create!(environment)
+
+    unless options[:boot] == false
+      request = environment.boot(configuration: configuration, application_id: application.id)
+      request.ready!
+    end
+    environment
   end
 
   def create_provider_location(client, attributes={})
@@ -183,14 +162,6 @@ module ResourceHelper
       :name     => SecureRandom.hex(6),
       :username => "ey#{SecureRandom.hex(6)}",
       :password => SecureRandom.hex(8),
-    ).resource!
-  end
-
-  def create_deis_cluster(options={})
-    account = options.fetch(:account) { create_account(options) }
-
-    account.deis_clusters.create!(
-      :name => SecureRandom.hex(6),
     ).resource!
   end
 

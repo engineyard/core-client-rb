@@ -51,11 +51,7 @@ describe 'alerts' do
   context 'with a server' do
     let!(:account)     { create_account(client: client) }
     let!(:provider)    { create_provider(account: account) }
-    let!(:environment) { account.environments.create!(account: account, name: Faker::Name.first_name) }
-    let!(:cluster)     { client.clusters.create!(environment: environment, provider: provider, name: Faker::Name.first_name, location: "us-west-2") }
-    let!(:slots)       { cluster.slots.create!(quantity: 2) }
-
-    before(:each) { cluster.cluster_updates.create!.ready! }
+    let!(:environment) { create_environment(account: account, name: Faker::Name.first_name) }
 
     it 'should create an alert' do
       server = client.servers.all.first

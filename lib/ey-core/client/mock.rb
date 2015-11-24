@@ -16,17 +16,13 @@ class Ey::Core::Client::Mock
 
       account_name     = server_options.fetch(:account_name, SecureRandom.hex(4))
       location         = server_options.fetch(:location, "us-west-2")
-      cluster_name     = server_options.fetch(:cluster_name, SecureRandom.hex(4))
       environment_name = server_options.fetch(:environment_name, SecureRandom.hex(4))
 
       account = client.accounts.create!(name: account_name)
 
       provider = account.providers.create!(type: :aws)
-      environment = account.environments.create!(name: environment_name)
-      cluster = client.clusters.create!(environment: environment, location: location, provider: provider, name: cluster_name)
-      cluster.slots.create!
-      cluster.cluster_updates.create!.resource!
-      cluster.slots.first.server
+      environment = create_environment(account: account, name: environment_name)
+      environment.servers.first
     when :user
       user = Ey::Core::Client::Mock.for(:consumer).users.create!(
         {
@@ -122,13 +118,8 @@ class Ey::Core::Client::Mock
                  :backup_files                => {},
                  :backups                     => {},
                  :billing                     => {},
-                 :cluster_components          => {},
                  :cluster_firewalls           => [],
-                 :cluster_updates             => {},
-                 :clusters                    => {},
-                 :component_actions           => {},
                  :components                  => components,
-                 :connectors                  => {},
                  :contact_assignments         => [],
                  :contacts                    => {},
                  :costs                       => [],
@@ -139,7 +130,6 @@ class Ey::Core::Client::Mock
                  :database_server_usages      => Hash.new { |h1,k1| h1[k1] = {} },
                  :database_servers            => {},
                  :database_services           => {},
-                 :deis_clusters               => {},
                  :deleted                     => Hash.new {|x,y| x[y] = {}},
                  :environment_plan_usages     => Hash.new { |h1,k1| h1[k1] = {} },
                  :environments                => {},
@@ -158,15 +148,12 @@ class Ey::Core::Client::Mock
                  :messages                    => {},
                  :plan_usages                 => Hash.new { |h1,k1| h1[k1] = {} },
                  :possible_provider_locations => possible_provider_locations,
-                 :projects                    => {},
                  :provider_locations          => {},
                  :providers                   => {},
                  :requests                    => {},
                  :server_events               => {},
                  :server_usages               => Hash.new { |h1,k1| h1[k1] = {} },
                  :servers                     => {},
-                 :slot_components             => {},
-                 :slots                       => {},
                  :ssl_certificates            => {},
                  :storage_users               => {},
                  :storages                    => {},

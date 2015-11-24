@@ -24,5 +24,5 @@ Gem::Specification.new do |gem|
   gem.add_dependency "sshkey",  "~> 1.6"
   gem.add_dependency "faraday", "~> 0.9"
   gem.add_dependency "faraday_middleware", "~> 0.9"
-  gem.add_dependency "mime-types"
+  gem.add_dependency "mime-types", "~> 2.99" #maintain ruby 1.9 compatibility
 end

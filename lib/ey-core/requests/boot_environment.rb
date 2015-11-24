@@ -63,8 +63,12 @@ class Ey::Core::Client
       )
     end
 
-    def server_hash(flavor: "m3_medium", role: "solo", name: nil, environment: nil)
+    def server_hash(options={})
       id             = self.serial_id
+      flavor         = options.delete(:flavor)
+      role           = options.delete(:role)
+      name           = options.delete(:name)
+      environment    = options.delete(:environment)
       provisioned_id = "i-#{SecureRandom.hex(4)}"
       provider       = get_providers("account" => environment["account"]).body["providers"].first
       {

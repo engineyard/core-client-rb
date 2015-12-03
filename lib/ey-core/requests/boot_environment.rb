@@ -72,6 +72,7 @@ class Ey::Core::Client
       provisioned_id = "i-#{SecureRandom.hex(4)}"
       provider       = get_providers("account" => environment["account"]).body["providers"].first
       {
+        "account"          => url_for("/accounts/#{resource_identity(environment["account"])}"),
         "alerts"           => url_for("/servers/#{id}/alerts"),
         "created_at"       => Time.now.to_s,
         "deprovisioned_at" => Time.now.to_s,

@@ -72,6 +72,7 @@ class Ey::Core::Client
       provisioned_id = "i-#{SecureRandom.hex(4)}"
       provider       = get_providers("account" => environment["account"]).body["providers"].first
       {
+        "account"          => url_for("/accounts/#{resource_identity(environment["account"])}"),
         "alerts"           => url_for("/servers/#{id}/alerts"),
         "created_at"       => Time.now.to_s,
         "deprovisioned_at" => Time.now.to_s,
@@ -84,7 +85,7 @@ class Ey::Core::Client
         "logs"             => url_for("/servers/#{id}/logs"),
         "name"             => name,
         "private_hostname" => "#{provisioned_id}.private.example.org",
-        "provider"         => provider,
+        "provider"         => url_for("/providers/#{provider["id"]}"),
         "provisioned_at"   => Time.now.to_s,
         "provisioned_id"   => provisioned_id,
         "public_hostname"  => "#{provisioned_id}.public.example.org",

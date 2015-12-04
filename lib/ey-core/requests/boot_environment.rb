@@ -85,7 +85,7 @@ class Ey::Core::Client
         "logs"             => url_for("/servers/#{id}/logs"),
         "name"             => name,
         "private_hostname" => "#{provisioned_id}.private.example.org",
-        "provider"         => provider,
+        "provider"         => url_for("/providers/#{provider["id"]}"),
         "provisioned_at"   => Time.now.to_s,
         "provisioned_id"   => provisioned_id,
         "public_hostname"  => "#{provisioned_id}.public.example.org",

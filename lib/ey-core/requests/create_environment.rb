@@ -35,12 +35,15 @@ class Ey::Core::Client
         "classic"               => true,
         "clusters"              => url_for("/environments/#{resource_id}/clusters"),
         "created_at"            => Time.now,
+        "database_stack"        => "postgres9_4",
         "id"                    => resource_id,
         "internal_private_key"  => internal_key[:private_key],
         "internal_public_key"   => internal_key[:public_key],
         "keypairs"              => url_for("/environments/#{resource_id}/keypairs"),
         "logical_databases_url" => url_for("/environments/#{resource_id}/logical-databases"),
+        "release_label"         => "stable-v4-2.0.101",
         "servers"               => url_for("/environments/#{resource_id}/servers"),
+        "stack_name"            => "nginx_passenger4",
         "updated_at"            => Time.now,
       )
 

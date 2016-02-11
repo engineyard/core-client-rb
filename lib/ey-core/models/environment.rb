@@ -4,11 +4,17 @@ class Ey::Core::Client::Environment < Ey::Core::Model
   identity :id
 
   attribute :classic, type: :boolean
-  attribute :name
   attribute :created_at, type: :time
+  attribute :database_stack
   attribute :deleted_at, type: :time
+  attribute :deploy_method
+  attribute :framework_env
+  attribute :language
   attribute :monitor_url
+  attribute :name
   attribute :region
+  attribute :release_label
+  attribute :stack_name
 
   has_one :account
   has_one :database_service

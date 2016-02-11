@@ -34,6 +34,47 @@ describe 'servers' do
         environment.servers.all(role: "solo").to contain_exactly(server)
       }
     end
+
+    it "adds an app server" do
+      expect {
+        client.servers.create!(
+          :environment => environment,
+          :role        => "app",
+          :flavor_id   => "m3.large",
+        ).resource!
+      }.to change { environment.servers.count }.by(1)
+    end
+
+    it "adds a util server" do
+      expect {
+        client.servers.create!(
+          :environment => environment,
+          :role        => "util",
+          :flavor_id   => "m3.large",
+          :name        => "resque",
+        ).resource!
+      }.to change { environment.servers.count }.by(1)
+    end
+
+    it "does not add a util server without a name" do
+      expect {
+        client.servers.create!(
+          :environment => environment,
+          :role        => "util",
+          :flavor_id   => "m3.large",
+        ).resource!
+      }.to raise_error(Ey::Core::Response::BadRequest, /value is empty: name/)
+    end
+
+    it "does not add a db slave" do
+      expect {
+        client.servers.create!(
+          :environment => environment,
+          :role        => "db_slave",
+          :flavor_id   => "m3.large",
+        )
+      }.to raise_error(Ey::Core::Response::Unprocessable, /cannot add a db slave/i)
+    end
   end
 
   context "with multiple servers" do
@@ -50,6 +91,47 @@ describe 'servers' do
       expect(environment.servers.first(role: "app_master")).to be
       expect(environment.servers.first(role: "app")).to be
       expect(environment.servers.first(role: "db_master")).to be
+    end
+
+    it "adds an app server" do
+      expect {
+        client.servers.create!(
+          :environment => environment,
+          :role        => "app",
+          :flavor_id   => "m3.large",
+        ).resource!
+      }.to change { environment.servers.count }.by(1)
+    end
+
+    it "adds a util server" do
+      expect {
+        client.servers.create!(
+          :environment => environment,
+          :role        => "util",
+          :flavor_id   => "m3.large",
+          :name        => "resque",
+        ).resource!
+      }.to change { environment.servers.count }.by(1)
+    end
+
+    it "does not add a util server without a name" do
+      expect {
+        client.servers.create!(
+          :environment => environment,
+          :role        => "util",
+          :flavor_id   => "m3.large",
+        ).resource!
+      }.to raise_error(Ey::Core::Response::BadRequest, /value is empty: name/)
+    end
+
+    it "adds a db slave" do
+      expect {
+        client.servers.create!(
+          :environment => environment,
+          :role        => "db_slave",
+          :flavor_id   => "m3.large",
+        ).resource!
+      }.to change { environment.servers.count }.by(1)
     end
   end
 end

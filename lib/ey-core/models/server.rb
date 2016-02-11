@@ -32,6 +32,8 @@ class Ey::Core::Client::Server < Ey::Core::Model
   has_many :events, key: :server_events
   has_many :firewalls
 
+  attr_accessor :mnt_volume_size, :volume_size, :iops, :snapshot_id
+
   def reboot
     requires :identity
 
@@ -42,15 +44,22 @@ class Ey::Core::Client::Server < Ey::Core::Model
 
   def save!
     if new_record?
-      raise "adding servers is not yet implemented"
       requires :flavor_id, :role, :environment
 
       server_attributes = {
-        "flavor" => self.flavor_id,
-        "role"   => self.role,
+        "environment" => environment.id,
+        "snapshot"    => self.snapshot_id,
+        "server"      => {
+          "flavor"          => self.flavor_id,
+          "iops"            => self.iops,
+          "location"        => self.location || environment.region,
+          "mnt_volume_size" => self.mnt_volume_size,
+          "name"            => self.name,
+          "role"            => self.role,
+          "volume_size"     => self.volume_size,
+        }
       }
-      server_attributes.merge!("location" => self.location)
-      connection.create_server(server_attributes)
+      connection.requests.new(connection.create_server(server_attributes).body["request"])
     else
       requires :identity
       server_attributes = Cistern::Hash.slice(Cistern::Hash.stringify_keys(self.attributes), "provisioned_at", "deprovisioned_at", "disappeared_at")

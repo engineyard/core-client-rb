@@ -95,7 +95,7 @@ class Ey::Core::Client
         "token"            => SecureRandom.hex(16),
         "updated_at"       => Time.now.to_s,
         "volumes"          => url_for("/servers/#{id}/volumes"),
-        "role"             => role,
+        "role"             => role || "solo",
       }
     end
 

@@ -141,6 +141,7 @@ class Ey::Core::Client < Cistern::Service
   request :create_message
   request :create_password_reset
   request :create_provider
+  request :create_server
   request :create_ssl_certificate
   request :create_storage
   request :create_storage_user

@@ -11,7 +11,7 @@ class Ey::Core::Client::Volume < Ey::Core::Model
   attribute :mount
   attribute :mount_options
   attribute :name
-  attribute :provisioned_id, type: :integer
+  attribute :provisioned_id, type: :string
   attribute :size, type: :integer
 
   has_one :provider

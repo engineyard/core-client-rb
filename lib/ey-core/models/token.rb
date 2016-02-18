@@ -1,8 +1,12 @@
 class Ey::Core::Client::Token < Ey::Core::Model
 
-  identity :auth_id
+  identity :id
 
+  attribute :auth_id
   attribute :on_behalf_of
+  attribute :last_seen_at, type: :time
+  attribute :expires_at,   type: :time
+  attribute :revoked_at,   type: :time
 
   def save!
     params = {

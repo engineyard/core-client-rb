@@ -10,6 +10,7 @@ class Ey::Core::Client::User < Ey::Core::Model
 
   has_many :accounts
   has_many :keypairs
+  has_many :tokens
 
   attr_accessor :password
 

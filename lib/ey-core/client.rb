@@ -265,6 +265,8 @@ class Ey::Core::Client < Cistern::Service
   request :get_support_trial
   request :get_task
   request :get_tasks
+  request :get_token
+  request :get_tokens
   request :get_untracked_server
   request :get_untracked_servers
   request :get_user

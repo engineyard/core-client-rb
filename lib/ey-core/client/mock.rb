@@ -160,6 +160,7 @@ class Ey::Core::Client::Mock
                  :support_trials              => {},
                  :tasks                       => {},
                  :temp_files                  => {},
+                 :tokens                      => {},
                  :untracked_servers           => {},
                  :users                       => {},
                  :volumes                     => {},

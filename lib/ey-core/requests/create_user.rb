@@ -20,17 +20,25 @@ class Ey::Core::Client
         )
       end
 
-      resource_id = self.uuid
+      resource_id   = self.uuid
+      token_id      = self.uuid
+      token_auth_id = self.uuid
 
       resource = params["user"].dup
-      resource["token"] = SecureRandom.hex(20)
 
       resource.merge!({
         "id"          => resource_id,
         "accounts"    => url_for("/users/#{resource_id}/accounts"),
         "memberships" => url_for("/users/#{resource_id}/memberships"),
         "keypairs"    => url_for("/users/#{resource_id}/keypairs"),
+        "tokens"      => url_for("/users/#{resource_id}/tokens"),
       })
+
+      self.data[:tokens][token_id] = {
+        "id"           => token_id,
+        "auth_id"      => token_auth_id,
+        "on_behalf_of" => url_for("/users/#{resource_id}"),
+      }
 
       self.data[:users][resource_id] = resource
 

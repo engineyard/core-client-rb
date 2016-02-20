@@ -21,6 +21,8 @@ class Ey::Core::Client::Server < Ey::Core::Model
   attribute :ssh_port,         type: :integer
   attribute :state
   attribute :updated_at,       type: :time
+  attribute :wait_for_chef,    type: :boolean
+  attribute :release_label
 
   has_one :account
   has_one :address, collection: "addresses"
@@ -48,6 +50,7 @@ class Ey::Core::Client::Server < Ey::Core::Model
 
       server_attributes = {
         "environment" => environment.id,
+        "wait_for_chef" => self.wait_for_chef,
         "snapshot"    => self.snapshot_id,
         "server"      => {
           "flavor"          => self.flavor_id,
@@ -57,6 +60,7 @@ class Ey::Core::Client::Server < Ey::Core::Model
           "name"            => self.name,
           "role"            => self.role,
           "volume_size"     => self.volume_size,
+          "release_label"   => self.release_label,
         }
       }
       connection.requests.new(connection.create_server(server_attributes).body["request"])

@@ -18,7 +18,7 @@ Or install it yourself as:
 
 ## Usage
 
-Uses [cistern](https://github.com/lanej/cistern) to wrap RESTful resources nicely. See [rdoc](https://docbox.engineyard.com/core/branch/master/index.html).
+Uses [cistern](https://github.com/lanej/cistern) to wrap RESTful resources nicely.
 
 ```ruby
 client.users.current  # =>
@@ -68,10 +68,6 @@ Ey::Core::Client.reset!
 
 By default, specs are run against the core mock. In order to run them against awsm mocked mode instead, run `MOCK_CORE=false bundle exec rspec`
 
-## Releasing
-
-    $ gem install gem-release
-    $ gem bump -trv (major|minor|patch) --host https://geminst:XXX@nextgem.engineyard.com/
 
 ## Contributing
 

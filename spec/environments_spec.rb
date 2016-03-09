@@ -70,6 +70,24 @@ describe 'as a user' do
       let!(:name)        { Faker::Name.first_name }
       let!(:environment) { create_environment(account: account, application: app, environment: {name: name}) }
 
+      it "applies main" do
+        expect(environment.apply.ready!).to be_successful
+
+        if Ey::Core::Client.mocking?
+          expect(client.data[:instance_updates].count).to eq(environment.servers.count)
+          expect(client.data[:instance_updates].values.map { |iu| iu["data"]["type"] }).to eq(["main"] * environment.servers.count)
+        end
+      end
+
+      it "applies custom" do
+        expect(environment.apply("custom").ready!).to be_successful
+
+        if Ey::Core::Client.mocking?
+          expect(client.data[:instance_updates].count).to eq(environment.servers.count)
+          expect(client.data[:instance_updates].values.map { |iu| iu["data"]["type"] }).to eq(["custom"] * environment.servers.count)
+        end
+      end
+
       it "destroys an environment" do
         expect {
           environment.destroy.ready!

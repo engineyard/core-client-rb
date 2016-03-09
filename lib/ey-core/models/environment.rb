@@ -51,6 +51,10 @@ class Ey::Core::Client::Environment < Ey::Core::Model
     connection.requests.new(response.body["request"])
   end
 
+  def apply(type="main")
+    connection.requests.new(self.connection.apply_environment_updates("id" => self.id, "type" => type).body["request"])
+  end
+
   def deprovision
     connection.requests.new(self.connection.deprovision_environment("id" => self.id).body["request"])
   end

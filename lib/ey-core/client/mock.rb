@@ -136,6 +136,7 @@ class Ey::Core::Client::Mock
                  :features                    => {},
                  :firewall_rules              => {},
                  :firewalls                   => {},
+                 :instance_updates            => {},
                  :keypair_deployments         => {},
                  :keypairs                    => {},
                  :legacy_alerts               => {},

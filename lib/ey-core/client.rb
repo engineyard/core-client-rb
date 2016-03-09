@@ -114,6 +114,8 @@ class Ey::Core::Client < Cistern::Service
   model :user
   model :volume
 
+  request :apply_environment_updates
+  request :apply_server_updates
   request :attach_address
   request :authorized_channel
   request :boot_environment

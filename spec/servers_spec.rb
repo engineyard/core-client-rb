@@ -19,6 +19,14 @@ describe 'servers' do
       expect(reboot_request.successful).to be true
     end
 
+    it "applies" do
+      expect(server.apply.ready!).to be_successful
+
+      if Ey::Core::Client.mocking?
+        expect(client.data[:instance_updates].count).to eq(1)
+      end
+    end
+
     it "does not destroy" do
       expect {
         server.destroy

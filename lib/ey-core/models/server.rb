@@ -36,6 +36,12 @@ class Ey::Core::Client::Server < Ey::Core::Model
 
   attr_accessor :mnt_volume_size, :volume_size, :iops, :snapshot_id
 
+  def apply(type="main")
+    requires :identity
+
+    connection.requests.new(self.connection.apply_server_updates("id" => self.identity, "type" => type).body["request"])
+  end
+
   def reboot
     requires :identity
 

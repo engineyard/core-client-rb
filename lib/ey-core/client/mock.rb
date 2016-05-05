@@ -118,6 +118,7 @@ class Ey::Core::Client::Mock
                  :backup_files                => {},
                  :backups                     => {},
                  :billing                     => {},
+                 :blueprints                  => {},
                  :cluster_firewalls           => [],
                  :components                  => components,
                  :contact_assignments         => [],

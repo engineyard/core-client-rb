@@ -111,6 +111,7 @@ module ResourceHelper
     application             = options[:application] || create_application(account: account)
     database_service        = options[:database_service]
     configuration           = Cistern::Hash.stringify_keys(options[:configuration] || {})
+    configuration["type"] = "production-cluster" if configuration["type"] == "production"
     configuration["type"] ||= "solo"
     environment[:name]    ||= options.fetch(:name, SecureRandom.hex(3))
     environment[:region]  ||= "us-west-2"

@@ -68,7 +68,22 @@ describe 'as a user' do
 
     context "with an environment" do
       let!(:name)        { Faker::Name.first_name }
-      let!(:environment) { create_environment(account: account, application: app, environment: {name: name}) }
+      let!(:environment) { create_environment(account: account, application: app, environment: {name: name}, configuration: {type: "production"}) }
+
+      it "has the right number of servers" do
+        expect(environment.servers.count).to eq(5)
+      end
+
+      it "creates a blueprint" do
+        blueprint = nil
+        expect {
+          blueprint = environment.save_blueprint("name" => SecureRandom.hex(3))
+        }.to change { environment.blueprints.count }.by(1)
+
+        expect(blueprint.data["app_instances"].count).to eq(3)
+        expect(blueprint.data["db_master"].count).to eq(1)
+        expect(blueprint.data["db_slaves"].count).to eq(1)
+      end
 
       it "applies main" do
         expect(environment.apply.ready!).to be_successful

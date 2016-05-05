@@ -15,6 +15,7 @@ class Ey::Core::Client < Cistern::Service
   collection :application_deployments
   collection :applications
   collection :backup_files
+  collection :blueprints
   collection :components
   collection :contacts
   collection :costs
@@ -70,6 +71,7 @@ class Ey::Core::Client < Cistern::Service
   model :application_deployment
   model :backup_file
   model :billing
+  model :blueprint
   model :component
   model :contact
   model :cost
@@ -118,6 +120,7 @@ class Ey::Core::Client < Cistern::Service
   request :apply_server_updates
   request :attach_address
   request :authorized_channel
+  request :blueprint_environment
   request :boot_environment
   request :bootstrap_logical_database
   request :cancel_account
@@ -155,6 +158,7 @@ class Ey::Core::Client < Cistern::Service
   request :deploy_environment_application
   request :deprovision_environment
   request :destroy_addon
+  request :destroy_blueprint
   request :destroy_database_server
   request :destroy_database_server_snapshot
   request :destroy_database_service
@@ -198,6 +202,8 @@ class Ey::Core::Client < Cistern::Service
   request :get_backup_file
   request :get_backup_files
   request :get_billing
+  request :get_blueprint
+  request :get_blueprints
   request :get_component
   request :get_components
   request :get_contacts
@@ -285,6 +291,7 @@ class Ey::Core::Client < Cistern::Service
   request :update_alert
   request :update_application_archive
   request :update_billing
+  request :update_blueprint
   request :update_membership
   request :update_server
   request :update_ssl_certificate

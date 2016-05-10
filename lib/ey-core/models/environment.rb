@@ -5,6 +5,7 @@ class Ey::Core::Client::Environment < Ey::Core::Model
 
   attribute :classic, type: :boolean
   attribute :created_at, type: :time
+  attribute :custom_recipes
   attribute :database_stack
   attribute :deleted_at, type: :time
   attribute :deploy_method
@@ -15,6 +16,7 @@ class Ey::Core::Client::Environment < Ey::Core::Model
   attribute :region
   attribute :release_label
   attribute :stack_name
+  attribute :username
 
   has_one :account
   has_one :database_service
@@ -25,6 +27,7 @@ class Ey::Core::Client::Environment < Ey::Core::Model
   has_many :servers
   has_many :applications
   has_many :logical_databases
+  has_many :deployments
 
   attr_accessor :application_id
 
@@ -78,6 +81,40 @@ class Ey::Core::Client::Environment < Ey::Core::Model
     requires :id
     raise "name is a required key" unless options["name"]
     self.connection.blueprints.new(self.connection.blueprint_environment("id" => self.id, "name" => options["name"]).body["blueprint"])
+  end
+
+  def upload_recipes(file)
+    # file should be a StringIO
+    self.connection.upload_recipes_for_environment("file" => file, "id" => self.identity)
+  end
+
+  def maintenance(application, action)
+    requires :identity
+
+    params = {
+      "id"             => self.identity,
+      "application_id" => application.id,
+      "maintenance"    => {
+        "action" => action
+      }
+    }
+
+    self.connection.requests.new(self.connection.change_environment_maintenance(params).body["request"])
+  end
+
+  def restart_app_servers
+    params = {
+      "id"             => self.identity,
+      "application_id" => self.applications.first.id,
+    }
+
+    self.connection.requests.new(self.connection.restart_environment_app_servers(params).body["request"])
+  end
+
+  def download_recipes
+    tempfile = Tempfile.new("cookbooks-#{self.name}.tar.gz")
+    File.open(tempfile, 'wb') { |f| f.write self.connection.request(url: self.custom_recipes).body }
+    tempfile
   end
 
   def boot(options={})

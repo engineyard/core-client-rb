@@ -42,13 +42,13 @@ class Ey::Core::Client::Real
   end
 
   def request(options={})
-    method  = options[:method] || :get
-    url     = options[:url] || File.join(@url, options[:path] || "/")
+    method  = options[:method]             || :get
+    url     = options[:url]                || File.join(@url, options[:path] || "/")
     #@todo query is a band-aid
-    query   = options[:query] || {}
+    query   = options[:query]              || {}
     params  = query.merge(options[:params] || {})
     body    = options[:body]
-    headers = options[:headers] || {}
+    headers = options[:headers]            || {}
 
     default_content_type = if !body && !params.empty?
                              "application/x-www-form-urlencoded"

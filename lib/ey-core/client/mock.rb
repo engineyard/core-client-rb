@@ -132,6 +132,7 @@ class Ey::Core::Client::Mock
                  :database_servers            => {},
                  :database_services           => {},
                  :deleted                     => Hash.new {|x,y| x[y] = {}},
+                 :deployments                 => {},
                  :environment_plan_usages     => Hash.new { |h1,k1| h1[k1] = {} },
                  :environments                => {},
                  :features                    => {},

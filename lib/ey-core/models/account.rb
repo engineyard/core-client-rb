@@ -12,6 +12,7 @@ class Ey::Core::Client::Account < Ey::Core::Model
   attribute :plan_type
   attribute :type
 
+  has_many :addresses
   has_many :applications
   has_many :deis_clusters
   has_many :environments

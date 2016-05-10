@@ -36,6 +36,7 @@ class Ey::Core::Client
         "clusters"              => url_for("/environments/#{resource_id}/clusters"),
         "created_at"            => Time.now,
         "database_stack"        => "postgres9_4",
+        "deployments_url"       => url_for("/environments/#{resource_id}/deployments"),
         "id"                    => resource_id,
         "internal_private_key"  => internal_key[:private_key],
         "internal_public_key"   => internal_key[:public_key],
@@ -45,6 +46,7 @@ class Ey::Core::Client
         "servers"               => url_for("/environments/#{resource_id}/servers"),
         "stack_name"            => "nginx_passenger4",
         "updated_at"            => Time.now,
+        "username"              => "deploy",
       )
 
       self.data[:environments][resource_id] = resource

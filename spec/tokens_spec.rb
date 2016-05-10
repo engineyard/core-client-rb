@@ -5,7 +5,29 @@ describe 'tokens' do
     let!(:client) { create_client }
 
     context "with a user" do
-      let!(:user) { client.users.create!(name: Faker::Name.name, email: Faker::Internet.email) }
+      let!(:email)    { Faker::Internet.email }
+      let!(:password) { SecureRandom.hex(5) }
+      let!(:user)     { client.users.create!(name: Faker::Name.name, email: email, password: password) }
+
+      it "retrieves a token by login information" do
+        if Ey::Core::Client.mocking?
+          token = SecureRandom.hex(10)
+          client.data[:users][user.id]["token"] = token
+        end
+
+        expect(client.get_token_by_login(email: email, password: password).body["api_token"]).to be
+      end
+
+      it "does not retrieve a token with login information with an incorrect password" do
+        if Ey::Core::Client.mocking?
+          token = SecureRandom.hex(10)
+          client.data[:users][user.id]["token"] = token
+        end
+
+        expect {
+          client.get_token_by_login(email: email, password: "whoops")
+        }.to raise_error(Ey::Core::Response::Unauthorized)
+      end
 
       it "generates a token" do
         token = client.tokens.create!(on_behalf_of: user)

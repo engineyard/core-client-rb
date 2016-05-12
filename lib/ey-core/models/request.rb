@@ -21,9 +21,14 @@ class Ey::Core::Client::Request < Ey::Core::Model
     merge_attributes(connection.request_callback("url" => self.callback_url).body["request"])
   end
 
-  def ready!(timeout = self.service.timeout, interval = self.service.poll_interval)
-    wait_for!(timeout, interval) { ready? }
-    raise Ey::Core::RequestFailure.new(self) unless successful?
+  def ready!(timeout = self.service.timeout, interval = self.service.poll_interval, raise_on_failure = true, &block)
+    wait_for!(timeout, interval) do
+      yield self if block_given?
+      ready?
+    end
+    if raise_on_failure && !successful?
+      raise Ey::Core::RequestFailure.new(self)
+    end
     self
   end
 

@@ -51,8 +51,8 @@ class Ey::Core::Client::Environment < Ey::Core::Model
     connection.requests.new(response.body["request"])
   end
 
-  def apply(type="main")
-    connection.requests.new(self.connection.apply_environment_updates("id" => self.id, "type" => type).body["request"])
+  def apply(type="main", data={})
+    connection.requests.new(self.connection.apply_environment_updates("id" => self.id, "type" => type, "data" => data).body["request"])
   end
 
   def deprovision
@@ -152,23 +152,29 @@ class Ey::Core::Client::Environment < Ey::Core::Model
   end
 
   def save!
-    requires :application_id, :account_id, :region
-
-    params = {
-      "url"         => self.collection.url,
-      "account"     => self.account_id,
-      "environment" => {
-        "name"                      => self.name,
-        "application_id"            => self.application_id,
-        "region"                    => self.region,
-      },
-    }
-
-    params["environment"].merge!("database_service" => self.database_service.id) if self.database_service
-
     if new_record?
+      requires :application_id, :account_id, :region
+
+      params = {
+        "url"         => self.collection.url,
+        "account"     => self.account_id,
+        "environment" => {
+          "name"                      => self.name,
+          "application_id"            => self.application_id,
+          "region"                    => self.region,
+        },
+      }
+
+      params["environment"].merge!("database_service" => self.database_service.id) if self.database_service
+
       merge_attributes(self.connection.create_environment(params).body["environment"])
-    else raise NotImplementedError # update
+    else
+      requires :identity
+      attributes = Cistern::Hash.slice(Cistern::Hash.stringify_keys(self.attributes), "nane", "release_label")
+      connection.update_environment(
+        "id"     => self.identity,
+        "environment" => attributes,
+      )
     end
   end
 end

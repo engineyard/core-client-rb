@@ -45,6 +45,10 @@ class Ey::Core::Cli
         options[:logger] = v ? Logger.new(STDOUT) : Logger.new(nil)
       end
 
+      opts.on("-e", "--execute-command [COMMAND]", "Execute Command") do |c|
+        @execute_command = c
+      end
+
       opts.separator ""
       opts.separator "Common options:"
 
@@ -74,8 +78,12 @@ class Ey::Core::Cli
   end
 
   def console
-    Pry.config.prompt = proc { |obj, nest_level, _| "ey-core:> " }
-    self.pry
+    if @execute_command
+      @client.instance_eval(@execute_command)
+    else
+      Pry.config.prompt = proc { |obj, nest_level, _| "ey-core:> " }
+      @client.pry
+    end
   end
 
   def show

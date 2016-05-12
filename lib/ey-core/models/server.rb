@@ -33,6 +33,7 @@ class Ey::Core::Client::Server < Ey::Core::Model
   has_many :volumes
   has_many :events, key: :server_events
   has_many :firewalls
+  has_many :logs
 
   attr_accessor :mnt_volume_size, :volume_size, :iops, :snapshot_id
 
@@ -40,6 +41,14 @@ class Ey::Core::Client::Server < Ey::Core::Model
     requires :identity
 
     connection.requests.new(self.connection.apply_server_updates("id" => self.identity, "type" => type).body["request"])
+  end
+
+  def latest_main_log
+    logs.select{|l| l.filename.match(/main/)}.sort_by(&:created_at).last
+  end
+
+  def latest_custom_log
+    logs.select{|l| l.filename.match(/custom/)}.sort_by(&:created_at).last
   end
 
   def reboot

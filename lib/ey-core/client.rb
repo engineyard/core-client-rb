@@ -292,6 +292,7 @@ class Ey::Core::Client < Cistern::Service
   request :update_application_archive
   request :update_billing
   request :update_blueprint
+  request :update_environment
   request :update_membership
   request :update_server
   request :update_ssl_certificate
@@ -334,7 +335,7 @@ class Ey::Core::Client < Cistern::Service
 
       unless @authentication == :none
         if !@auth_id && !@auth_key && !@token
-          raise "Missing token. Use Ey::Core::Client.new(token: mytoken) or add \"'#{@url}': mytoken\" to your ~/.ey-core file" unless @token
+          raise "Missing token. Use Ey::Core::Client.new(token: mytoken) or add \"'#{@url}': mytoken\" to your ~/.ey-core file (see: https://cloud.engineyard.com/cli)" unless @token
         elsif options[:token] || (@token && !@auth_id) # token was explicitly provided
           @authentication = :token
         else

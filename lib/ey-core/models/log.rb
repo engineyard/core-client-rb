@@ -3,6 +3,7 @@ class Ey::Core::Client::Log < Ey::Core::Model
 
   identity :id
 
+  attribute :created_at
   attribute :filename
   attribute :mime_type
   attribute :download_url
@@ -30,4 +31,14 @@ class Ey::Core::Client::Log < Ey::Core::Model
 
     merge_attributes(self.connection.create_log(params).body["log"])
   end
+
+  def contents
+    body = Faraday.get(download_url).body
+    if filename.match(/\.gz$/)
+      Zlib::GzipReader.new(StringIO.new(body, "rb")).read
+    else
+      body
+    end
+  end
+
 end

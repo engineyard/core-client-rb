@@ -9,7 +9,7 @@ class Ey::Core::Cli::Deploy < Ey::Core::Cli::Subcommand
   option :app,         short: "a", long: "app",         description: "Application name or ID to deploy.  If :account is not specified, this will be the first app that matches the criteria in the accounts you have access to.", argument: "app"
 
   switch :stream, long: "stream",     description: "Stream deploy output to this console."
-  switch :verbose, short: "v", long: "verbose",    description: "Stream deploy output to this console."
+  switch :verbose, short: "v", long: "verbose",    description: "Stream deploy output to this console. Alias to stream for backwards compatibility."
   switch :no_migrate, long: "no-migrate", description: "Skip migration."
 
   def handle
@@ -44,7 +44,7 @@ This can be retrieved by running "ey accounts".
 Deploy started to environment: #{environment.name} with application: #{app.name}
 Request ID: #{request.id}
     EOF
-    if switch_active?(:stream) || switch_active
+    if switch_active?(:stream) || switch_active?(:verbose)
       request.subscribe { |m| print m["message"] if m.is_a?(Hash) }
       puts "" # fix console output from stream
     else

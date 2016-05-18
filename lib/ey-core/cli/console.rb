@@ -1,7 +1,7 @@
 class Ey::Core::Cli::Console < Ey::Core::Cli::Subcommand
   title "console"
   summary "Start an interactive console"
-  option :execute_command, short: "c", long: "command", description: "Command to execute", argument: "command"
+  option :execute_command, short: "e", long: "command", description: "Command to execute", argument: "command"
 
   def handle
     if command = option(:execute_command)

@@ -35,6 +35,7 @@ class Ey::Core::Client
         "classic"               => true,
         "clusters"              => url_for("/environments/#{resource_id}/clusters"),
         "created_at"            => Time.now,
+        "custom_recipes"        => nil,
         "database_stack"        => "postgres9_4",
         "deployments_url"       => url_for("/environments/#{resource_id}/deployments"),
         "id"                    => resource_id,

@@ -25,6 +25,7 @@ class Ey::Core::Client < Cistern::Service
   collection :database_server_usages
   collection :database_servers
   collection :database_services
+  collection :deployments
   collection :environment_plan_usages
   collection :environments
   collection :features
@@ -81,6 +82,7 @@ class Ey::Core::Client < Cistern::Service
   model :database_server_snapshot
   model :database_server_usage
   model :database_service
+  model :deployment
   model :environment
   model :environment_plan_usage
   model :feature
@@ -124,6 +126,7 @@ class Ey::Core::Client < Cistern::Service
   request :boot_environment
   request :bootstrap_logical_database
   request :cancel_account
+  request :change_environment_maintenance
   request :create_account
   request :create_addon
   request :create_address
@@ -219,6 +222,8 @@ class Ey::Core::Client < Cistern::Service
   request :get_database_servers_firewalls
   request :get_database_service
   request :get_database_services
+  request :get_deployment
+  request :get_deployments
   request :get_environment
   request :get_environment_database_services
   request :get_environment_logical_databases
@@ -274,6 +279,7 @@ class Ey::Core::Client < Cistern::Service
   request :get_task
   request :get_tasks
   request :get_token
+  request :get_token_by_login
   request :get_tokens
   request :get_untracked_server
   request :get_untracked_servers
@@ -283,9 +289,11 @@ class Ey::Core::Client < Cistern::Service
   request :reboot_server
   request :request_callback
   request :reset_password
+  request :restart_environment_app_servers
   request :run_cluster_application_action
   request :run_environment_application_action
   request :signup
+  request :timeout_deployment
   request :update_addon
   request :update_address
   request :update_alert
@@ -298,6 +306,7 @@ class Ey::Core::Client < Cistern::Service
   request :update_ssl_certificate
   request :update_untracked_server
   request :upload_file
+  request :upload_recipes_for_environment
 
   recognizes :token, :url, :logger, :adapter, :builder, :connection_options, :auth_id, :auth_key, :cache, :config_file
 

@@ -19,10 +19,24 @@ Gem::Specification.new do |gem|
   gem.licenses      = ["MIT"]
 
   gem.add_dependency "addressable", "~> 2.2"
+  gem.add_dependency "awesome_print"
+  gem.add_dependency "belafonte"
   gem.add_dependency "cistern", "~> 0.12"
+  gem.add_dependency "colorize"
   gem.add_dependency "ey-hmac", "~> 2.0"
-  gem.add_dependency "sshkey",  "~> 1.6"
+  gem.add_dependency "escape"
   gem.add_dependency "faraday", "~> 0.9"
   gem.add_dependency "faraday_middleware", "~> 0.9"
+  gem.add_dependency "faye"
   gem.add_dependency "mime-types", "~> 2.99" #maintain ruby 1.9 compatibility
+  gem.add_dependency "oj"
+  gem.add_dependency "oj_mimic_json"
+  gem.add_dependency "pry"
+  gem.add_dependency "sshkey",  "~> 1.6"
+  gem.add_dependency "table_print"
+
+  gem.add_development_dependency "pry-nav"
+  gem.add_development_dependency "rspec", "~> 3.0"
+  gem.add_development_dependency "ffaker"
+  gem.add_development_dependency "rake"
 end

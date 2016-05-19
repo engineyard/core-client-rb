@@ -3,12 +3,6 @@ source 'https://rubygems.org'
 # Specify your gem's dependencies in ey-core.gemspec
 gemspec
 
-gem 'awesome_print', '~> 1.0'
-gem 'faye', '~> 1.1'
-gem 'oj'
-gem 'oj_mimic_json'
-gem 'pry-nav'
-
 group :doc do
   gem 'yard'
   gem 'redcarpet'
@@ -21,7 +15,6 @@ group :test do
   gem 'guard-rspec', '~> 4.2', require: false
   gem 'hashie'
   gem 'rack-test'
-  gem 'rake'
   gem 'rspec', '~> 3.1'
   gem 'simplecov'
   gem 'timecop'

@@ -16,8 +16,25 @@ class Ey::Core::Client
       environment_id = options.delete("id")
       application_id = options.delete("application_id")
       request_id     = self.uuid
+      deployment_id  = self.serial_id
 
       response(status: 422) unless self.data[:application_deployments].values.detect { |ad| ad[:environment_id] == environment_id && ad[:application_id] == application_id }
+
+      deployment = {
+        "account"         => find(:environments, environment_id)["account"],
+        "application"     => url_for("/applications/#{application_id}"),
+        "commit"          => options["deploy"]["ref"],
+        "environment"     => url_for("/environments/#{environment_id}"),
+        "finished_at"     => Time.now,
+        "id"              => deployment_id,
+        "migrate_command" => options["deploy"]["migrate"] ? (options["deploy"]["migrate_command"] || "rake db:migrate") : nil,
+        "migrate"         => options["deploy"]["migrate"] || false,
+        "resolved_ref"    => options["deploy"]["ref"],
+        "started_at"      => Time.now,
+        "successful"      => true
+      }
+
+      self.data[:deployments][deployment_id] = deployment
 
       request = {
         "id"           => request_id,

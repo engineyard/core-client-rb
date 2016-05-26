@@ -87,6 +87,26 @@ module Ey
 
           end
 
+          describe '.filter' do
+            let(:dummy) {Object.new}
+            let(:options) {{foo: 'bar'}}
+            let(:filtered) {['servers bruh']}
+
+            it 'is the same as creating a new sieve and filtering it' do
+              expect(described_class).
+                to receive(:new).
+                with(servers_api, options).
+                and_return(dummy)
+
+              expect(dummy).
+                to receive(:filtered).
+                and_return(filtered)
+
+              expect(described_class.filter(servers_api, options)).
+                to eql(filtered)
+            end
+          end
+
           describe '#filtered' do
             let(:options) {{}}
             let(:sieve) {described_class.new(servers_api, options)}

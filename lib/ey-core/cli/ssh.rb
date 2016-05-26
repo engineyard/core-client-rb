@@ -1,3 +1,5 @@
+require 'ey-core/cli/helpers/server_sieve'
+
 class Ey::Core::Cli::Ssh < Ey::Core::Cli::Subcommand
   title "ssh"
   summary "Open an SSH session to the environment's application master"
@@ -27,8 +29,6 @@ class Ey::Core::Cli::Ssh < Ey::Core::Cli::Subcommand
     user     = environment.username
     servers  = []
 
-
-
     if option(:command)
       if shell = option(:shell)
         cmd = Escape.shell_command([shell,'-lc',cmd])
@@ -40,29 +40,14 @@ class Ey::Core::Cli::Ssh < Ey::Core::Cli::Subcommand
         puts "sudo commands often need a tty to run correctly. Use -t option to spawn a tty.".yellow
       end
 
-      if switch_active?(:all)
-        servers += environment.servers.all.to_a
-      end
-
-      if switch_active?(:app_servers)
-        servers += (environment.servers.all(role: "app_master") + environment.servers.all(role: "app") + environment.servers.all(role: "solo")).to_a
-      end
-
-      if switch_active?(:db_servers)
-        servers += (environment.servers.all(role: "db_master") + environment.servers.all(role: "db_slave") + environment.servers.all(role: "solo")).to_a
-      end
-
-      if switch_active?(:db_master)
-        servers += (environment.servers.all(role: "db_master") + environment.servers.all(role: "solo")).to_a
-      end
-
-      if utils = option(:utilities)
-        if utils == 'all'
-          servers += environment.servers.all(role: "util").to_a
-        else
-          servers += environment.servers.all(role: "util", name: utils).to_a
-        end
-      end
+      servers += Ey::Core::Cli::Helpers::ServerSieve.filter(
+        environment.servers,
+        all: switch_active?(:all),
+        app_servers: switch_active?(:app_servers),
+        db_servers: switch_active?(:db_servers),
+        db_master: switch_active?(:db_master),
+        utilities: option(:utilities)
+      )
     else
       if option(:bind_address)
         ssh_opts += ["-L", option(:bind_address)]
@@ -78,6 +63,8 @@ class Ey::Core::Cli::Ssh < Ey::Core::Cli::Subcommand
     if servers.empty?
       abort "Unable to find any matching servers. Aborting.".red
     end
+
+    servers.uniq!
 
     servers.each do |server|
       host = server.public_hostname

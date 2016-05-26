@@ -64,6 +64,8 @@ class Ey::Core::Cli::Ssh < Ey::Core::Cli::Subcommand
       abort "Unable to find any matching servers. Aborting.".red
     end
 
+    servers.uniq!
+
     servers.each do |server|
       host = server.public_hostname
       name = server.name ? "#{server.role} (#{server.name})" : server.role

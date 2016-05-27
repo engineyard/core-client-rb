@@ -8,6 +8,7 @@ require 'belafonte'
 require 'table_print'
 require 'rubygems/package'
 require 'escape'
+require 'highline/import'
 
 Cistern.formatter = Cistern::Formatter::AwesomePrint
 

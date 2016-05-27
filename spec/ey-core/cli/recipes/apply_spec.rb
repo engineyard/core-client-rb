@@ -7,15 +7,7 @@ require 'ey-core/cli/recipes'
 require 'ey-core/cli/recipes/apply'
 
 describe Ey::Core::Cli::Recipes::Apply do
-  let(:argv) {[]}
-  let(:stdout) {StringIO.new}
-  let(:stderr) {StringIO.new}
-  let(:stdin) {StringIO.new}
-  let(:kernel) {FakeKernel.new}
-  let(:apply) {described_class.new(argv, stdin, stdout, stderr, kernel)}
-  let(:execute) {apply.execute!}
-  let(:operator) {Object.new}
-  let(:environment) {Object.new}
+  set_up_cli
 
   before(:each) do
     allow_any_instance_of(described_class).
@@ -33,7 +25,7 @@ describe Ey::Core::Cli::Recipes::Apply do
     let(:argv) {['--main']}
 
     it 'performs a main chef run' do
-      expect(apply).to receive(:run_chef).with('main', environment)
+      expect(cli).to receive(:run_chef).with('main', environment)
 
       execute
       expect(kernel.exit_status).to eql(0)
@@ -44,7 +36,7 @@ describe Ey::Core::Cli::Recipes::Apply do
     let(:argv) {['--custom']}
 
     it 'performs a custom chef run' do
-      expect(apply).to receive(:run_chef).with('custom', environment)
+      expect(cli).to receive(:run_chef).with('custom', environment)
       
       execute
       expect(kernel.exit_status).to eql(0)
@@ -55,7 +47,7 @@ describe Ey::Core::Cli::Recipes::Apply do
     let(:argv) {['--quick']}
 
     it 'performs a quick chef run' do
-      expect(apply).to receive(:run_chef).with('quick', environment)
+      expect(cli).to receive(:run_chef).with('quick', environment)
       
       execute
       expect(kernel.exit_status).to eql(0)
@@ -66,8 +58,8 @@ describe Ey::Core::Cli::Recipes::Apply do
     let(:argv) {['--full']}
 
     it 'performs both a main and a custom chef run' do
-      expect(apply).to receive(:run_chef).with('main', environment)
-      expect(apply).to receive(:run_chef).with('custom', environment)
+      expect(cli).to receive(:run_chef).with('main', environment)
+      expect(cli).to receive(:run_chef).with('custom', environment)
       
       execute
       expect(kernel.exit_status).to eql(0)

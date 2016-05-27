@@ -9,13 +9,6 @@ class Ey::Core::Cli::Recipes::Apply < Ey::Core::Cli::Recipes
   switch :quick, short: "q", long: "quick", description: "Quick chef run"
   switch :full, short: "f", long: "full", description: "Run main and custom chef"
 
-  SECONDARY_RUN_TYPES = {
-    custom: 'custom',
-    quick: 'quick'
-  }
-
-  DEFAULT_RUN_TYPE = 'main'
-
   def handle
     validate_run_type_flags
 
@@ -39,7 +32,7 @@ class Ey::Core::Cli::Recipes::Apply < Ey::Core::Cli::Recipes
   end
 
   def run_type
-    SECONDARY_RUN_TYPES[active_run_type] || DEFAULT_RUN_TYPE
+    secondary_run_types[active_run_type] || default_run_type
   end
 
   def active_run_type
@@ -48,5 +41,16 @@ class Ey::Core::Cli::Recipes::Apply < Ey::Core::Cli::Recipes
 
   def active_run_type_flags
     [:main, :custom, :quick, :full].select {|switch| switch_active?(switch)}
+  end
+
+  def secondary_run_types
+    {
+      custom: 'custom',
+      quick: 'quick'
+    }
+  end
+
+  def default_run_type
+    'main'
   end
 end

@@ -17,7 +17,6 @@ class Ey::Core::Cli::Recipes::Upload < Ey::Core::Cli::Recipes
       puts "Uploading custom recipes complete".green
     rescue => e
       abort "There was a problem uploading the recipes".red
-      puts e.inspect
     end
 
     if switch_active?(:apply)

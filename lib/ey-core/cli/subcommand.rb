@@ -111,4 +111,11 @@ class Ey::Core::Cli::Subcommand < Belafonte::App
       end
     end
   end
+
+  def setup
+    $stdout = stdout
+    $stderr = stderr
+    $stdin = stdin
+    $kernel = kernel
+  end
 end

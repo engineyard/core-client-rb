@@ -28,6 +28,7 @@ Gem::Specification.new do |gem|
   gem.add_dependency "faraday", "~> 0.9"
   gem.add_dependency "faraday_middleware", "~> 0.9"
   gem.add_dependency "faye"
+  gem.add_dependency "highline"
   gem.add_dependency "mime-types", "~> 2.99" #maintain ruby 1.9 compatibility
   gem.add_dependency "oj"
   gem.add_dependency "oj_mimic_json"

@@ -71,7 +71,7 @@ describe Ey::Core::Cli::Recipes::Download do
         execute
 
         expect(standard_output).
-          to include('Extracting recipes to \'cookbooks/\''.green)
+          to match(/Extracting recipes to 'cookbooks\/'/)
       end
 
       it 'unarchives the downloaded archive' do

@@ -72,8 +72,13 @@ describe Ey::Core::Cli::Recipes::Upload do
     end
   end
 
-  context 'ey-core recipes upload --environment 12345' do
-    before(:each) do
-    let(:environment2) {create_environment(account: account, client: client, environment: {id: 12345})}
+  context 'ey-core recipes upload --path /some/path' do
+    arguments '--file /some/path'
+
+    it 'uploads the recipes from the given path' do
+      expect(cli).to receive(:upload_recipes).with(environment, '/some/path')
+
+      execute
+    end
   end
 end

@@ -13,7 +13,7 @@ class Ey::Core::Cli::Recipes::Download < Ey::Core::Cli::Recipes
 
   def handle
     if File.exist?("cookbooks")
-      raise Ey::Core::Clie::RecipesExist.new("Cannot download recipes, cookbooks directory already exists.")
+      raise Ey::Core::Cli::RecipesExist.new("Cannot download recipes, cookbooks directory already exists.")
     end
 
     operator, environment = core_operator_and_environment_for(options)

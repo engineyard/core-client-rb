@@ -25,3 +25,19 @@ end
 def arguments(command_line)
   let(:argv) {command_line.split(/\s+/)}
 end
+
+def error_output
+  @error_output ||= []
+  stderr.rewind
+  @error_output += stderr.readlines.map {|line| line.strip}
+  @error_output.uniq!
+  @error_output
+end
+
+def standard_output
+  @standard_output ||= []
+  stdout.rewind
+  @standard_output += stdout.readlines.map {|line| line.strip}
+  @standard_output.uniq!
+  @standard_output
+end

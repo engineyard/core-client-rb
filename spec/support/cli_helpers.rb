@@ -19,6 +19,10 @@ def set_up_cli
       to receive(:core_operator_and_environment_for).
       with(any_args).
       and_return([client, environment])
+
+    allow_any_instance_of(described_class).
+      to receive(:current_accounts).
+      and_return([account])
   end
 end
 

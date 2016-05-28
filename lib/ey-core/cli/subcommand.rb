@@ -1,3 +1,5 @@
+require 'table_print'
+
 class Ey::Core::Cli::Subcommand < Belafonte::App
   def self.descendants
     ObjectSpace.each_object(Class).select { |klass| klass < self }

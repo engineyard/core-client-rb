@@ -34,7 +34,7 @@ describe Ey::Core::Cli::Recipes::Upload do
       execute
     end
     
-    context 'successfully' do
+    context 'upon uploading successfully' do
       it 'advises that the upload completed' do
         execute
 
@@ -43,7 +43,7 @@ describe Ey::Core::Cli::Recipes::Upload do
       end
     end
 
-    context 'unsuccessfully' do
+    context 'upon failing to upload' do
       before(:each) do
         allow(cli).
           to receive(:upload_recipes).

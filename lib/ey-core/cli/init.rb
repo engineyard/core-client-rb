@@ -1,11 +1,14 @@
-class Ey::Core::Cli::Init < Ey::Core::Cli::Subcommand
-  title "init"
-  summary "Deprecated"
-  description <<-DESC
-   The init command has been deprecated.  We apologize for any inconvenience.
-  DESC
+require 'ey-core/cli/subcommand'
+require 'ey-core/cli/helpers/deprecated'
 
-  def handle
-    abort "This command is deprecated".red
+module Ey
+  module Core
+    module Cli
+      class Init < Subcommand
+        include Helpers::Deprecated
+
+        deprecate('init')
+      end
+    end
   end
 end

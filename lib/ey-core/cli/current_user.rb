@@ -1,8 +1,16 @@
-class Ey::Core::Cli::CurrentUser < Ey::Core::Cli::Subcommand
-  title "current_user"
-  summary "Print the current user information"
+require 'ey-core/cli/subcommand'
 
-  def handle
-    ap core_client.users.current
+module Ey
+  module Core
+    module Cli
+      class CurrentUser < Subcommand
+        title "current_user"
+        summary "Print the current user information"
+
+        def handle
+          ap core_client.users.current
+        end
+      end
+    end
   end
 end

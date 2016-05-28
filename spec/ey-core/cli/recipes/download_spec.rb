@@ -1,8 +1,4 @@
 require 'spec_helper'
-require 'ey-core/cli'
-require 'ey-core/cli/errors'
-require 'ey-core/cli/subcommand'
-require 'ey-core/cli/recipes'
 require 'ey-core/cli/recipes/download'
 
 describe Ey::Core::Cli::Recipes::Download do

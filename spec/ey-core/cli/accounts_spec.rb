@@ -1,6 +1,4 @@
 require 'spec_helper'
-require 'ey-core/cli'
-require 'ey-core/cli/subcommand'
 require 'ey-core/cli/accounts'
 
 describe Ey::Core::Cli::Accounts do

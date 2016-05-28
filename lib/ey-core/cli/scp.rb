@@ -1,11 +1,14 @@
-class Ey::Core::Cli::Scp < Ey::Core::Cli::Subcommand
-  title "scp"
-  summary "This command is deprecated"
-  description <<-DESC
-    The scp command has been deprecated.  We apologize for any inconvenience.
-  DESC
+require 'ey-core/cli/subcommand'
+require 'ey-core/cli/helpers/deprecated'
 
-  def handle
-    abort "This command is deprecated".red
+module Ey
+  module Core
+    module Cli
+      class Scp < Subcommand
+        include Helpers::Deprecated
+
+        deprecate('scp')
+      end
+    end
   end
 end

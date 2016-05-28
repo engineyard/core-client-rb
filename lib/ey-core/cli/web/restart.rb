@@ -1,23 +1,42 @@
-class Ey::Core::Cli::Web::Restart < Ey::Core::Cli::Web
-  title "restart"
-  summary "Restart all application servers in an environment"
+require 'ey-core/cli/subcommand'
 
-  option :environment, short: "e", long: "environment", description: "Name or id of the environment to deploy to.", argument: "environment"
-  option :account,     short: "c", long: "account",     description: "Name or id of the account that the environment resides in.", argument: "account"
+module Ey
+  module Core
+    module Cli
+      module Web
+        class Restart < Ey::Core::Cli::Subcommand
+          title "restart"
+          summary "Restart all application servers in an environment"
 
-  def handle
-    operator, environment = core_operator_and_environment_for(options)
+          option :environment,
+            short: "e",
+            long: "environment",
+            description: "Name or id of the environment to deploy to.",
+            argument: "environment"
 
-    puts "Restarting application servers in #{environment.name}".green
+          option :account,
+            short: "c",
+            long: "account",
+            description: "Name or id of the account that the environment resides in.",
+            argument: "account"
 
-    request = environment.restart_app_servers
-    request.wait_for { |r| r.ready? }
+          def handle
+            operator, environment = core_operator_and_environment_for(options)
 
-    if request.successful
-      puts "Successfully restarted application servers".green
-    else
-      puts "Restarting application servers has failed".red
-      ap request
+            puts "Restarting application servers in #{environment.name}".green
+
+            request = environment.restart_app_servers
+            request.wait_for { |r| r.ready? }
+
+            if request.successful
+              puts "Successfully restarted application servers".green
+            else
+              puts "Restarting application servers has failed".red
+              ap request
+            end
+          end
+        end
+      end
     end
   end
 end

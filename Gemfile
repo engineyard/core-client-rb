@@ -11,8 +11,6 @@ end
 group :test do
   gem 'codeclimate-test-reporter', '~> 0.3'
   gem 'faker'
-  gem 'guard-bundler', require: false
-  gem 'guard-rspec', '~> 4.2', require: false
   gem 'hashie'
   gem 'rack-test'
   gem 'rspec', '~> 3.1'

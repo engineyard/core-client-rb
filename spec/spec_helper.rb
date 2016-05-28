@@ -10,4 +10,9 @@ Dir[File.expand_path("../{shared,support}/*.rb", __FILE__)].each{|f| require(f)}
 
 RSpec.configure do |config|
   config.order = "random"
+  config.after(:each) do
+    $stdout = STDOUT
+    $stdin = STDIN
+    $stderr = STDERR
+  end
 end

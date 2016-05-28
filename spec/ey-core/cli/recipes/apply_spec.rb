@@ -1,7 +1,4 @@
 require 'spec_helper'
-require 'ey-core/cli'
-require 'ey-core/cli/subcommand'
-require 'ey-core/cli/recipes'
 require 'ey-core/cli/recipes/apply'
 
 describe Ey::Core::Cli::Recipes::Apply do

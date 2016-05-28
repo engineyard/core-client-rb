@@ -1,10 +1,10 @@
-class Ey::Core::Cli::Web < Ey::Core::Cli::Subcommand
-  title "web"
-  summary "Web related commands"
+require 'ey-core/cli/web/main'
 
-  Dir[File.dirname(__FILE__) + "/web/*.rb"].each { |file| load file }
-
-  Ey::Core::Cli::Web.descendants.each do |d|
-    mount d
+module Ey
+  module Core
+    module Cli
+      module Web
+      end
+    end
   end
 end

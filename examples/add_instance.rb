@@ -6,6 +6,7 @@
 
 require 'ey-core'
 require 'optparse'
+require 'yaml'
 
 options = {}
 OptionParser.new do |opts|
@@ -18,8 +19,10 @@ OptionParser.new do |opts|
   
 end.parse!
 
-# Token comes for `~/.eyrc`
-client = Ey::Core::Client.new(token: "abcdefghijklmnrstuvwxyz123456789")
+# Token comes from '~/.eyrc'
+eyrc = YAML.load_file(File.expand_path("~/.eyrc"))
+
+client = Ey::Core::Client.new(token: eyrc['api_token'])
 
 # Account name as shown in cloud.engineyard.com
 account = client.accounts.first(name: options[:account_name])
@@ -42,35 +45,26 @@ new_server_specs = {
         :volume_size     => "10",
 }
 
-provision_request = client.servers.create(new_server_specs)
-if !provision_request then
-  puts "Provision request FAILED!!!!"
-  puts "Check cloud.engineyard.com for more details"
-  exit
-end
+provision_request = client.servers.create!(new_server_specs)
 
-while !provision_request.ready? do
-  print "."
-  provision_request.reload
-  sleep 20
-end
-puts "*"
+# Provisioning the instance with a timeout of 1200sec.
+# Adjust as necessary depending of the type/role of instance.
+provision_request.ready!(1200)
+
+ap provision_request.attributes
+
 puts "Instance provisioned successfully"
 puts "-------------------"
 
 puts "Waiting for instance #{instance_name} to integrate into the environment #{environment.name}...."
-new_server = environment.servers.first(name: new_server_specs[:name])
-while new_server.state == "integrating" do
-  print "."
-  new_server.reload
-  sleep 20
-end
-puts "*"
-puts "-------------------"
+new_server = provision_request.resource!
+
+new_server.wait_for(1800) { |s| s.state == "running" || s.state == "error" }
 
 if !new_server.enabled? then
   puts "Adding of instance #{instance_name} into environment #{environment.name} FAILED!!!"
   puts "Check cloud.engineyard.com for more details"
+  ap new_server.attributes
   exit
 end
 

@@ -5,6 +5,7 @@
 
 require 'ey-core'
 require 'optparse'
+require 'yaml'
 
 options = {}
 OptionParser.new do |opts|
@@ -16,8 +17,10 @@ OptionParser.new do |opts|
 
 end.parse!
 
-# Token comes for `~/.eyrc`
-client = Ey::Core::Client.new(token: "abcdefghijklmnrstuvwxyz123456789")
+# Token comes from '~/.eyrc'
+eyrc = YAML.load_file(File.expand_path("~/.eyrc"))
+
+client = Ey::Core::Client.new(token: eyrc['api_token'])
 
 # Account name as shown in cloud.engineyard.com
 account = client.accounts.first(name: options[:account_name])
@@ -45,11 +48,10 @@ if !deprovision_request then
   exit
 end
 
-while !deprovision_request.ready? do
-  print "."
-  deprovision_request.reload
-  sleep 20
-end
+# Terminating the instance with a timeout of 1200sec (20min) as a ballpark figure.
+# Adjust as necessary depending of the size/role of the instance.
+deprovision_request.ready!(1200)
+
 puts "*"
 puts "Instance #{instance_name} terminated successfully"
 puts "-------------------"

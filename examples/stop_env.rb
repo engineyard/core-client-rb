@@ -5,6 +5,7 @@
 
 require 'ey-core'
 require 'optparse'
+require 'yaml'
 
 options = {}
 OptionParser.new do |opts|
@@ -15,8 +16,10 @@ OptionParser.new do |opts|
 
 end.parse!
 
-# Token comes for `~/.eyrc`
-client = Ey::Core::Client.new(token: "abcdefghijklmnrstuvwxyz123456789")
+# Token comes from '~/.eyrc'
+eyrc = YAML.load_file(File.expand_path("~/.eyrc"))
+
+client = Ey::Core::Client.new(token: eyrc['api_token'])
 
 # Account name as shown in cloud.engineyard.com
 account = client.accounts.first(name: options[:account_name])
@@ -31,12 +34,10 @@ end
 
 puts "Stopping environment #{environment.name}...."
 deprovision_request = environment.deprovision
-while !deprovision_request.ready? do
-  print "."
-  deprovision_request.reload
-  sleep 20
-end
-puts "*"
+
+# Stoping the environment with a timeout of 1200sec.
+# Adjust as necessary depending of the size of the environment.
+deprovision_request.ready!(1200)
 
 puts "-------------------"
 

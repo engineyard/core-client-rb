@@ -5,6 +5,7 @@
 
 require 'ey-core'
 require 'optparse'
+require 'yaml'
 
 options = {}
 OptionParser.new do |opts|
@@ -16,8 +17,11 @@ OptionParser.new do |opts|
 
 end.parse!
 
-# Token comes for `~/.eyrc`
-client = Ey::Core::Client.new(token: "abcdefghijklmnrstuvwxyz123456789")
+# Token comes from '~/.eyrc'
+eyrc = YAML.load_file(File.expand_path("~/.eyrc"))
+
+#client = Ey::Core::Client.new(token: "abcdefghijklmnrstuvwxyz123456789")
+client = Ey::Core::Client.new(token: eyrc['api_token'])
 
 # Account name as shown in cloud.engineyard.com
 account = client.accounts.first(name: options[:account_name])
@@ -41,12 +45,10 @@ end
 env_options = {"blueprint_id": blueprint.id}
 puts "Booting environment using an specific blueprint...."
 provision_request = environment.boot(env_options)
-while !provision_request.ready? do
-  print "."
-  provision_request.reload
-  sleep 20
-end
-puts "*"
+
+# Booting the environment instance with a timeout of 1800sec (30mins).
+# Adjust as necessary depending of the size of the environment.
+provision_request.ready!(1800)
 
 puts "-------------------"
 if !provision_request.successful? then

@@ -35,7 +35,7 @@ class Ey::Core::Client::Server < Ey::Core::Model
   has_many :firewalls
   has_many :logs
 
-  attr_accessor :mnt_volume_size, :volume_size, :iops, :snapshot_id
+  attr_accessor :mnt_volume_size, :volume_size, :iops, :snapshot_id, :force
 
   def apply(type="main")
     requires :identity
@@ -67,6 +67,7 @@ class Ey::Core::Client::Server < Ey::Core::Model
         "environment" => environment.id,
         "wait_for_chef" => self.wait_for_chef,
         "snapshot"    => self.snapshot_id,
+        "force"       => self.force,
         "server"      => {
           "flavor"          => self.flavor_id,
           "iops"            => self.iops,

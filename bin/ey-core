@@ -1,4 +1,4 @@
 #!/usr/bin/env ruby
-require File.expand_path('../../lib/ey-core/cli', __FILE__)
+require File.expand_path('../../lib/ey-core/cli/main', __FILE__)
 
-Ey::Core::Cli.new(ARGV).execute!
+Ey::Core::Cli::Main.new(ARGV).execute!

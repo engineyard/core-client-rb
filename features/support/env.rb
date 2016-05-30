@@ -1,5 +1,5 @@
 require 'simplecov'
-SimpleCov.coverage_dir 'features-coverage'
+SimpleCov.coverage_dir 'coverage-features'
 SimpleCov.minimum_coverage 95
 SimpleCov.start do
   add_filter '/spec/'

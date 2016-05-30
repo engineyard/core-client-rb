@@ -1,3 +1,17 @@
+module Ey
+  module Core
+    module Cli
+      module Helpers
+        module Core
+          def core_client
+            MOCK_CLIENT
+          end
+        end
+      end
+    end
+  end
+end
+
 Before do
   Cistern.formatter = Cistern::Formatter::AwesomePrint
 
@@ -10,4 +24,6 @@ Before do
   Ey::Core::Client::Real.poll_interval = 0
 
   Ey::Core::Client::Mock.reset!
+
+  MOCK_CLIENT = create_client
 end

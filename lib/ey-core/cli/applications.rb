@@ -8,7 +8,7 @@ module Ey
         summary "Retrieve a list of Engine Yard applications that you have access to."
 
         option :account,
-          short: 'c',
+          short: 'a',
           long: 'account',
           description: 'Filter by account name or id',
           argument: 'Account'

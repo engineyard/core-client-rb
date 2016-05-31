@@ -19,8 +19,8 @@ Feature: Applications
 
   Scenario Outline: Listing applications for a specific account
     When I run `ey-core applications <Account Flag> one`
-    Then I see the name and ID for all applications in the one account
-    But I do not see applications that belong to other accounts
+    Then I see the applications in the one account
+    But I do not see applications from other accounts
 
     Examples:
       | Account Flag  |

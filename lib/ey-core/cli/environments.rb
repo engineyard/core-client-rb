@@ -27,7 +27,7 @@ module Ey
           if option(:account)
             core_account.environments.all
           else
-            current_account.map(&:environments).flatten.sort_by(&:id)
+            current_accounts.map(&:environments).flatten.sort_by(&:id)
           end
         end
       end

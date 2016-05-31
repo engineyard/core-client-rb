@@ -5,7 +5,7 @@ end
 
 Given %(ey-core is configured with my cloud token) do
   add_config_option(
-    ENV['CORE_URL'] => current_user_hash['token']
+    'https://api.engineyard.com/' => current_user_hash['token']
   )
 end
 

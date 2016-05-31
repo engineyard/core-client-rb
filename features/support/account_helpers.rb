@@ -1,4 +1,20 @@
 module AccountHelpers
+  def known_accounts
+    begin
+      recall_fact(:known_accounts)
+    rescue
+      memorize_fact(:known_accounts, [])
+    end
+  end
+
+  def first_account
+    known_accounts.first.reload
+  end
+
+  def last_account
+    known_accounts.last.reload
+  end
+
   def create_account(options={})
     creator = options[:creator] || create_client
     client  = options[:client]

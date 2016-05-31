@@ -6,7 +6,7 @@ SimpleCov.start do
   add_filter '/features/'
   add_filter '/mock/'
   add_group 'Libraries', 'lib'
-  add_group 'CLI', 'lib/ey-core/cli'
+  add_group 'CLI', 'lib/ey-core/cli/'
   add_group 'CLI Helpers', 'lib/ey-core/cli/helpers'
 end
 
@@ -31,10 +31,10 @@ Before do
   @puts = true
   @original_rubylib = ENV['RUBYLIB']
   ENV['RUBYLIB'] = LIB_DIR + File::PATH_SEPARATOR + ENV['RUBYLIB'].to_s
-  ENV['CORE_URL'] ||= "http://api-development.localdev.engineyard.com:9292"
+  #ENV['CORE_URL'] ||= "http://api-development.localdev.engineyard.com:9292"
 end
 
 After do
   ENV['RUBYLIB'] = @original_rubylib
-  ENV.delete('CORE_URL')
+  #ENV.delete('CORE_URL')
 end

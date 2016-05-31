@@ -1,11 +1,10 @@
 module CoreHelpers
   def client
-    #begin
-      #recall_fact(:client)
-    #rescue
-      #memorize_fact(:client, create_client)
-    #end
-    MOCK_CLIENT
+    begin
+      recall_fact(:client)
+    rescue
+      memorize_fact(:client, create_client)
+    end
   end
 
   def current_user

@@ -31,14 +31,14 @@ Then %(I see the name and ID for all of my applications) do
 end
 
 Then %(I see the applications in the one account) do
-  client.accounts.first(name: 'one').applications.all.each do |app|
+  account_named('one').applications.all.each do |app|
     expect(output_text).to match(/#{Regexp.escape(app.id.to_s)}\s+\|\s+#{Regexp.escape(app.name)}/)
   end
 end
 
 Then %(I do not see applications from other accounts) do
-  two = client.accounts.first(name: 'two').applications.all.to_a
-  three = client.accounts.first(name: 'three').applications.all.to_a
+  two = account_named('two').applications.all.to_a
+  three = account_named('three').applications.all.to_a
 
   (two + three).each do |app|
     expect(output_text).not_to match(/#{Regexp.escape(app.id.to_s)}\s+\|\s+#{Regexp.escape(app.name)}/)

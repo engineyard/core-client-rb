@@ -1,4 +1,8 @@
 module AccountHelpers
+  def account_named(name)
+    client.accounts.first(name: name)
+  end
+
   def known_accounts
     begin
       recall_fact(:known_accounts)

@@ -69,8 +69,8 @@ module Ey
 
         def server_filters
           filters = {}
-          filters[:account] = core_account if option(:account)
-          filters[:environment] = applicable_environment if environment_name
+          filters[:account] = core_account.id if option(:account)
+          filters[:environment] = applicable_environment.id if environment_name
           filters
         end
       end

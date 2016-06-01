@@ -1,4 +1,8 @@
 module EnvironmentHelpers
+  def environment_named(name)
+    client.environments.first(name: name)
+  end
+
   def known_environments
     begin
       recall_fact(:known_environments)

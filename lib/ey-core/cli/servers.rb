@@ -51,34 +51,18 @@ module Ey
         end
 
         def applicable_environment
-          core_client.environments.get(option(:environment)) ||
-            core_client.environments.first(name: option(:environment))
+          possible_environments.first
         end
 
         def servers
-          @servers ||= AccountFilter.filter(
-            EnvironmentFilter.filter(
-              all_pages(core_client.servers.all),
-              applicable_environment
-            ),
-            core_account
-          )
+          @servers ||= all_pages(core_client.servers, server_filters)
         end
 
-        module AccountFilter
-          def self.filter(servers, account)
-            return servers unless account
-
-            servers.select {|server| server.account == account}
-          end
-        end
-
-        module EnvironmentFilter
-          def self.filter(servers, environment)
-            return servers unless environment
-
-            servers.select {|server| server.environment == environment}
-          end
+        def server_filters
+          filters = {}
+          filters[:account] = core_account if option(:account)
+          filters[:environment] = applicable_environment if environment_name
+          filters
         end
       end
     end

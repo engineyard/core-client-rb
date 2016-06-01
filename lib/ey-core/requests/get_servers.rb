@@ -14,7 +14,7 @@ class Ey::Core::Client
     def get_servers(params={})
       extract_url_params!(params)
 
-      headers, servers_page = search_and_page(params, :servers, search_keys: %w[cluster environment provider state private_hostname public_hostname provisioned_id role])
+      headers, servers_page = search_and_page(params, :servers, search_keys: %w[account environment provider state private_hostname public_hostname provisioned_id role])
 
       response(
         :body    => {"servers" => servers_page},

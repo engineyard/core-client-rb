@@ -51,10 +51,9 @@ DESC
         end
 
         def deployments
-          @deployments ||= environment.
+          @deployments ||= api.
             deployments.
-            all.
-            select {|deployment| deployment.application == app}
+            all(environment: environment.id, application: app.id)
         end
 
         def no_deployments_found

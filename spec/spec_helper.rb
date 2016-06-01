@@ -1,6 +1,8 @@
 ENV['MOCK_CORE'] ||= 'true'
 ENV['CORE_URL'] ||= "http://api-development.localdev.engineyard.com:9292"
 
+require 'pry'
+require 'pry-nav'
 require 'tempfile'
 
 Bundler.require(:default, :test)

@@ -53,6 +53,10 @@ module Ey::Core::Mock
     def search(resources, params)
       search_params = Cistern::Hash.stringify_keys(params)
 
+      search_params.select { |k,v| v.respond_to?(:id) }.each do |k,v|
+        search_params[k] = v.id
+      end
+
       resources.select do |id, attrs|
         search_params.all? do |term, condition|
           if condition.kind_of? Array

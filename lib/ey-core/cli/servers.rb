@@ -40,12 +40,21 @@ module Ey
           end
         end
 
+        def environments_api
+          core_client.environments
+        end
+
         def possible_environments
           return @possible_environments if @possible_environments
 
-          @possible_environments = [core_client.environments.get(environment_name)].compact
+          @possible_environments = [environments_api.get(environment_name)].compact
 
-          @possible_environments = all_pages(core_client.environments.all, name: environment_name).to_a if @possible_environments.empty?
+          if @possible_environments.empty?
+            @possible_environments = all_pages(
+              environments_api.all,
+              name: environment_name
+            )
+          end
 
           @possible_environments
         end

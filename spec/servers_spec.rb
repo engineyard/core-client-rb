@@ -4,10 +4,25 @@ describe 'servers' do
   let!(:client)      { create_client }
   let!(:account)     { create_account(client: client) }
   let!(:application) { create_application(account: account) }
+
   context "with a solo environment" do
 
     let!(:environment) { create_environment(account: account, application: application, name: Faker::Name.first_name) }
     let!(:server)      { environment.servers.first }
+
+    context "with a second account" do
+      let(:account2) { create_account(client: client) }
+      let(:app2)     { create_application(account: account2) }
+
+      context "with a solo env" do
+        let!(:environment2) { create_environment(account: account2, application: application, name: Faker::Name.first_name) }
+        let!(:server2) { environment2.servers.first }
+
+        it "filters servers by account" do
+          expect(client.servers.all(account: account2).map(&:id)).to contain_exactly(server2.id)
+        end
+      end
+    end
 
     it "has an association with the environment" do
       expect(server.environment).to eq(environment)

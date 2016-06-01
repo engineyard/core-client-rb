@@ -1,0 +1,35 @@
+module Ey
+  module Core
+    module Cli
+      module Helpers
+        module LogStreaming
+
+          def stream_deploy_log(request)
+            if request.successful
+              puts "Deploy successful!".green
+              return
+            end
+            unless request.read_channel
+              puts "Unable to stream log (streaming not enabled for this deploy)".yellow
+              return
+            end
+            request.subscribe { |m| print m["message"] if m.is_a?(Hash) }
+            puts "" # fix console output from stream
+      
+            if request.successful
+              puts "Deploy successful!".green
+            else
+              abort <<-EOF
+        Deploy failed!
+        Request output:
+        #{request.message}
+              EOF
+              .red
+            end
+          end
+
+        end
+      end
+    end
+  end
+end

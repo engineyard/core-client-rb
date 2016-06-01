@@ -15,6 +15,10 @@ class Ey::Core::Client::Request < Ey::Core::Model
   attribute :type
   attribute :updated_at,        type: :time
 
+  def to_s
+    "Request:#{id}"
+  end
+
   def callback
     requires :callback_url
 
@@ -65,6 +69,8 @@ class Ey::Core::Client::Request < Ey::Core::Model
       self.connection.database_servers.get!(resource_id)
     when /database_service/
       self.connection.database_services.get!(resource_id)
+    when /deployment/
+      self.connection.deployments.get!(resource_id)
     when /firewall(?!_rule)/
       self.connection.firewalls.get!(resource_id)
     when /firewall_rule/

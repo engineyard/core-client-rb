@@ -8,7 +8,7 @@ class Ey::Core::Cli::Web::Enable < Ey::Core::Cli::Web
 
   def handle
     operator, environment = core_operator_and_environment_for(self.options)
-    application           = core_application_for(self.options)
+    application           = core_application_for(environment, self.options)
 
     puts "Disabling maintenance for #{application.name} on #{environment.name}".green
     request = environment.maintenance(application, "disable")

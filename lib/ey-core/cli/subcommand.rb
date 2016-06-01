@@ -75,8 +75,14 @@ class Ey::Core::Cli::Subcommand < Belafonte::App
   end
 
   def core_operator_and_environment_for(options={})
+    unless options[:environment]
+      raise "--environment is required (for a list of environments, try `ey environments`)"
+    end
     operator = operator(options)
     environment = operator.environments.get(options[:environment]) || operator.environments.first(name: options[:environment])
+    unless environment
+      raise "environment '#{options[:environment]}' not found (for a list of environments, try `ey environments`)"
+    end
     [operator, environment]
   end
 
@@ -89,8 +95,16 @@ class Ey::Core::Cli::Subcommand < Belafonte::App
     operator.servers.get(options[:server]) || operator.servers.first(provisioned_id: options[:server])
   end
 
-  def core_application_for(options={})
-    return nil unless options[:app]
+  def core_application_for(environment, options={})
+    candidate_apps = nil
+    unless options[:app]
+      candidate_apps = environment.applications.map(&:name)
+      if candidate_apps.size == 1
+        options[:app] = candidate_apps.first
+      else
+        raise "--app is required (Candidate apps on environment #{environment.name}: #{candidate_apps.join(', ')})"
+      end
+    end
 
     app = begin
             Integer(options[:app])
@@ -98,17 +112,52 @@ class Ey::Core::Cli::Subcommand < Belafonte::App
             options[:app]
           end
 
-    actor = options[:environment].is_a?(Ey::Core::Client::Environment) ? options[:environment].account : operator(options)
-
     if app.is_a?(Integer)
-      actor.applications.get(app)
+      environment.applications.get(app)
     else
-      applications = actor.applications.all(name: app)
+      applications = environment.applications.all(name: app)
       if applications.count == 1
         applications.first
       else
-        raise Ey::Core::Cli::AmbiguousSearch.new("Found multiple applications that matched that search.  Please be more specific by specifying the account, environment, and application name.")
+        error_msg = [
+          "Found multiple applications that matched that search.",
+          "Please be more specific by specifying the account, environment, and application name.",
+          "Matching applications: #{applications.map(&:name)}.",
+        ]
+        if candidate_apps
+          error_msg << "applications on this environment: #{candidate_apps}"
+        end
+        raise Ey::Core::Cli::AmbiguousSearch.new(error_msg.join(" "))
       end
     end
   end
+
+  def run_handle
+    super
+  rescue Ey::Core::Response::Error => e
+    if ENV["DEBUG"]
+      puts e.inspect
+      puts e.backtrace
+    end
+    handle_core_error(e)
+  rescue => e
+    if ENV["DEBUG"]
+      puts e.inspect
+      puts e.backtrace
+    end
+    raise e
+  end
+
+  #TODO: a lot more errors that would could handle with nice messages, eventually this should probably be it's own class
+  def handle_core_error(e)
+    stderr.puts "Error: #{e.error_type}".red
+    (e.response.body["errors"] || [e.message]).each do |message|
+      stderr.puts Wrapomatic.wrap(message, indents: 1)
+    end
+    if e.is_a?(Ey::Core::Response::Unauthorized)
+      stderr.puts "Check the contents of ~/.ey-core vs https://cloud.engineyard.com/cli"
+    end
+    raise SystemExit.new(255)
+  end
+
 end

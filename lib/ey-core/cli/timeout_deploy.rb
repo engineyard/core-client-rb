@@ -18,7 +18,7 @@ class Ey::Core::Cli::TimeoutDeploy < Ey::Core::Cli::Subcommand
 
   def handle
     operator, environment = core_operator_and_environment_for(self.options)
-    app                   = core_application_for(self.options)
+    app                   = core_application_for(environment, self.options)
     deployment            = core_client.deployments.first(environment_id: environment.id, application_id: app.id)
 
     puts "Timing out the most recent deployment (deploy started at: #{deployment.started_at})".green

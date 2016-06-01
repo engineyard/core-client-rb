@@ -45,7 +45,7 @@ module Ey
 
           @possible_environments = [core_client.environments.get(environment_name)].compact
 
-          @possible_environments = core_client.environments.all(name: environment_name).to_a if @possible_environments.empty?
+          @possible_environments = all_pages(core_client.environments.all, name: environment_name).to_a if @possible_environments.empty?
 
           @possible_environments
         end
@@ -58,7 +58,7 @@ module Ey
         def servers
           @servers ||= AccountFilter.filter(
             EnvironmentFilter.filter(
-              core_client.servers.all,
+              all_pages(core_client.servers.all),
               applicable_environment
             ),
             core_account

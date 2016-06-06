@@ -7,39 +7,57 @@ module Ey
         title "status"
         summary "Show the deployment status of the app"
         description <<-DESC
-Show the current status of the most recent deployment of the specifed application and environment
+Given an environment name and an application name, show the status of the most recent deployment of that application on the environment in question.
+
+Optionally, one may also specify the account to use in the case that one has several accounts with identical environment/application names.
+
+If an account is specified, the deployment in question will come from the environment and application within that account. Otherwise, we use the first account available that matches for both the environment and the application.
 DESC
 
-        option :environment,
-          short: "e",
-          long: "environment",
-          description: "Name or id of the environment to deploy to.",
-          argument: "Environment"
-
         option :account,
-          short: 'c',
+          short: 'a',
           long: 'account',
-          description: 'Name or ID of the account that the environment resides in.  If no account is specified, the app will deploy to the first environment that meets the criteria, in the accounts you have access to.',
+          description: 'Name or ID of the account to query',
           argument: 'Account name or id'
 
-        option :app,
-          short: "a",
-          long: "app",
-          description: "Application name or ID to deploy.  If :account is not specified, this will be the first app that matches the criteria in the accounts you have access to.",
-          argument: "app"
+        arg :environment
+        arg :app
 
         def handle
-          operator, environment = core_operator_and_environment_for(self.options)
-          deployments = core_client.
-            deployments.
-            all(environment_id: environment.id, application_id: app.id)
+          deployment = deployments.first
 
-          ap deployments.first
+          ap deployment ? deployment : no_deployments_found
         end
 
         private
+        def app_name
+          arg(:app).first
+        end
+
         def app
-          core_application_for(options)
+          api.applications.first(name: app_name)
+        end
+
+        def environment_name
+          arg(:environment).first
+        end
+
+        def environment
+          @environment ||= api.environments.first(name: environment_name)
+        end
+
+        def api
+          @api ||= self.operator(options)
+        end
+
+        def deployments
+          @deployments ||= api.
+            deployments.
+            all(environment: environment.id, application: app.id)
+        end
+
+        def no_deployments_found
+          "We couldn't find a deployment matching the criteria you provided."
         end
       end
     end

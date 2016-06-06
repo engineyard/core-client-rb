@@ -115,6 +115,21 @@ module Ey
             {}
           end
 
+          def all_pages(resource, params={})
+            params.delete(:per_page)
+            per_page = 100
+            results = []
+            page = 1
+
+            while resources = resource.all({page: page, per_page: per_page}.merge(params))
+              results.concat(resources)
+              break if resources.size < per_page
+              page += 1
+            end
+
+            results
+          end
+
           def self.included(base)
             base.extend(ClassMethods)
           end

@@ -12,16 +12,10 @@ module Ey
           summary "Apply changes to an environment"
 
           option :account,
-            short: "c",
+            short: "a",
             long: "account",
             description: "Name or id of account",
             argument: "account"
-
-          option :environment,
-            short: "e",
-            long: "environment",
-            description: "Name or id of environment",
-            argument: "environment"
 
           switch :main,
             short: "m",
@@ -29,7 +23,7 @@ module Ey
             description: "Apply main recipes only"
 
           switch :custom,
-            short: "u",
+            short: "c",
             long: "custom",
             description: "Apply custom recipes only"
 
@@ -43,26 +37,57 @@ module Ey
             long: "full",
             description: "Run main and custom chef"
 
+          arg :environment
+
           def handle
             validate_run_type_flags
+            abort_on_ambiguous_environment
 
-            operator, environment = core_operator_and_environment_for(options)
-            raise "Unable to find matching environment" unless environment
-
-            run_chef(run_type, environment)
+            run_chef(run_type, applicable_environment)
 
             if switch_active?(:full)
-              run_chef("custom", environment)
+              run_chef("custom", applicable_environment)
             end
           end
 
           private
           def validate_run_type_flags
             if active_run_type_flags.length > 1
-              kernel.abort(
+              abort(
                 'Only one of --main, --custom, --quick, and --full may be specified.'
               )
             end
+          end
+
+          def abort_on_ambiguous_environment
+            abort "The criteria you've provided matches multiple environments. Please refine further with an account." if possible_environments.length > 1
+          end
+
+          def environment_name
+            arg(:environment).first
+          end
+
+          def environments_api
+            operator(options).environments
+          end
+
+          def possible_environments
+            return @possible_environments if @possible_environments
+
+            @possible_environments = [environments_api.get(environment_name)].compact
+
+            if @possible_environments.empty?
+              @possible_environments = all_pages(
+                environments_api.all,
+                name: environment_name
+              )
+            end
+
+            @possible_environments
+          end
+
+          def applicable_environment
+            possible_environments.first
           end
 
           def run_type

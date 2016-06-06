@@ -8,7 +8,7 @@ module Ey
         summary "Retrieve a list of Engine Yard environments that you have access to."
 
         option :account,
-          short: 'c',
+          short: 'a',
           long: 'account',
           description: 'Filter by account name or id',
           argument: 'Account'
@@ -27,7 +27,7 @@ module Ey
           if option(:account)
             core_account.environments.all
           else
-            current_account.map(&:environments).flatten.sort_by(&:id)
+            current_accounts.map(&:environments).flatten.sort_by(&:id)
           end
         end
       end

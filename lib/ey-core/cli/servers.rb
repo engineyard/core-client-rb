@@ -20,20 +20,58 @@ module Ey
           argument: "environment"
 
         def handle
-          puts TablePrint::Printer.
+          abort_on_ambiguous_environment
+
+          puts servers.empty? ?
+            "No servers were found that match your criteria." :
+            TablePrint::Printer.
             new(servers, [{id: {width: 10}}, :role, :provisioned_id]).
             table_print
         end
 
         private
-        def servers
-          if option(:account)
-            core_client.servers.all(account: core_account)
-          elsif environment = option(:environment)
-            (core_client.environments.get(environment) || core_client.environments.first(name: environment)).servers.all
-          else
-            core_client.servers.all
+        def environment_name
+          option(:environment)
+        end
+
+        def abort_on_ambiguous_environment
+          if environment_name
+            abort "The criteria you've provided matches multiple environments. Please refine further with an account." if possible_environments.length > 1
           end
+        end
+
+        def environments_api
+          core_client.environments
+        end
+
+        def possible_environments
+          return @possible_environments if @possible_environments
+
+          @possible_environments = [environments_api.get(environment_name)].compact
+
+          if @possible_environments.empty?
+            @possible_environments = all_pages(
+              environments_api.all,
+              name: environment_name
+            )
+          end
+
+          @possible_environments
+        end
+
+        def applicable_environment
+          possible_environments.first
+        end
+
+        def servers
+          @servers ||= all_pages(core_client.servers, server_filters)
+        end
+
+        def server_filters
+          filters = {}
+          filters[:account] = core_account.id if option(:account)
+          filters[:environment] = applicable_environment.id if environment_name
+          filters
         end
       end
     end

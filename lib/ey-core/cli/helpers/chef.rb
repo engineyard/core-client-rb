@@ -7,7 +7,9 @@ module Ey
         module Chef
           def run_chef(type, environment)
             request = environment.apply(type)
-            puts "Started #{type} chef run".green
+
+            puts "#{run_msg(type)} #{env_msg(environment)}"
+
             request.wait_for { |r| r.ready? }
             if request.successful
               puts "#{type.capitalize} chef run completed".green
@@ -15,6 +17,14 @@ module Ey
               puts "#{type.capitalize} chef run failed".red
               ap request
             end
+          end
+
+          def run_msg(type)
+            "Started #{type} chef run".green
+          end
+
+          def env_msg(environment)
+            "(account: #{environment.account.name}, environment: #{environment.name})".yellow
           end
 
           def upload_recipes(environment, path="cookbooks/")

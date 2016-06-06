@@ -7,8 +7,7 @@ Feature: Recipes Apply
     Given I'm an Engine Yard user
     And ey-core is configured with my cloud token
     And I have an account named ACME Inc
-    And ACME Inc has an application called anvil_drop
-    And anvil_drop has the following environments:
+    And ACME Inc has the following environments:
       | Environment |
       | coyote      |
       | roadrunner  |
@@ -80,8 +79,7 @@ Feature: Recipes Apply
 
   Scenario Outline: Applying changes to an environment on a specific account
     Given I have an account named Wile E Enterprises
-    And Wile E Enterprises has an application called painted_tunnel
-    And painted_tunnel has the following environments:
+    And Wile E Enterprises has the following environments:
       | Environment |
       | coyote      |
       | roadrunner  |

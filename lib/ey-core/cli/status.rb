@@ -20,11 +20,19 @@ class Ey::Core::Cli::Status < Ey::Core::Cli::Subcommand
     app                   = core_application_for(environment, self.options)
     deploy                = environment.latest_deploy(app)
 
-    ap deploy
-    ap deploy.request
-
-    if switch_active?(:tail)
-      stream_deploy_log(deploy.request)
+    puts environment.release_label
+    puts "#{environment.servers.size} servers"
+    environment.servers.each do |s|
+      puts [s.provisioned_id, s.role, s.state].join(" ")
+    end
+    if deploy
+      ap deploy
+      ap deploy.request
+      if switch_active?(:tail)
+        stream_deploy_log(deploy.request)
+      end
+    else
+      puts "Never Deployed"
     end
   end
 end

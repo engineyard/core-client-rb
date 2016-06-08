@@ -20,10 +20,6 @@ class Ey::Core::Client::Deployment < Ey::Core::Model
   has_one :application
   has_one :user
 
-  def to_s
-    "Deployment:#{id}"
-  end
-
   def request
     self.connection.requests.get(self.request_url.split("/").last)
   end

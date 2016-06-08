@@ -15,10 +15,6 @@ class Ey::Core::Client::Request < Ey::Core::Model
   attribute :type
   attribute :updated_at,        type: :time
 
-  def to_s
-    "Request:#{id}"
-  end
-
   def callback
     requires :callback_url
 

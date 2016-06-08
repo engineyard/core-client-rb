@@ -30,17 +30,17 @@ module Ey::Core::Subscribable
       end
 
       deferred.callback do
-        block.call({"meta" => true, "created_at" => Time.now,"message" => "successfully subscribed"})
+        block.call({"meta" => true, "created_at" => Time.now,"message" => "successfully connected to log streaming service\n"})
       end
 
       deferred.errback do |error|
-        block.call({"meta" => true, "created_at" => Time.now, "message" => "subscription failed: #{error.inspect}"})
+        block.call({"meta" => true, "created_at" => Time.now, "message" => "failed to stream output: #{error.inspect}\n"})
         EM.stop_event_loop
       end
 
       EventMachine::PeriodicTimer.new(5) do
         if resource.reload.ready?
-          block.call({"meta" => true, "created_at" => Time.now, "message" => "#{resource} is finished"})
+          block.call({"meta" => true, "created_at" => Time.now, "message" => "#{resource} finished"})
           EM.stop_event_loop
         end
       end

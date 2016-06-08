@@ -31,6 +31,11 @@ class Ey::Core::Client::Environment < Ey::Core::Model
 
   attr_accessor :application_id
 
+  def latest_deploy(app)
+    deployments = connection.deployments.all(environment_id: self.id, application_id: app.id)
+    deployments.first
+  end
+
   # @param application [Ey::Core::Client::Application]
   # @option opts [Ey::Core::Client::ApplicationArchive] :archive
   def deploy(application, opts={})

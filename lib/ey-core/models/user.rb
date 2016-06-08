@@ -9,6 +9,7 @@ class Ey::Core::Client::User < Ey::Core::Model
   attribute :deleted_at
 
   has_many :accounts
+  has_many :environments
   has_many :keypairs
   has_many :tokens
 
@@ -33,4 +34,5 @@ class Ey::Core::Client::User < Ey::Core::Model
   def destroy!
     self.connection.destroy_user("id" => self.id) && true
   end
+
 end

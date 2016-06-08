@@ -7,6 +7,11 @@ class Ey::Core::Model < Cistern::Model
     end
   end
 
+  def to_s
+    shortname = self.class.name.split("::").last
+    "#{shortname}:#{id}"
+  end
+
   def self.range_parser(v)
     case v
     when Range then

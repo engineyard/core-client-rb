@@ -65,6 +65,8 @@ class Ey::Core::Client::Request < Ey::Core::Model
       self.connection.database_servers.get!(resource_id)
     when /database_service/
       self.connection.database_services.get!(resource_id)
+    when /deployment/
+      self.connection.deployments.get!(resource_id)
     when /firewall(?!_rule)/
       self.connection.firewalls.get!(resource_id)
     when /firewall_rule/

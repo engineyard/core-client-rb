@@ -13,6 +13,10 @@ class Ey::Core::Response
         }.inspect
       )
     end
+
+    def error_type
+      self.class.name.split(":").last
+    end
   end
 
   BadRequest        = Class.new(Error)

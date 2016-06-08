@@ -42,6 +42,7 @@ DESC
 
         def handle
           operator, environment = core_operator_and_environment_for(self.options)
+          app                   = core_application_for(environment, options)
           deployment = core_client.
             deployments.
             first(environment_id: environment.id, application_id: app.id)
@@ -50,11 +51,6 @@ DESC
 
           deployment.timeout(option(:message))
           ap deployment
-        end
-
-        private
-        def app
-          core_application_for(options)
         end
       end
     end

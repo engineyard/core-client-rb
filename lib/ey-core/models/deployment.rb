@@ -11,11 +11,18 @@ class Ey::Core::Client::Deployment < Ey::Core::Model
   attribute :resolved_ref
   attribute :started_at,     type: :time
   attribute :successful,     type: :boolean
+  attribute :verbose
+  attribute :streaming
+  attribute :request_url, aliases: :request
 
   has_one :account
   has_one :environment
   has_one :application
   has_one :user
+
+  def request
+    self.request_url && self.connection.requests.get(self.request_url.split("/").last)
+  end
 
   def timeout(message=nil)
     merge_attributes(self.connection.timeout_deployment("id" => self.id, "message" => message).body["deployment"])

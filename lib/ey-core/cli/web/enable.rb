@@ -28,6 +28,7 @@ module Ey
 
           def handle
             operator, environment = core_operator_and_environment_for(self.options)
+            application           = core_application_for(environment, options)
             puts "Disabling maintenance for #{application.name} on #{environment.name}".green
             request = environment.maintenance(application, "disable")
             request.wait_for { |r| r.ready? }
@@ -37,11 +38,6 @@ module Ey
               puts "Disabling maintenance mode was not successful".red
               ap request
             end
-          end
-
-          private
-          def application
-            core_application_for(options)
           end
         end
       end

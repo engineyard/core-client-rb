@@ -1,9 +1,11 @@
 require 'ey-core/cli/subcommand'
+require 'ey-core/cli/helpers/stream_printer'
 
 module Ey
   module Core
     module Cli
       class Environments < Subcommand
+        include Ey::Core::Cli::Helpers::StreamPrinter
         title "environments"
         summary "Retrieve a list of Engine Yard environments that you have access to."
 
@@ -14,22 +16,23 @@ module Ey
           argument: 'Account'
 
         def handle
-          table_data = TablePrint::Printer.new(
-            environments,
-            [{id: {width: 10}}, :name]
-          )
-
-          puts table_data.table_print
-        end
-
-        private
-        def environments
           if option(:account)
-            core_account.environments.all
+            stream_print("ID" => 10, "Name" => 50) do |printer|
+              core_account.environments.each_entry do |env|
+                printer.print(env.id, env.name)
+              end
+            end
           else
-            current_account.map(&:environments).flatten.sort_by(&:id)
+            stream_print("ID" => 10, "Name" => 50, "Account" => 50) do |printer|
+              core_accounts.each_entry do |account|
+                account.environments.each_entry do |env|
+                  printer.print(env.id, env.name, account.name)
+                end
+              end
+            end
           end
         end
+
       end
     end
   end

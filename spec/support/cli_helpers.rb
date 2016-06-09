@@ -21,7 +21,7 @@ def set_up_cli
       and_return([client, environment])
 
     allow_any_instance_of(described_class).
-      to receive(:current_accounts).
+      to receive(:core_accounts).
       and_return([account])
   end
 end

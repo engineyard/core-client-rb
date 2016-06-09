@@ -28,7 +28,7 @@ module Ey
 
           def handle
             operator, environment = core_operator_and_environment_for(self.options)
-            application = core_application_for(self.options)
+            application           = core_application_for(environment, self.options)
 
             puts "Enabling maintenance page for #{application.name} on #{environment.name}".green
 

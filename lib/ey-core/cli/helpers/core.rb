@@ -33,18 +33,36 @@ module Ey
             retry
           end
 
-          def core_account
-            @core_account ||= core_client.accounts.get(options[:account]) ||
-              core_client.users.current.accounts.first(name: options[:account])
-          end
-
           def operator(options)
-            options[:account] ? core_account : core_client
+            if options[:account]
+              core_account
+            elsif ENV["STAFF"]
+              core_client
+            else
+              core_client.users.current
+            end
           end
 
           def core_operator_and_environment_for(options={})
+            unless options[:environment]
+              raise "--environment is required (for a list of environments, try `ey environments`)"
+            end
             operator = operator(options)
-            environment = operator.environments.get(options[:environment]) || operator.environments.first(name: options[:environment])
+            environment = nil
+            if options[:environment].to_i.to_s == options[:environment]
+              environment = operator.environments.get(options[:environment])
+            end
+            unless environment
+              candidate_envs = operator.environments.all(name: options[:environment])
+              if candidate_envs.size > 1
+                raise "Multiple matching environments found named '#{options[:environment]}', please specify --account"
+              else
+                environment = candidate_envs.first
+              end
+            end
+            unless environment
+              raise "environment '#{options[:environment]}' not found (for a list of environments, try `ey environments`)"
+            end
             [operator, environment]
           end
 
@@ -57,8 +75,16 @@ module Ey
             operator.servers.get(options[:server]) || operator.servers.first(provisioned_id: options[:server])
           end
 
-          def core_application_for(options={})
-            return nil unless options[:app]
+          def core_application_for(environment, options={})
+            candidate_apps = nil
+            unless options[:app]
+              candidate_apps = environment.applications.map(&:name)
+              if candidate_apps.size == 1
+                options[:app] = candidate_apps.first
+              else
+                raise "--app is required (Candidate apps on environment #{environment.name}: #{candidate_apps.join(', ')})"
+              end
+            end
 
             app = begin
                     Integer(options[:app])
@@ -66,16 +92,22 @@ module Ey
                     options[:app]
                   end
 
-            actor = options[:environment].is_a?(Ey::Core::Client::Environment) ? options[:environment].account : operator(options)
-
             if app.is_a?(Integer)
-              actor.applications.get(app)
+              environment.applications.get(app)
             else
-              applications = actor.applications.all(name: app)
+              applications = environment.applications.all(name: app)
               if applications.count == 1
                 applications.first
               else
-                raise Ey::Core::Cli::AmbiguousSearch.new("Found multiple applications that matched that search.  Please be more specific by specifying the account, environment, and application name.")
+                error_msg = [
+                  "Found multiple applications that matched that search.",
+                  "Please be more specific by specifying the account, environment, and application name.",
+                  "Matching applications: #{applications.map(&:name)}.",
+                ]
+                if candidate_apps
+                  error_msg << "applications on this environment: #{candidate_apps}"
+                end
+                raise Ey::Core::Cli::AmbiguousSearch.new(error_msg.join(" "))
               end
             end
           end
@@ -85,7 +117,13 @@ module Ey
           end
 
           def core_client
-            @core_client ||= Ey::Core::Client.new(url: core_url, config_file: self.class.core_file)
+            @core_client ||= begin
+              opts = {url: core_url, config_file: self.class.core_file}
+              if ENV["DEBUG"]
+                opts[:logger] = ::Logger.new(STDOUT)
+              end
+              Ey::Core::Client.new(opts)
+            end
           rescue RuntimeError => e
             if legacy_token = e.message.match(/missing token/i) && eyrc_yaml["api_token"]
               puts "Found legacy .eyrc token.  Migrating to core file".green
@@ -98,8 +136,40 @@ module Ey
             end
           end
 
-          def current_accounts
-            core_client.users.current.accounts
+          def core_account
+            @_core_account ||= begin
+              if options[:account]
+                found = core_client.accounts.get(options[:account]) ||
+                        core_client.users.current.accounts.first(name: options[:account])
+                if ENV["STAFF"]
+                  found ||= core_client.accounts.first(name: options[:account])
+                end
+                unless found
+                  account_not_found_error_message = "Couldn't find account '#{options[:account]}'"
+                  if core_client.users.current.staff && !ENV["STAFF"]
+                    account_not_found_error_message += " (set environment variable STAFF=1 to search all accounts)"
+                  end
+                  raise account_not_found_error_message
+                end
+                found
+              else
+                if core_accounts.size == 1
+                  core_accounts.first
+                else
+                  raise "Please specify --account (options: #{core_accounts.map(&:name).join(', ')})"
+                end
+              end
+            end
+          end
+
+          def core_accounts
+            @_core_accounts ||= begin
+              if ENV["STAFF"]
+                core_client.accounts
+              else
+                core_client.users.current.accounts
+              end
+            end
           end
 
           def write_core_yaml(token=nil)

@@ -1,9 +1,11 @@
 require 'ey-core/cli/subcommand'
+require 'ey-core/cli/helpers/log_streaming'
 
 module Ey
   module Core
     module Cli
       class Deploy < Subcommand
+        include Ey::Core::Cli::Helpers::LogStreaming
         title "deploy"
         summary "Deploy your application"
 
@@ -37,9 +39,14 @@ module Ey
           description: "Application name or ID to deploy.  If :account is not specified, this will be the first app that matches the criteria in the accounts you have access to.",
           argument: "app"
 
-        switch :stream,
-          long: "stream",
-          description: "Stream deploy output to this console."
+        switch :no_wait,
+          long: "no-wait",
+          description: "Don't wait for deploy to finish, exit after deploy is started"
+
+        switch :verbose,
+          short: "v",
+          long: "verbose",
+          description: "Deploy with verbose output"
 
         switch :verbose,
           short: "v",
@@ -51,10 +58,6 @@ module Ey
           description: "Skip migration."
 
         def handle
-          %w(environment app).each {|option|
-            raise "--#{option} is required" unless options[option.to_sym]
-          }
-
           operator, environment = core_operator_and_environment_for(self.options)
           if operator.is_a?(Ey::Core::Client::Account)
             abort <<-EOF
@@ -73,34 +76,45 @@ EOF
             self.options.merge!(environment: environment)
           end
 
-          app = core_application_for(self.options)
+          app = core_application_for(environment, self.options)
 
-          deploy_options = {}
-          deploy_options.merge!(ref: option(:ref)) if option(:ref)
-          deploy_options.merge!(migrate_command: option(:migrate)) if option(:migrate)
-          deploy_options.merge!(migrate_command: '') if switch_active?(:no_migrate)
+          deploy_options = {verbose: options[:verbose], cli_args: ARGV}
+          latest_deploy = nil
+          if options[:ref]
+            deploy_options.merge!(ref: option(:ref))
+          else
+            puts "--ref not provided, checking latest deploy...".yellow
+            latest_deploy ||= environment.latest_deploy(app)
+            if latest_deploy && latest_deploy.ref
+              deploy_options[:ref] = latest_deploy.ref
+            else
+              raise "--ref is required (HEAD is the typical choice)"
+            end
+          end
+          if (options[:migrate] || options[:no_migrate])
+            deploy_options.merge!(migrate_command: option(:migrate)) if option(:migrate)
+            deploy_options.merge!(migrate_command: '') if switch_active?(:no_migrate)
+          else
+            puts "missing migrate option (--migrate or --no-migrate), checking latest deploy...".yellow
+            latest_deploy ||= environment.latest_deploy(app)
+            if latest_deploy
+              deploy_options.merge!(migrate_command: (latest_deploy.migrate && latest_deploy.migrate_command) || '')
+            else
+              raise "either --migrate or --no-migrate needs to be specified"
+            end
+          end
           request = environment.deploy(app, deploy_options)
 
           puts <<-EOF
 Deploy started to environment: #{environment.name} with application: #{app.name}
 Request ID: #{request.id}
 EOF
-          if switch_active?(:stream) || switch_active?(:verbose)
-            request.subscribe { |m| print m["message"] if m.is_a?(Hash) }
-            puts "" # fix console output from stream
+          ap request
+          ap request.resource
+          if switch_active?(:no_wait)
+            puts("Deploy started".green + " (use status command with --tail to view output)")
           else
-            request.wait_for { |r| r.ready? } # dont raise from ready!
-          end
-
-          if request.successful
-            puts "Deploy successful!".green
-          else
-            abort <<-EOF
-Deploy failed!
-Request output:
-#{request.message}
-EOF
-            .red
+            stream_deploy_log(request)
           end
         end
       end

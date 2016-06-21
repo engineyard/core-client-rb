@@ -33,8 +33,15 @@ class Ey::Core::Client
                            when "utils"         then "util"
                            end
           blueprint_data.each_with_index do |server_data,index|
-            role = "app_master" if type == 'app_instances' && index == 0
-            server = server_hash(role: role, environment: environment, flavor: server_data["flavor"]["id"], name: server_data["name"])
+            role_to_use = (type == 'app_instances' && index == 0) ? "app_master" : role
+            server = server_hash(role: role_to_use, environment: environment, flavor: server_data["flavor"]["id"], name: server_data["name"])
+            if role_to_use == "app_master"
+              if ip_id = params["cluster_configuration"]["ip_id"]
+                if find(:addresses, ip_id)
+                  server[:address] = url_for("/addresses/#{ip_id}")
+                end
+              end
+            end
             create_volume(server: server, size: server_data["volume_size"], iops: server_data["volume_iops"])
             servers[server["id"]] = server
           end

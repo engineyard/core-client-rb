@@ -30,5 +30,18 @@ describe 'as a user' do
         new_environment.boot("blueprint_id" => blueprint.id)
       }.to change { new_environment.servers.count }.to(5)
     end
+
+    it "boots an environment from a blueprint with an IP Address" do
+      address = client.addresses.create!(provider: provider, location: "us-west-2").resource!
+      new_environment = create_environment(account: account, app: app, environment: {name: SecureRandom.hex(5)}, boot: false)
+
+      expect {
+        new_environment.boot("blueprint_id" => blueprint.id, "ip_id" => address.id)
+      }.to change { new_environment.servers.count }.to(5)
+
+      app_master = new_environment.servers.detect{|s| s.role == "app_master"}
+      expect(app_master.address).to eq address
+    end
+
   end
 end

@@ -130,6 +130,9 @@ class Ey::Core::Client::Environment < Ey::Core::Model
           "blueprint_id" => options["blueprint_id"]
         }
       }
+      if ip_id = options["ip_id"]
+        params["cluster_configuration"]["ip_id"] = ip_id
+      end
 
       self.connection.requests.new(self.connection.boot_environment(params.merge("id" => self.id)).body["request"])
     else

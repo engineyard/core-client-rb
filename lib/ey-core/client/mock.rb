@@ -108,6 +108,7 @@ class Ey::Core::Client::Mock
                {
                  :account_referrals           => {},
                  :accounts                    => {},
+                 :account_trials              => {},
                  :addons                      => {},
                  :addresses                   => {},
                  :agents                      => {},
@@ -203,6 +204,14 @@ class Ey::Core::Client::Mock
         @current_user ||= begin
                             _,found = self.data[:users].detect{|k,v| v["token"] == options[:token]}
                             found
+                          end
+
+        @current_user ||= begin
+                            _,token = self.data[:tokens].detect{|k,v| v["auth_id"] == options[:token]}
+                            if token
+                              user_id = token["on_behalf_of"].split("/").last
+                              self.data[:users][user_id]
+                            end
                           end
 
         # FIXME(rs) get rid of this and the implicit Josh Lane creation entirely

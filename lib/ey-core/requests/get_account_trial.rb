@@ -14,13 +14,14 @@ class Ey::Core::Client
 
       find(:accounts, account_id)
 
-      resource = {
+      resource = self.data[:account_trials][account_id]
+      resource ||= {
         "id"         => Cistern::Mock.random_numbers(4),
         "duration"   => 500,
         "used"       => 30,
         "created_at" => Time.now.to_s,
-        "account"    => url_for("/accounts/#{account_id}")
       }
+      resource["account"] = url_for("/accounts/#{account_id}")
 
       response(
         :body   => {"account_trial" => resource},

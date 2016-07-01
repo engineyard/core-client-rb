@@ -207,6 +207,9 @@ class Ey::Core::Client::Environment < Ey::Core::Model
           "name"                      => self.name,
           "application_id"            => self.application_id,
           "region"                    => self.region,
+          "stack_name"                => self.stack_name,
+          "database_stack"            => self.database_stack,
+          "release_label"             => self.release_label,
         },
       }
 

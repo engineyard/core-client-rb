@@ -3,6 +3,8 @@ source 'https://rubygems.org'
 # Specify your gem's dependencies in ey-core.gemspec
 gemspec
 
+gem "rack", "<= 2.0"
+
 group :doc do
   gem 'yard'
   gem 'redcarpet'

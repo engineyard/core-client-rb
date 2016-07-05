@@ -210,6 +210,7 @@ class Ey::Core::Client::Environment < Ey::Core::Model
           "stack_name"                => self.stack_name,
           "database_stack"            => self.database_stack,
           "release_label"             => self.release_label,
+          "language"                  => self.language,
         },
       }
 

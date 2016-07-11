@@ -37,7 +37,6 @@ module Ey
           argument: "'command with args'"
 
         option :shell,
-          short: 's',
           long: "shell",
           description: "Run command in a shell other than bash",
           argument: "shell"
@@ -110,7 +109,14 @@ module Ey
             if option(:server)
               servers += [core_server_for(server: option[:server], operator: environment)]
             else
-              servers += (environment.servers.all(role: "app_master") + environment.servers.all(role: "solo")).to_a
+              servers += Ey::Core::Cli::Helpers::ServerSieve.filter(
+                environment.servers,
+                all: switch_active?(:all),
+                app_servers: switch_active?(:app_servers),
+                db_servers: switch_active?(:db_servers),
+                db_master: switch_active?(:db_master),
+                utilities: option(:utilities)
+              )
             end
           end
 

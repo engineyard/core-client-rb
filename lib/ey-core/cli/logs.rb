@@ -35,7 +35,11 @@ DESC
           abort "Unable to find matching environment".red unless environment
 
           servers = if option(:server)
-                      [environment.servers.get(option(:server))] || environment.servers.all(provisioned_id: option(:server))
+                      if option(:server).match(/i-/)
+                        environment.servers.all(provisioned_id: option(:server))
+                      else
+                        [environment.servers.get(option(:server))].compact
+                      end
                     else
                       environment.servers.all
                     end
@@ -43,16 +47,20 @@ DESC
           abort "No servers found".red if servers.empty?
 
           servers.each do |server|
-            name = server.name ? "#{server.name} (#{server.role})" : server.role
+            name = [server.provisioned_id, server.name, server.role].compact.join(" ")
 
-            if log = server.latest_main_log
+            if main_log = server.latest_main_log
               puts "Main logs for #{name}:".green
-              puts log.contents
-            end
-
-            if log = server.latest_custom_log
-              puts "Custom logs for #{name}:".green
-              puts log.contents
+              puts main_log.contents
+              if custom_log = server.latest_custom_log
+                #only older stack versions will have custom logs at all, so to avoid showing in-accurate logs, ensure the latest custom log is created (run) chronologically after the latest main log
+                if main_log.created_at < custom_log.created_at
+                  puts "Custom logs for #{name}:".green
+                  puts custom_log.contents
+                end
+              end
+            else
+              puts "No Logs".yellow
             end
           end
         end

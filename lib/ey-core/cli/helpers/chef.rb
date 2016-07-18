@@ -14,6 +14,9 @@ module Ey
             else
               puts "#{type.capitalize} chef run failed".red
               ap request
+              if server = environment.servers.first
+                puts "For logs try `ey logs --server #{server.provisioned_id}` --environment #{environment.name}"
+              end
             end
           end
 
@@ -25,7 +28,7 @@ module Ey
             elsif recipes_path.exist?
               environment.upload_recipes(archive_directory(path))
             else
-              raise RecipesNotFound, "Recipes file not found: #{recipes_path}"
+              raise RecipesNotFound, "Recipes not found, expected to find chef recipes in: #{File.expand_path(recipes_path)}"
             end
           end
         end

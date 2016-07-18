@@ -3,7 +3,7 @@ class Ey::Core::Client::Log < Ey::Core::Model
 
   identity :id
 
-  attribute :created_at
+  attribute :created_at, type: :time
   attribute :filename
   attribute :mime_type
   attribute :download_url

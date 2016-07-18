@@ -46,11 +46,12 @@ module Ey
               upload_recipes(environment, path)
               puts "Uploading custom recipes complete".green
             rescue => e
+              puts e.message
               abort "There was a problem uploading the recipes".red
             end
 
             if switch_active?(:apply)
-              run_chef("custom", environment)
+              run_chef("main", environment)
             end
           end
         end

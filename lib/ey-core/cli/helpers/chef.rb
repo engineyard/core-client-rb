@@ -5,10 +5,23 @@ module Ey
     module Cli
       module Helpers
         module Chef
-          def run_chef(type, environment)
-            request = environment.apply(type)
+          def run_chef(type, environment, options = {})
+            no_wait = options.delete(:no_wait)
+            options[:streaming] = true unless no_wait
+            request = environment.apply(type, options)
             puts "Started #{type} chef run".green
-            request.wait_for { |r| r.ready? }
+            if no_wait
+              return
+            end
+            streamable_instance_update = nil
+            if request.read_channel
+              request.subscribe do |m|
+                print m["message"] if m.is_a?(Hash)
+              end
+              puts "" # fix console output from stream
+            else
+              request.wait_for { |r| r.ready? }
+            end
             if request.successful
               puts "#{type.capitalize} chef run completed".green
             else
@@ -28,7 +41,7 @@ module Ey
             elsif recipes_path.exist?
               environment.upload_recipes(archive_directory(path))
             else
-              raise RecipesNotFound, "Recipes not found, expected to find chef recipes in: #{File.expand_path(recipes_path)}"
+              raise RecipesNotFound, "Recipes not found, expected to find chef recipes in: #{File.expand_path(recipes_path)}, use --file to specify a different path"
             end
           end
         end

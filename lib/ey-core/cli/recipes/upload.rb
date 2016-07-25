@@ -36,6 +36,14 @@ module Ey
             long: "apply",
             description: "Apply the recipes immediately after they are uploaded"
 
+          switch :verbose,
+            long: "verbose",
+            description: "(used in conjunction with --apply) verbose chef run (include chef setup and stack traces)"
+
+          switch :no_wait,
+            long: "no-wait",
+            description: "(used in conjunction with --apply) Don't wait for apply to finish, exit after started"
+
           def handle
             operator, environment = core_operator_and_environment_for(options)
             path = option(:file) || "cookbooks/"
@@ -51,7 +59,10 @@ module Ey
             end
 
             if switch_active?(:apply)
-              run_chef("main", environment)
+              opts = {}
+              opts[:no_wait] = true if switch_active?(:no_wait)
+              opts[:verbose] = true if switch_active?(:verbose)
+              run_chef("main", environment, opts)
             end
           end
         end

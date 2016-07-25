@@ -62,7 +62,7 @@ describe Ey::Core::Cli::Recipes::Upload do
     arguments '--apply'
 
     it 'performs a custom chef run' do
-      expect(cli).to receive(:run_chef).with('main', environment)
+      expect(cli).to receive(:run_chef).with('main', environment, {})
 
       execute
     end

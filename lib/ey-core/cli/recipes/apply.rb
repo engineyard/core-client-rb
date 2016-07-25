@@ -28,11 +28,22 @@ module Ey
             long: "quick",
             description: "Quick chef run (if not specified, will run main chef run)"
 
+          switch :verbose,
+            long: "verbose",
+            description: "verbose chef run (include chef setup and stack traces)"
+
+          switch :no_wait,
+            long: "no-wait",
+            description: "Don't wait for apply to finish, exit after started"
+
           def handle
             operator, environment = core_operator_and_environment_for(options)
             raise "Unable to find matching environment" unless environment
 
-            run_chef(run_type, environment)
+            opts = {}
+            opts[:no_wait] = true if switch_active?(:no_wait)
+            opts[:verbose] = true if switch_active?(:verbose)
+            run_chef(run_type, environment, opts)
           end
 
           private

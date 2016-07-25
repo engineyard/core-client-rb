@@ -13,7 +13,7 @@ describe Ey::Core::Cli::Recipes::Apply do
 
   context 'ey-core recipes apply' do
     it 'performs a main chef run' do
-      expect(cli).to receive(:run_chef).with('main', environment)
+      expect(cli).to receive(:run_chef).with('main', environment, {})
 
       execute
       expect(kernel.exit_status).to eql(0)
@@ -24,7 +24,7 @@ describe Ey::Core::Cli::Recipes::Apply do
     arguments '--quick'
 
     it 'performs a quick chef run' do
-      expect(cli).to receive(:run_chef).with('quick', environment)
+      expect(cli).to receive(:run_chef).with('quick', environment, {})
       
       execute
       expect(kernel.exit_status).to eql(0)

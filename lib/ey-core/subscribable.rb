@@ -24,24 +24,32 @@ module Ey::Core::Subscribable
     EM.run do
       client = Faye::Client.new(url)
       client.set_header("Authorization", "Token #{token}")
+      next_ready_check = Time.now + 5
+      handle_output = Proc.new do |m|
+        next_ready_check = Time.now + 1
+        block.call(m)
+      end
 
       deferred = client.subscribe(subscription) do |message|
-        block.call(JSON.load(message))
+        handle_output.call(JSON.load(message))
       end
 
       deferred.callback do
-        block.call({"meta" => true, "created_at" => Time.now,"message" => "successfully connected to log streaming service\n"})
+        handle_output.call({"meta" => true, "created_at" => Time.now,"message" => "log output stream connection established, waiting...\n"})
       end
 
       deferred.errback do |error|
-        block.call({"meta" => true, "created_at" => Time.now, "message" => "failed to stream output: #{error.inspect}\n"})
+        handle_output.call({"meta" => true, "created_at" => Time.now, "message" => "failed to stream output: #{error.inspect}\n"})
         EM.stop_event_loop
       end
 
-      EventMachine::PeriodicTimer.new(5) do
-        if resource.reload.ready?
-          block.call({"meta" => true, "created_at" => Time.now, "message" => "#{resource} finished"})
-          EM.stop_event_loop
+      EventMachine::PeriodicTimer.new(1) do
+        if Time.now > next_ready_check
+          if resource.reload.ready?
+            handle_output.call({"meta" => true, "created_at" => Time.now, "message" => "#{resource} finished"})
+            EM.stop_event_loop
+          end
+          next_ready_check = Time.now + 5
         end
       end
     end

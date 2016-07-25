@@ -1,4 +1,5 @@
 class Ey::Core::Client::Request < Ey::Core::Model
+  extend Ey::Core::Associations
   include Ey::Core::Subscribable
 
   identity :id
@@ -14,6 +15,8 @@ class Ey::Core::Client::Request < Ey::Core::Model
   attribute :successful,        type: :boolean
   attribute :type
   attribute :updated_at,        type: :time
+
+  has_many :dependencies, model: :requests
 
   def callback
     requires :callback_url

@@ -46,8 +46,8 @@ module Ey
             raise "Unable to find matching environment" unless environment
 
             opts = {}
-            opts[:no_wait] = true if switch_active?(:no_wait)
-            opts[:verbose] = true if switch_active?(:verbose)
+            opts[:no_wait] = switch_active?(:no_wait)
+            opts[:verbose] = switch_active?(:verbose)
             opts[:watch]   = option(:watch)
             run_chef(run_type, environment, opts)
           end

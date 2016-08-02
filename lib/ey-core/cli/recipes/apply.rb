@@ -36,6 +36,11 @@ module Ey
             long: "no-wait",
             description: "Don't wait for apply to finish, exit after started"
 
+          option :watch,
+            long: "watch",
+            description: "Specify an instance amazon_id or server role to watch chef logs (defaults to app_master)",
+            argument: "instance"
+
           def handle
             operator, environment = core_operator_and_environment_for(options)
             raise "Unable to find matching environment" unless environment
@@ -43,6 +48,7 @@ module Ey
             opts = {}
             opts[:no_wait] = true if switch_active?(:no_wait)
             opts[:verbose] = true if switch_active?(:verbose)
+            opts[:watch]   = option(:watch)
             run_chef(run_type, environment, opts)
           end
 

@@ -3,8 +3,8 @@ module Ey
     module TestHelpers
       module AccountHelpers
         def create_account(options={})
-          creator = options[:creator] || create_client
-          client  = options[:client]
+          client = options[:client]
+          creator = options[:creator] || client || create_client
 
           attributes = options[:account] || {}
           attributes[:type] ||= "beta" # get around awsm billing requirements for tests
@@ -28,8 +28,8 @@ module Ey
         end
 
         def create_user(options={})
-          creator = options[:creator] || create_client
-          client  = options[:client]
+          client = options[:client]
+          creator = options[:creator] || client || create_client
 
           attributes = options[:user] || {}
           attributes[:name] ||= Faker::Name.name

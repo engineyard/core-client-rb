@@ -19,6 +19,9 @@ module Ey
           end
 
           def archive_directory(path)
+            if path.split("/").last != "cookbooks"
+              puts "WARNING: cookbooks path given '#{path}' does not end in /cookbooks, please provide the path to the cookbooks folder (not the parent folder or a specific recipe folder)".yellow
+            end
             tarfile = StringIO.new("")
             Gem::Package::TarWriter.new(tarfile) do |tar|
               Dir[File.join(path, "**/*")].each do |file|

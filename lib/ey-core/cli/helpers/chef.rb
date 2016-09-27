@@ -26,7 +26,6 @@ module Ey
               puts "#{type.capitalize} chef run completed".green
             else
               puts "#{type.capitalize} chef run failed".red
-              ap request
               if server = environment.servers.first
                 puts "For logs try `ey logs --server #{server.provisioned_id}` --environment #{environment.name}"
               end

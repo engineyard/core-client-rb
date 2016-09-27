@@ -27,7 +27,7 @@ module Ey
 
           option :file,
             short: "f",
-            long: "file",
+            long: ["file", "path"],
             description: "Path to recipes",
             argument: "path"
 

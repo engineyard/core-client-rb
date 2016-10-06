@@ -22,7 +22,7 @@ describe 'provider locations' do
     before do
     end
 
-    it "should find the provider location" do
+    it "finds the provider location" do
       location = client.provider_locations.get(provider_location.id)
 
       expect(location.id).to eq(provider_location.id)
@@ -46,7 +46,7 @@ describe 'provider locations' do
         end
       end
 
-      it "should list provider locations" do
+      it "lists provider locations" do
         locations = provider.provider_locations.all
 
         expect(locations.size).to be > 0
@@ -58,6 +58,27 @@ describe 'provider locations' do
         expect(location.location_id).to eq(provider_location.location_id)
         expect(location.limits["servers"]).to eq(provider_location.limits["servers"])
         expect(location.limits["addresses"]).to eq(provider_location.limits["addresses"])
+      end
+    end
+
+    describe '#limits=' do
+      let(:new_limits) {{servers: 25, addresses: 10}}
+
+      it 'sets new limits for the provider location' do
+        provider_location.limits = new_limits
+
+        expect(provider_location.limits).to eql(new_limits)
+      end
+
+      it 'is persisted when saved' do
+        limits = {"servers" => 20, "addresses" => 5}
+        provider_location.limits = new_limits
+
+        expect(provider.provider_locations.get(provider_location.id).limits).to eql(limits)
+
+        provider_location.save!
+
+        expect(provider.provider_locations.get(provider_location.id).limits).to eql(new_limits)
       end
     end
   end

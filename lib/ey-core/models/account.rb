@@ -5,12 +5,15 @@ class Ey::Core::Client::Account < Ey::Core::Model
 
   attribute :cancelled_at, type: :time
   attribute :created_at, type: :time
-  attribute :updated_at, type: :time
+  attribute :emergency_contact
+  attribute :fraudulent
+  attribute :legacy_id
   attribute :name
-  attribute :support_plan
-  attribute :signup_via
   attribute :plan_type
+  attribute :signup_via
+  attribute :support_plan
   attribute :type
+  attribute :updated_at, type: :time
 
   has_many :addresses
   has_many :applications

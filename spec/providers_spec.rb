@@ -6,7 +6,7 @@ describe 'providers' do
     let!(:account) { create_account(client: client) }
 
     ["azure", "aws"].each do |provider|
-      it "should have possible #{provider} locations without a provider type" do
+      it "has possible #{provider} locations without a provider type" do
         locations = client.provider.possible_locations(provider)
         expect(locations).to be_a(Array)
         expect(locations).not_to be_empty
@@ -14,8 +14,8 @@ describe 'providers' do
     end
 
     context "with an account" do
-      ["aws", "azure"].each do |type|
-        it "should create a #{type} provider" do
+      ["aws"].each do |type|
+        it "creates a #{type} provider" do
           provisioned_id = SecureRandom.hex(8)
           provider = account.providers.create!(type: type, provisioned_id: provisioned_id, credentials: {}).resource!
 
@@ -27,16 +27,16 @@ describe 'providers' do
         context "with a #{type} provider" do
           let!(:provider) { account.providers.create!(type: type, provisioned_id: SecureRandom.hex(8), credentials: {}).resource! }
 
-          it "should get an provider" do
+          it "gets an provider" do
             expect(account.providers.get(provider.id)).to eq(provider)
           end
 
-          it "should have possible provider locations" do
+          it "has possible provider locations" do
             expect(provider.possible_locations).to be_a(Array)
             expect(provider.possible_locations).not_to be_empty
           end
 
-          it "should get providers" do
+          it "gets providers" do
             another_account = create_account(client: client)
             create_provider(account: another_account)
 
@@ -46,12 +46,12 @@ describe 'providers' do
             expect(account_providers.first).to eq(provider)
           end
 
-          it "should destroy the provider" do
+          it "destroys the provider" do
             expect(provider.destroy.ready!).to be_successful
             expect(provider.reload.cancelled_at).not_to be_nil
           end
 
-          it "should discover locations for the #{type} provider", :mock_only do
+          it "discovers locations for the #{type} provider", :mock_only do
             provider.possible_locations.each do |location_id|
               provider_location = nil
               expect {
@@ -71,7 +71,7 @@ describe 'providers' do
       let!(:client_1_account_1) { client_1.accounts.create!(owner: owner, name: Faker::Name.first_name)}
       let!(:client_1_account_2) { client_1.accounts.create!(owner: owner, name: Faker::Name.first_name)}
 
-      it "should not clobber other accounts' providers" do
+      it "does not clobber other accounts' providers" do
         # this just tests that the mock behaves reasonably
         client_1_account_1.providers.create!(type: "aws").ready!
 

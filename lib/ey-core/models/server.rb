@@ -17,9 +17,11 @@ class Ey::Core::Client::Server < Ey::Core::Model
   attribute :provisioned_at,   type: :time
   attribute :provisioned_id
   attribute :public_hostname
+  attribute :public_key
   attribute :role
   attribute :ssh_port,         type: :integer
   attribute :state
+  attribute :token
   attribute :updated_at,       type: :time
   attribute :wait_for_chef,    type: :boolean
   attribute :release_label
@@ -57,6 +59,18 @@ class Ey::Core::Client::Server < Ey::Core::Model
     connection.requests.new(
       self.connection.reboot_server("id" => self.identity).body["request"]
     )
+  end
+
+  def reset_state(state)
+    params = {
+      "url"   => self.collection.url,
+      "id"    => self.id,
+      "state" => state
+    }
+
+    unless new_record?
+      merge_attributes(self.connection.reset_server_state(params).body["server"])
+    end
   end
 
   def save!

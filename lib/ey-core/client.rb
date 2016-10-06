@@ -118,6 +118,7 @@ class Ey::Core::Client < Cistern::Service
   model :user
   model :volume
 
+  request :acknowledge_alert
   request :apply_environment_updates
   request :apply_server_updates
   request :attach_address
@@ -289,11 +290,13 @@ class Ey::Core::Client < Cistern::Service
   request :reboot_server
   request :request_callback
   request :reset_password
+  request :reset_server_state
   request :restart_environment_app_servers
   request :run_cluster_application_action
   request :run_environment_application_action
   request :signup
   request :timeout_deployment
+  request :unassign_environment
   request :update_addon
   request :update_address
   request :update_alert
@@ -302,6 +305,7 @@ class Ey::Core::Client < Cistern::Service
   request :update_blueprint
   request :update_environment
   request :update_membership
+  request :update_provider_location
   request :update_server
   request :update_ssl_certificate
   request :update_untracked_server

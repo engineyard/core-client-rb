@@ -42,6 +42,12 @@ describe 'servers' do
       end
     end
 
+    it "should reset the server state" do
+      expect {
+        server.reset_state('error')
+      }.to change { server.reload.state }.from('running').to('error')
+    end
+
     it "does not destroy" do
       expect {
         server.destroy

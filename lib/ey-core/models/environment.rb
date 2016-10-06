@@ -21,6 +21,7 @@ class Ey::Core::Client::Environment < Ey::Core::Model
   has_one :account
   has_one :database_service
   has_one :firewall
+  has_one :assignee, assoc_name: :user, resource: :user
 
   has_many :costs
   has_many :keypairs
@@ -194,6 +195,11 @@ class Ey::Core::Client::Environment < Ey::Core::Model
 
       connection.requests.new(self.connection.boot_environment(params.merge("id" => self.id)).body["request"])
     end
+  end
+
+  def unassign!
+    requires :id
+    merge_attributes(self.connection.unassign_environment("id" => self.id).body["environment"])
   end
 
   def save!

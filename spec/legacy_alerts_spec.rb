@@ -18,7 +18,7 @@ describe 'as a user' do
                       acknowledged: false)
     end
 
-    it "should fetch a legacy alert" do
+    it "fetches a legacy alert" do
       a = client.legacy_alerts.get(1001)
 
       expect(a).not_to be_nil
@@ -29,7 +29,7 @@ describe 'as a user' do
       expect(a.server).to      eq(server)
     end
 
-    it "should list legacy alerts" do
+    it "lists legacy alerts" do
       legacy_alerts = client.legacy_alerts.all
       expect(legacy_alerts.size).to be(1)
 

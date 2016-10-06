@@ -32,6 +32,7 @@ class Ey::Core::Client
         "memberships" => url_for("/users/#{resource_id}/memberships"),
         "keypairs"    => url_for("/users/#{resource_id}/keypairs"),
         "tokens"      => url_for("/users/#{resource_id}/tokens"),
+        "api_token"   => SecureRandom.hex(16),
       })
 
       self.data[:tokens][token_id] = {

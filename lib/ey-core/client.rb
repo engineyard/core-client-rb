@@ -254,6 +254,7 @@ class Ey::Core::Client < Cistern::Service
   request :get_logical_databases
   request :get_logs
   request :get_membership
+  request :get_memberships
   request :get_message
   request :get_messages
   request :get_metadata

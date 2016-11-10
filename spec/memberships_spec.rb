@@ -29,6 +29,9 @@ describe "memberships" do
     membership = client.memberships.create!(account: account, role: "collaborator", user: collaborator)
 
     expect(client.memberships.get(membership.id)).to eq(membership)
+
+    expect(account.memberships.size).to eq 1
+    expect(account.memberships.first).to eq membership
   end
 
   it "should be able to accept invites", :mock_only do

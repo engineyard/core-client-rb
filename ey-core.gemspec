@@ -18,7 +18,9 @@ Gem::Specification.new do |gem|
   gem.require_paths = ["lib"]
   gem.licenses      = ["MIT"]
 
-  gem.add_dependency "addressable", "~> 2.2"
+  # The last version of addressable that works on ruby-1.9 is 2.4.0
+  gem.add_dependency "addressable", "= 2.4.0"
+
   gem.add_dependency "awesome_print"
   gem.add_dependency "belafonte"
   gem.add_dependency "cistern", "~> 0.12"
@@ -31,7 +33,7 @@ Gem::Specification.new do |gem|
   gem.add_dependency "faye"
   gem.add_dependency "highline"
   gem.add_dependency "json", "< 2.0"
-  gem.add_dependency "mime-types", "~> 2.99" #maintain ruby 1.9 compatibility
+  gem.add_dependency "mime-types", "~> 2.99.2" #maintain ruby 1.9 compatibility
   gem.add_dependency "oj"
   gem.add_dependency "oj_mimic_json"
   gem.add_dependency "pry"

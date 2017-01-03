@@ -34,6 +34,18 @@ describe 'servers' do
       expect(reboot_request.successful).to be true
     end
 
+    it "stops" do
+      request = server.stop
+      request.ready!
+      expect(request.successful).to be true
+    end
+
+    it "starts" do
+      request = server.start
+      request.ready!
+      expect(request.successful).to be true
+    end
+
     it "applies" do
       expect(server.apply.ready!).to be_successful
 

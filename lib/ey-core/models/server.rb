@@ -61,6 +61,22 @@ class Ey::Core::Client::Server < Ey::Core::Model
     )
   end
 
+  def stop
+    requires :identity
+
+    connection.requests.new(
+      self.connection.stop_server("id" => self.identity).body["request"]
+    )
+  end
+
+  def start
+    requires :identity
+
+    connection.requests.new(
+      self.connection.start_server("id" => self.identity).body["request"]
+    )
+  end
+
   def reset_state(state)
     params = {
       "url"   => self.collection.url,

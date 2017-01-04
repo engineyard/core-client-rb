@@ -289,6 +289,7 @@ class Ey::Core::Client < Cistern::Service
   request :get_users
   request :get_volumes
   request :reboot_server
+  request :reconcile_server
   request :request_callback
   request :reset_password
   request :reset_server_state

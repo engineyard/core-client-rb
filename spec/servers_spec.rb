@@ -46,6 +46,12 @@ describe 'servers' do
       expect(request.successful).to be true
     end
 
+    it "reconciles" do
+      request = server.reconcile
+      request.ready!
+      expect(request.successful).to be true
+    end
+
     it "applies" do
       expect(server.apply.ready!).to be_successful
 

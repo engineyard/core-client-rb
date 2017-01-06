@@ -63,6 +63,7 @@ class Ey::Core::Client
         "updated_at"       => Time.now.to_s,
         "volumes"          => url_for("/servers/#{resource_id}/volumes"),
         "role"             => server["role"],
+        "resource_url"     => url_for("/servers/#{resource_id}"),
       }
 
       request = {

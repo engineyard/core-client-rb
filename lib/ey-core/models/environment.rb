@@ -10,6 +10,7 @@ class Ey::Core::Client::Environment < Ey::Core::Model
   attribute :deleted_at, type: :time
   attribute :deploy_method
   attribute :framework_env
+  attribute :kubey
   attribute :language
   attribute :monitor_url
   attribute :name
@@ -204,19 +205,27 @@ class Ey::Core::Client::Environment < Ey::Core::Model
 
   def save!
     if new_record?
-      requires :application_id, :account_id, :region
+      if self.kubey
+        requires :account_id, :region
+      else
+        requires :application_id, :account_id, :region
+      end
+
+      #TODO: re-enable the commented out params below
+      #THIS BRANHC IS TOTAL HAX DO NOT MERGE!
 
       params = {
         "url"         => self.collection.url,
         "account"     => self.account_id,
         "environment" => {
           "name"                      => self.name,
-          "application_id"            => self.application_id,
+          # "application_id"            => self.application_id,
+          "kubey"                     => self.kubey,
           "region"                    => self.region,
-          "stack_name"                => self.stack_name,
-          "database_stack"            => self.database_stack,
+          # "stack_name"                => self.stack_name,
+          # "database_stack"            => self.database_stack,
           "release_label"             => self.release_label,
-          "language"                  => self.language,
+          # "language"                  => self.language,
         },
       }
 

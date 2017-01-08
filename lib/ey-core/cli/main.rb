@@ -16,6 +16,7 @@ require 'ey-core/cli/deploy'
 require 'ey-core/cli/environments'
 require 'ey-core/cli/help'
 require 'ey-core/cli/init'
+require 'ey-core/cli/kubey'
 require 'ey-core/cli/login'
 require 'ey-core/cli/logout'
 require 'ey-core/cli/logs'
@@ -47,6 +48,7 @@ module Ey
         mount Environments
         mount Help
         mount Init
+        mount Kubey
         mount Login
         mount Logout
         mount Logs

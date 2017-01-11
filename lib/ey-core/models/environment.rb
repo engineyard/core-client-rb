@@ -211,21 +211,18 @@ class Ey::Core::Client::Environment < Ey::Core::Model
         requires :application_id, :account_id, :region
       end
 
-      #TODO: re-enable the commented out params below
-      #THIS BRANHC IS TOTAL HAX DO NOT MERGE!
-
       params = {
         "url"         => self.collection.url,
         "account"     => self.account_id,
         "environment" => {
           "name"                      => self.name,
-          # "application_id"            => self.application_id,
+          "application_id"            => self.application_id,
           "kubey"                     => self.kubey,
           "region"                    => self.region,
-          # "stack_name"                => self.stack_name,
-          # "database_stack"            => self.database_stack,
+          "stack_name"                => self.stack_name,
+          "database_stack"            => self.database_stack,
           "release_label"             => self.release_label,
-          # "language"                  => self.language,
+          "language"                  => self.language,
         },
       }
 

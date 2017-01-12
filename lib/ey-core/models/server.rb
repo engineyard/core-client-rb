@@ -4,6 +4,7 @@ class Ey::Core::Client::Server < Ey::Core::Model
   identity :id, type: :integer
 
   attribute :created_at,       type: :time
+  attribute :dedicated,        type: :boolean
   attribute :deleted_at,       type: :time
   attribute :deprovisioned_at, type: :time
   attribute :devices,          type: :array
@@ -107,14 +108,15 @@ class Ey::Core::Client::Server < Ey::Core::Model
         "snapshot"    => self.snapshot_id,
         "force"       => self.force,
         "server"      => {
+          "dedicated"       => self.dedicated,
           "flavor"          => self.flavor_id,
           "iops"            => self.iops,
           "location"        => self.location || environment.region,
           "mnt_volume_size" => self.mnt_volume_size,
           "name"            => self.name,
+          "release_label"   => self.release_label,
           "role"            => self.role,
           "volume_size"     => self.volume_size,
-          "release_label"   => self.release_label,
         }
       }
       connection.requests.new(connection.create_server(server_attributes).body["request"])

@@ -123,20 +123,40 @@ module Ey
             argument: "environment"
 
           def handle
-
-            # e = environments.first(name: "kubey_a2d98015240a4fd7")
-            # requests.all(environment:
-
             environment = core_environment(kubey: true)
-            # e = environments.first(name: "kubey_a2d98015240a4fd7")
-            # ap requests.all(environment: environment.id, finished_at: nil)
-            # ap requests.all(environment: environment.id) #TODO fetch recent requests...
-
-            ap environment
-            puts "TODO"
+            puts "Environment #{environment.name} (#{environment.id})"
+            if environment.servers.empty?
+              puts "(No Servers Running)"
+            end
+            environment.servers.each do |s|
+              puts [s.provisioned_id,
+                    s.flavor_id,
+                    s.state,
+                    s.role,
+                    s.private_hostname,
+                    s.public_hostname ].join(" -- ")
+            end
           end
         end
         mount Status
+
+        class Fix < Subcommand
+          title "fix"
+          summary "Attempt to fix a Kubernetes environment (AKA re-run chef setup scripts on all instances in hopes it will 'do the right thing')"
+
+          option :environment,
+            short: "-e",
+            long: "environment",
+            description: "environment name or ID",
+            argument: "environment"
+
+          def handle
+            environment = core_environment(kubey: true)
+            environment.apply
+            puts "Re-Running chef configuration scripts on #{environment.servers.size} servers on #{environment.name} (#{environment.id}). Use status to command to poll for completion."
+          end
+        end
+        mount Fix
 
         #TODO: help command? for terminate/destroy and add/remove ? apply command for dev/support?
 

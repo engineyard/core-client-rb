@@ -115,6 +115,7 @@ class Ey::Core::Client
         "account"          => url_for("/accounts/#{resource_identity(environment["account"])}"),
         "alerts"           => url_for("/servers/#{id}/alerts"),
         "created_at"       => Time.now.to_s,
+        "dedicated"        => !!options[:dedicated],
         "deprovisioned_at" => Time.now.to_s,
         "devices"          => block_device_map,
         "enabled"          => true,

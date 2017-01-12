@@ -82,6 +82,16 @@ describe 'servers' do
       }
     end
 
+    it "adds a dedicated app server" do
+      server = client.servers.create!(
+        :environment => environment,
+        :role        => "app",
+        :flavor_id   => "m3.large",
+        :dedicated   => true,
+      ).resource!
+      expect(server.dedicated).to be_truthy
+    end
+
     it "adds an app server" do
       expect {
         client.servers.create!(

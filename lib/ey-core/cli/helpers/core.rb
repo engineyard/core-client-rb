@@ -136,6 +136,32 @@ module Ey
             end
           end
 
+          def core_environment(opts = {})
+            @_core_environment ||= begin
+              if options[:environment]
+                found = core_client.environments.all(opts).get(options[:environment]) ||
+                        core_client.users.current.environments.all(opts).first(name: options[:environment])
+                if ENV["STAFF"]
+                  found ||= core_client.environments.all(opts).first(name: options[:environment])
+                end
+                unless found
+                  error_message = "Couldn't find environment '#{options[:environment]}'"
+                  if core_client.users.current.staff && !ENV["STAFF"]
+                    error_message += " (set environment variable STAFF=1 to search all environments)"
+                  end
+                  raise error_message
+                end
+                found
+              else
+                if core_environments(opts).size == 1
+                  core_environments(opts).first
+                else
+                  raise "Please specify --environment (options: #{core_environments(opts).map(&:name).join(', ')})"
+                end
+              end
+            end
+          end
+
           def core_account
             @_core_account ||= begin
               if options[:account]
@@ -158,6 +184,17 @@ module Ey
                 else
                   raise "Please specify --account (options: #{core_accounts.map(&:name).join(', ')})"
                 end
+              end
+            end
+          end
+
+          def core_environments(opts = {})
+            @_core_environments ||= {}
+            @_core_environments[opts] ||= begin
+              if ENV["STAFF"]
+                core_client.environments.all(opts)
+              else
+                core_client.users.current.environments.all(opts)
               end
             end
           end

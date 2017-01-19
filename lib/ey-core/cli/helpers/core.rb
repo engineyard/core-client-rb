@@ -138,16 +138,18 @@ module Ey
 
           def core_environment(opts = {})
             @_core_environment ||= begin
-              if options[:environment]
-                found = core_client.environments.all(opts).get(options[:environment]) ||
-                        core_client.users.current.environments.all(opts).first(name: options[:environment])
+              argname = opts.delete(:arg_name) || :environment
+              env_arg = options[argname]
+              if env_arg
+                found = core_client.environments.all(opts).get(env_arg) ||
+                        core_client.users.current.environments.all(opts).first(name: env_arg)
                 if ENV["STAFF"]
-                  found ||= core_client.environments.all(opts).first(name: options[:environment])
+                  found ||= core_client.environments.all(opts).first(name: env_arg)
                 end
                 unless found
-                  error_message = "Couldn't find environment '#{options[:environment]}'"
+                  error_message = "Couldn't find environment '#{env_arg}'"
                   if core_client.users.current.staff && !ENV["STAFF"]
-                    error_message += " (set environment variable STAFF=1 to search all environments)"
+                    error_message += " (set environment variable STAFF=1 to search all #{argname}s)"
                   end
                   raise error_message
                 end
@@ -156,7 +158,7 @@ module Ey
                 if core_environments(opts).size == 1
                   core_environments(opts).first
                 else
-                  raise "Please specify --environment (options: #{core_environments(opts).map(&:name).join(', ')})"
+                  raise "Please specify --#{argname} (options: #{core_environments(opts).map(&:name).join(', ')})"
                 end
               end
             end

@@ -91,6 +91,7 @@ class Ey::Core::Client < Cistern::Service
   model :gem
   model :keypair
   model :keypair_deployment
+  model :kubey_cluster
   model :legacy_alert
   model :load_balancer
   model :load_balancer_node
@@ -241,6 +242,7 @@ class Ey::Core::Client < Cistern::Service
   request :get_keypair_deployment
   request :get_keypair_deployments
   request :get_keypairs
+  request :get_kubey_cluster
   request :get_legacy_alert
   request :get_legacy_alerts
   request :get_load_balancer

@@ -32,6 +32,7 @@ class Ey::Core::Client < Cistern::Service
   collection :firewall_rules
   collection :firewalls
   collection :gems
+  collection :iam_roles
   collection :keypair_deployments
   collection :keypairs
   collection :legacy_alerts
@@ -89,6 +90,7 @@ class Ey::Core::Client < Cistern::Service
   model :firewall
   model :firewall_rule
   model :gem
+  model :iam_role
   model :keypair
   model :keypair_deployment
   model :legacy_alert
@@ -141,6 +143,7 @@ class Ey::Core::Client < Cistern::Service
   request :create_environment
   request :create_firewall
   request :create_firewall_rule
+  request :create_iam_role
   request :create_keypair
   request :create_keypair_deployment
   request :create_load_balancer
@@ -169,6 +172,7 @@ class Ey::Core::Client < Cistern::Service
   request :destroy_environment
   request :destroy_firewall
   request :destroy_firewall_rule
+  request :destroy_iam_role
   request :destroy_load_balancer
   request :destroy_logical_database
   request :destroy_provider
@@ -237,6 +241,8 @@ class Ey::Core::Client < Cistern::Service
   request :get_firewall_rules
   request :get_firewalls
   request :get_gem
+  request :get_iam_role
+  request :get_iam_roles
   request :get_keypair
   request :get_keypair_deployment
   request :get_keypair_deployments

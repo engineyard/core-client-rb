@@ -74,6 +74,8 @@ class Ey::Core::Client::Request < Ey::Core::Model
       self.connection.firewalls.get!(resource_id)
     when /firewall_rule/
       self.connection.firewall_rules.get!(resource_id)
+    when /iam_role/
+      self.connection.iam_roles.get!(resource_id)
     when /logical_database/
       self.connection.logical_databases.get!(resource_id)
     when /provider_location/

@@ -11,6 +11,7 @@ class Ey::Core::Client::Server < Ey::Core::Model
   attribute :disappeared_at,   type: :time
   attribute :enabled,          type: :boolean
   attribute :flavor_id,        squash: ["flavor", "id"]
+  attribute :iam_role_id
   attribute :keymaster_id
   attribute :location
   attribute :name
@@ -31,6 +32,7 @@ class Ey::Core::Client::Server < Ey::Core::Model
   has_one :address, collection: "addresses"
   has_one :environment
   has_one :provider
+  has_one :iam_role
 
   has_many :alerts
   has_many :volumes
@@ -110,6 +112,7 @@ class Ey::Core::Client::Server < Ey::Core::Model
         "server"      => {
           "dedicated"       => self.dedicated,
           "flavor"          => self.flavor_id,
+          "iam_role_id"     => self.iam_role_id,
           "iops"            => self.iops,
           "location"        => self.location || environment.region,
           "mnt_volume_size" => self.mnt_volume_size,

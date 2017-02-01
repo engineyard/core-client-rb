@@ -6,8 +6,12 @@ class Ey::Core::Client::ProviderLocation < Ey::Core::Model
   attribute :location_id
   attribute :location_name
   attribute :limits, type: :hash
+  attribute :data, type: :hash
 
+  has_many :children, model: :provider_locations
+  has_many :compute_flavors
   has_one :provider
+  has_one :parent, model: :provider_location
 
   def save!
     params = {

@@ -53,9 +53,16 @@ module Ey
             description: 'AWS Region for new cluster',
             argument: 'Region'
 
+          option :instance_size,
+            short: ['s','t'],
+            long: ['size','instance-size','instance-type'],
+            description: "AWS instance type (API Name), default is m3.large",
+            argument: "Instance Size/Type"
+
           def handle
             name = options[:name] || "kubey_" + SecureRandom.hex(8)
             region = options[:region] || "us-east-1"
+            instance_size = options[:instance_size] || "m3.large"
             #TODO: validate region against known list of regions? (known list of VPC regions), output suggestions
             account = core_account
             unless account
@@ -66,6 +73,11 @@ module Ey
             end
             #TODO: validation that region must be default VPC???
             #TODO: support specifying instance size (different size for master vs nodes)
+
+
+            #TODO: handle validation of invalid flavor and show:
+            # accounts.first(name: "staging-berkeley").providers.first.provider_locations.first.compute_flavors
+
             e = core_client.environments.create!({
               account_id: account.id,
               name: name,
@@ -73,8 +85,9 @@ module Ey
               region: region,
             })
             boot_configuration = {
-              :type => :kubey,
-              :kubey_node_count => 2,
+              type: :kubey,
+              kubey_node_count: 2,
+              instance_size: instance_size,
             }
             if ip_identifier = options[:ip]
               #TODO: avoid specifying an IP connected to an in-progress boot request.. If we do, will it fail appropriately?

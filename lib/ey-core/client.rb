@@ -17,6 +17,7 @@ class Ey::Core::Client < Cistern::Service
   collection :backup_files
   collection :blueprints
   collection :components
+  collection :compute_flavors
   collection :contacts
   collection :costs
   collection :database_plan_usages
@@ -74,6 +75,7 @@ class Ey::Core::Client < Cistern::Service
   model :billing
   model :blueprint
   model :component
+  model :compute_flavor
   model :contact
   model :cost
   model :database_plan_usage
@@ -211,6 +213,7 @@ class Ey::Core::Client < Cistern::Service
   request :get_blueprints
   request :get_component
   request :get_components
+  request :get_compute_flavors
   request :get_contacts
   request :get_costs
   request :get_current_user

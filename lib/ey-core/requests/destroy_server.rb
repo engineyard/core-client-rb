@@ -1,9 +1,11 @@
 class Ey::Core::Client
   class Real
-    def destroy_server(id)
+    def destroy_server(id,options={})
+      
       request(
         :method => :delete,
-        :path => "/servers/#{id}"
+        :path => "/servers/#{id}",
+        :query => options
       )
     end
   end

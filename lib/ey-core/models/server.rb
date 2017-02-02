@@ -131,15 +131,19 @@ class Ey::Core::Client::Server < Ey::Core::Model
     end
   end
 
-  def destroy!
+  def destroy!(skip_snapshot="false")
     if environment.servers.count == 1
       raise Ey::Core::Client::NotPermitted, "Terminating the last server in an environment is not allowed.  You must deprovision or destroy the environment instead."
     end
 
     requires :identity
 
+    params = {
+       :skip_snapshot => skip_snapshot
+    }
+
     connection.requests.new(
-      self.connection.destroy_server(self.identity).body["request"]
+      self.connection.destroy_server(self.identity, params).body["request"]
     )
   end
 end

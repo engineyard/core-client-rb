@@ -119,6 +119,7 @@ module Ey
           def core_client
             @core_client ||= begin
               opts = {url: core_url, config_file: self.class.core_file}
+              opts.merge!(token: ENV["CORE_TOKEN"]) if ENV["CORE_TOKEN"]
               if ENV["DEBUG"]
                 opts[:logger] = ::Logger.new(STDOUT)
               end

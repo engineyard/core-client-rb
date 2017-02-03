@@ -340,7 +340,9 @@ class Ey::Core::Client < Cistern::Service
                end
 
       @authentication = nil
-      @token = if options.has_key?(:token) && options[:token].nil?
+      @token = if ENV["CORE_TOKEN"]
+                 ENV["CORE_TOKEN"]
+               elsif options.has_key?(:token) && options[:token].nil?
                  @authentication = :none
                else
                  options[:token] || token_dotfile[@url] || token_dotfile[@url.gsub(/\/$/, "")] # matching with or without trailing slash

@@ -111,6 +111,11 @@ module Ey
                 existing_ips = account.addresses.all(location: region).select{|ip| ip.server.nil? }
                 puts "Try specifying an IP. e.g. --ip #{existing_ips.first.ip_address}"
               end
+              if ex.message.match(/Instance size is invalid/)
+                provider_location = account.providers.first.provider_locations.first(location_id: region)
+                puts "Instance size unknown or un-supported, try one of:"
+                provider_location.compute_flavors.each_entry{|x| puts x.api_name }
+              end
               raise ex
             end
             puts "Booting cluster: #{name} (ID: #{e.id})"

@@ -204,9 +204,13 @@ class Ey::Core::Client::Environment < Ey::Core::Model
     merge_attributes(self.connection.unassign_environment("id" => self.id).body["environment"])
   end
 
+  def kubey_cluster=(attributes)
+    @kubey_cluster_attributes = attributes
+  end
+
   def save!
     if new_record?
-      if self.kubey
+      if self.kubey || @kubey_cluster_attributes
         requires :account_id, :region
       else
         requires :application_id, :account_id, :region
@@ -226,6 +230,9 @@ class Ey::Core::Client::Environment < Ey::Core::Model
           "language"                  => self.language,
         },
       }
+      if @kubey_cluster_attributes
+        params["environment"]["kubey_cluster"] = @kubey_cluster_attributes
+      end
 
       params["environment"].merge!("database_service" => self.database_service.id) if self.database_service
 

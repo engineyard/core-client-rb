@@ -53,6 +53,22 @@ module Ey
             description: 'AWS Region for new cluster',
             argument: 'Region'
 
+          option :availability_zone,
+            short: ['az','z'],
+            long: ['az','zone', 'availability-zone'],
+            description: 'AWS Availability Zone for new cluster',
+            argument: 'Availability Zone'
+
+          option :additional_availability_zones,
+            long: ['additional-zones', 'additional-availability-zones'],
+            description: 'AWS Additional Availability Zones for new cluster',
+            argument: 'Availability Zones (comma seperated)'
+
+          option :num_nodes,
+            long: ['num-nodes', 'node-count'],
+            description: 'Number of Worker Nodes to provision is each Availability Zone',
+            argument: 'Number'
+
           option :instance_size,
             short: ['s','t'],
             long: ['size','instance-size','instance-type'],
@@ -61,8 +77,20 @@ module Ey
 
           def handle
             name = options[:name] || "kubey_" + SecureRandom.hex(8)
+            if options[:availability_zone]
+              expected_region = options[:availability_zone][0...-1]
+              if region_given = options[:region]
+                unless region_given == expected_region
+                  raise "Specified region: #{region_given} does not match specified AZ #{options[:availability_zone]}"
+                end
+              end
+              options[:region] ||= expected_region
+            end
             region = options[:region] || "us-east-1"
+            primary_availability_zone = options[:availability_zone] || (region + "a")
+            additional_availability_zones = options[:additional_availability_zones].to_s.split(",")
             instance_size = options[:instance_size] || "m3.large"
+            num_nodes = (options[:num_nodes] || 2) * (additional_availability_zones.size + 1)
             #TODO: validate region against known list of regions? (known list of VPC regions), output suggestions
             account = core_account
             unless account
@@ -81,12 +109,15 @@ module Ey
             e = core_client.environments.create!({
               account_id: account.id,
               name: name,
-              kubey: true,
+              kubey_cluster: {
+                primary_availability_zone: "us-east-1a",
+                additional_availability_zones: ["us-east-1b"],
+              },
               region: region,
             })
             boot_configuration = {
               type: :kubey,
-              kubey_node_count: 2,
+              kubey_node_count: num_nodes,
               instance_size: instance_size,
             }
             if ip_identifier = options[:ip]

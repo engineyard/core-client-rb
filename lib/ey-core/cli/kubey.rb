@@ -90,7 +90,7 @@ module Ey
             primary_availability_zone = options[:availability_zone] || (region + "a")
             additional_availability_zones = options[:additional_availability_zones].to_s.split(",")
             instance_size = options[:instance_size] || "m3.large"
-            num_nodes = (options[:num_nodes] || 2) * (additional_availability_zones.size + 1)
+            num_nodes = (options[:num_nodes] || 2).to_i * (additional_availability_zones.size + 1)
             #TODO: validate region against known list of regions? (known list of VPC regions), output suggestions
             account = core_account
             unless account

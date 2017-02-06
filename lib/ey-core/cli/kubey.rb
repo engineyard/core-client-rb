@@ -110,8 +110,8 @@ module Ey
               account_id: account.id,
               name: name,
               kubey_cluster: {
-                primary_availability_zone: "us-east-1a",
-                additional_availability_zones: ["us-east-1b"],
+                primary_availability_zone: primary_availability_zone,
+                additional_availability_zones: additional_availability_zones,
               },
               region: region,
             })

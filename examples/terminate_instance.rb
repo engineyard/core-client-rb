@@ -14,6 +14,7 @@ OptionParser.new do |opts|
   opts.on('-a', '--account NAME', 'Account name') { |v| options[:account_name] = v }
   opts.on('-e', '--environment NAME', 'Environment name') { |v| options[:environment_name] = v }
   opts.on('-n', '--iname NAME', 'Instance name') { |v| options[:instance_name] = v }
+  opts.on('-s', '--skip_snapshot', 'Skip snapshotting the volumes') { |v| options[:skip_snapshot] = true }
 
 end.parse!
 
@@ -31,6 +32,9 @@ environment = account.environments.first(name: options[:environment_name])
 # Instance's name
 instance_name = options[:instance_name]
 
+# Skip snapshot
+skip_snapshot = options[:skip_snapshot] ? true : false
+
 puts "Terminating instance #{instance_name} on environment #{environment.name}...."
 
 servers = environment.servers.select{|s| s.name == instance_name}
@@ -41,7 +45,7 @@ if !servers then
 end
 
 server = servers[0]
-deprovision_request = server.destroy
+deprovision_request = server.destroy!(skip_snapshot)
 if !deprovision_request then
   puts "Termination of instance #{instance_name} FAILED!!!!"
   puts "Check cloud.engineyard.com for more details"

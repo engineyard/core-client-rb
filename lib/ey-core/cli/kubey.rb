@@ -13,13 +13,11 @@ module Ey
           summary "List Kubernetes clusters"
 
           def handle
-            stream_print("ID" => 10, "Name" => 50, "Masters" => 7, "Nodes" => 7) do |printer|
+            stream_print("ID" => 10, "Name" => 50, "Region" => 10, "Masters" => 7, "Nodes" => 7) do |printer|
               core_environments(kubey: true).each_entry do |env|
                 servers_by_role = Hash.new{|h,k| h[k] = 0}
                 env.servers.each{ |s| servers_by_role[s.role] += 1 }
-                #TODO: show in-progress requests too!
-                #TODO: show recently failed requests too? (only the absolute most recent?)
-                printer.print(env.id, env.name, servers_by_role["kubey_master"], servers_by_role["kubey_node"])
+                printer.print(env.id, env.name, env.region, servers_by_role["kubey_master"], servers_by_role["kubey_node"])
               end
             end
           end
@@ -167,18 +165,33 @@ module Ey
           def handle
             environment = core_environment(kubey: true, arg_name: :cluster)
             puts "Cluster: #{environment.name} (ID: #{environment.id})"
-            if environment.servers.empty?
-              puts "(No Servers Running)"
-            end
-            environment.servers.each do |s|
-              puts [s.provisioned_id,
-                    s.flavor_id,
-                    s.state,
-                    s.role,
-                    s.private_hostname,
-                    s.public_hostname ].join(" -- ")
+            if environment.deleted_at
+              puts "deleted #{environment.deleted_at}"
+            else
+              relevant_requests = environment.requests.all(user: true, relevant: true)
+              relevant_requests.each_entry do |r|
+                puts r.request_status
+              end
+              if environment.servers.empty?
+                puts "(No Servers Running)"
+              end
+              environment.servers.each do |s|
+                puts [s.provisioned_id,
+                      s.flavor_id,
+                      s.state,
+                      s.role,
+                      s.location,
+                      s.private_hostname,
+                      s.public_hostname ].join(" -- ")
+                unless s.state.to_s == "running"
+                  s.chef_status.to_a.each do |chef_stat|
+                    puts "  " + chef_stat['message'] + " -- " + chef_stat['time_ago'] + " ago"
+                  end
+                end
+              end
             end
           end
+
         end
         mount Status
 

@@ -9,6 +9,7 @@ class Ey::Core::Client::Request < Ey::Core::Model
   attribute :finished_at,       type: :time
   attribute :message
   attribute :progress,          type: :integer
+  attribute :request_status
   attribute :resource_url,      aliases: "resource"
   attribute :stage
   attribute :started_at,        type: :time

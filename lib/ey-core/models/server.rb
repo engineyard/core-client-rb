@@ -3,6 +3,7 @@ class Ey::Core::Client::Server < Ey::Core::Model
 
   identity :id, type: :integer
 
+  attribute :chef_status,      type: :array
   attribute :created_at,       type: :time
   attribute :deleted_at,       type: :time
   attribute :deprovisioned_at, type: :time

@@ -12,7 +12,7 @@ end
 
 group :test do
   gem 'codeclimate-test-reporter', '~> 0.3'
-  gem 'faker'
+  gem 'faker', '= 1.7.2'
   gem 'hashie'
   gem 'rack-test'
   gem 'rspec', '~> 3.1'

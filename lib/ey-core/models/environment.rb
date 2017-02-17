@@ -209,6 +209,14 @@ class Ey::Core::Client::Environment < Ey::Core::Model
     @kubey_cluster_attributes = attributes
   end
 
+  def boot_request=(attributes)
+    @boot_request_attributes = attributes
+  end
+
+  def keypairs=(attributes)
+    @keypairs_atttributes = attributes
+  end
+
   def save!
     if new_record?
       if self.kubey || @kubey_cluster_attributes
@@ -233,6 +241,12 @@ class Ey::Core::Client::Environment < Ey::Core::Model
       }
       if @kubey_cluster_attributes
         params["environment"]["kubey_cluster"] = @kubey_cluster_attributes
+      end
+      if @boot_request_attributes
+        params["boot_request"] = {"cluster_configuration" => @boot_request_attributes}
+      end
+      if @keypairs_atttributes
+        params["keypairs"] = @keypairs_atttributes.map{|k| {"keypair" => k}}
       end
 
       params["environment"].merge!("database_service" => self.database_service.id) if self.database_service

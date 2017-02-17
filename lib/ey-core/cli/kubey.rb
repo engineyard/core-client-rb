@@ -73,7 +73,29 @@ module Ey
             description: "AWS instance type (API Name), default is m3.large",
             argument: "Instance Size/Type"
 
+          option :key,
+            short: ['k'],
+            long: ['key'],
+            description: "SSK key to install on all cluster instances",
+            argument: "path to public key file"
+
+          option :no_key,
+            long: ['no-key'],
+            description: "Skip installing SSH keys (boot cluster with no installed SSH keys)",
+            argument: "(none)"
+
           def handle
+            if options[:key]
+              keys = File.read(options[:key]).split("\n")
+            elsif options[:no_key]
+              keys = []
+            else
+              path = File.expand_path("~/.ssh/id_rsa.pub")
+              unless File.exists?(path)
+                raise "Expected to find SSH public key at #{path}, please specify one with --key. Or explicitly specify --no-key"
+              end
+              keys = File.read(path).split("\n")
+            end
             name = options[:name] || "kubey_" + SecureRandom.hex(8)
             if options[:availability_zone]
               expected_region = options[:availability_zone][0...-1]
@@ -89,7 +111,6 @@ module Ey
             additional_availability_zones = options[:additional_availability_zones].to_s.split(",")
             instance_size = options[:instance_size] || "m3.large"
             num_nodes = (options[:num_nodes] || 2).to_i * (additional_availability_zones.size + 1)
-            #TODO: validate region against known list of regions? (known list of VPC regions), output suggestions
             account = core_account
             unless account
               raise "No Accounts"
@@ -97,22 +118,7 @@ module Ey
             if account.providers.empty?
               raise "Account #{account.name} does not have an Amazon Account setup yet. To setup your amazon account go to: TODO"
             end
-            #TODO: validation that region must be default VPC???
             #TODO: support specifying instance size (different size for master vs nodes)
-
-
-            #TODO: handle validation of invalid flavor and show:
-            # accounts.first(name: "staging-berkeley").providers.first.provider_locations.first.compute_flavors
-
-            e = core_client.environments.create!({
-              account_id: account.id,
-              name: name,
-              kubey_cluster: {
-                primary_availability_zone: primary_availability_zone,
-                additional_availability_zones: additional_availability_zones,
-              },
-              region: region,
-            })
             boot_configuration = {
               type: :kubey,
               kubey_node_count: num_nodes,
@@ -132,8 +138,21 @@ module Ey
                 raise "IP not found '#{ip_identifier}'"
               end
             end
-            req = begin
-              e.boot(:configuration => boot_configuration)
+            begin
+              e = core_client.environments.create!({
+                account_id: account.id,
+                name: name,
+                kubey_cluster: {
+                  primary_availability_zone: primary_availability_zone,
+                  additional_availability_zones: additional_availability_zones,
+                },
+                region: region,
+                boot_request: {
+                  configuration: boot_configuration
+                },
+                keypairs: keys.map{|k| {name: k.split(" ").last, public_key: k}},
+              })
+              puts "Booting cluster: #{name} (ID: #{e.id})"
             rescue Ey::Core::Response::Unprocessable => ex
               puts ex.message
               if ex.message.match(/Too many provisioned addresses/)
@@ -147,7 +166,6 @@ module Ey
               end
               raise ex
             end
-            puts "Booting cluster: #{name} (ID: #{e.id})"
           end
         end
         mount Create
@@ -208,9 +226,7 @@ module Ey
           def handle
             environment = core_environment(kubey: true, arg_name: :cluster)
             puts "Cluster: #{environment.name} (ID: #{environment.id})"
-            #TODO: if environment.kubey_cluster is nil, display some sort of error message with useful recourse?
             kubey_cluster = environment.kubey_cluster
-            # ap environment.kubey_cluster
             unless kubey_cluster
               raise "Kubernetes Cluster setup has not completed (or failed)"
             end

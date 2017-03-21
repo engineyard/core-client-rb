@@ -164,6 +164,24 @@ module Ey
             end
           end
 
+          def core_db_service(opts = {})
+            @_core_db_service ||= begin
+              argname = opts.delete(:arg_name) || :db_service
+              arg = options[argname]
+              if arg
+                found = core_client.database_services.all(opts).get(arg) ||
+                        core_client.users.current.database_services.all(opts).first(name: arg)
+                if ENV["STAFF"]
+                  found ||= core_client.database_services.all(opts).first(name: arg)
+                end
+                unless found
+                  raise "Couldn't find environment '#{arg}'"
+                end
+                found
+              end
+            end
+          end
+
           def core_account
             @_core_account ||= begin
               if options[:account]

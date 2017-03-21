@@ -317,6 +317,69 @@ module Ey
 
         #TODO: add/remove command 
 
+        class DbListServices < Subcommand
+          include Ey::Core::Cli::Helpers::StreamPrinter
+          title "db-list-services"
+          summary "list database services"
+
+          option :account,
+            short: ['a','c'],
+            long: 'account',
+            description: 'Account name or ID',
+            argument: 'Account'
+
+          def handle
+            account = core_account
+            stream_print("ID" => 40, "Name" => 30, "DB Type" => 10, "Region" => 10, "Instance Type" => 17, "Replicas" => 10) do |printer|
+              account.database_services.each_entry do |db_service|
+                master = db_service.servers.detect{|s| !s.replication_source_url }
+                replica_count = db_service.servers.select{|s| s.replication_source_url }.size
+                printer.print(db_service.id, db_service.name,
+                  master && master.engine,
+                  db_service.location,
+                  master && master.flavor,
+                  replica_count)
+                db_service.databases.each_entry do |db|
+                  puts " - Database #{db.name} (#{db.id})"
+                  connected_environments = []
+                  db.environments.all(kubey: true).each_entry{ |env| connected_environments << env }
+                  puts " -- #{connected_environments.size} Connected Kubernetes Clusters"
+                end
+              end
+            end
+          end
+        end
+        mount DbListServices
+
+        class DbList < Subcommand
+          include Ey::Core::Cli::Helpers::StreamPrinter
+          title "db-list"
+          summary "list databases"
+
+          option :account,
+            short: ['a','c'],
+            long: 'account',
+            description: 'Account name or ID',
+            argument: 'Account'
+
+          def handle
+            account = core_account
+            stream_print("ID" => 40, "Name" => 20, "DB Type" => 10, "Service" => 60, "Clusters" => 10) do |printer|
+              account.logical_databases.each_entry do |db|
+                db_service = db.service
+                master = db_service.servers.detect{|s| !s.replication_source_url }
+                connected_environments = []
+                db.environments.all(kubey: true).each_entry{ |env| connected_environments << env }
+                printer.print(db.id, db.name, master && master.engine, 
+                  "#{db_service.id} - #{db_service.name}",
+                  connected_environments.size)
+              end
+            end
+          end
+        end
+        mount DbList
+
+
       end
     end
   end

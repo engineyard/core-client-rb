@@ -12,6 +12,7 @@ class Ey::Core::Client::LogicalDatabase < Ey::Core::Model
   attribute :extensions, type: :array
 
   has_one :service, resource: :database_service
+  has_many :environments
 
   def save!
     requires :name

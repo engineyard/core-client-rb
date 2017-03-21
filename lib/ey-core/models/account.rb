@@ -29,6 +29,8 @@ class Ey::Core::Client::Account < Ey::Core::Model
   has_many :referrals, key: :account_referrals
   has_many :costs
   has_many :memberships
+  has_many :database_services
+  has_many :logical_databases
 
   has_one :cancellation, assoc_name: 'account_cancellation', collection: :account_cancellations
   has_one :account_trial

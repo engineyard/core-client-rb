@@ -8,11 +8,20 @@ class Ey::Core::Client::DatabaseService < Ey::Core::Model
   attribute :deleted_at, type: :time
   attribute :service_level
 
+  attribute :db_service_id
+  attribute :db_service_name
+  attribute :db_engine_type
+  attribute :db_master_multi_az
+  attribute :db_master_flavor
+  attribute :db_replica_count
+  attribute :connected_kubey_cluster_count
+
   has_one :provider
 
   has_many :databases, model: :logical_databases
   has_many :servers,   model: :database_servers
   has_many :snapshots, model: :database_server_snapshots
+  has_many :connected_kubey_environments, model: :environments
 
   # @todo remove me next major revision
   attr_accessor :database_server

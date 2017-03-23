@@ -14,6 +14,7 @@ class Ey::Core::Client::Account < Ey::Core::Model
   attribute :support_plan
   attribute :type
   attribute :updated_at, type: :time
+  attribute :rds_management_web_uri
 
   has_many :addresses
   has_many :applications

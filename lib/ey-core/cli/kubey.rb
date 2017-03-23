@@ -7,24 +7,77 @@ module Ey
         title "kubey"
         summary "Perform Operations on Kubernetes clusters"
 
-        class List < Subcommand
+        class KubeySubcommand < Subcommand
+          def core_environment(opts = {})
+            @_core_environment ||= begin
+              argname = opts.delete(:arg_name) || :environment
+              arg = options[argname]
+              if arg
+                found = core_client.environments.first(opts.merge(id: arg)) ||
+                        core_client.environments.first(opts.merge(name: arg))
+                unless found
+                  raise "Couldn't find environment '#{arg}'"
+                end
+                found
+              end
+            end
+          end
+
+          def core_db_service(opts = {})
+            @_core_db_service ||= begin
+              argname = opts.delete(:arg_name) || :db_service
+              arg = options[argname]
+              if arg
+                found = core_client.database_services.all(opts).get(arg) ||
+                        core_client.database_services.all(opts).first(name: arg)
+                unless found
+                  raise "Couldn't find database service '#{arg}'"
+                end
+                found
+              end
+            end
+          end
+
+          def core_environments(opts = {})
+            @_core_environments ||= {}
+            @_core_environments[opts] ||= begin
+              if account = opts.delete(:account)
+                account.environments.all(opts)
+              else
+                core_client.users.current.environments.all(opts)
+              end
+            end
+          end
+        end
+
+        class List < KubeySubcommand
           include Ey::Core::Cli::Helpers::StreamPrinter
           title "list"
           summary "List Kubernetes clusters"
 
+          option :account,
+            short: ['a','c'],
+            long: 'account',
+            description: 'Account name or ID',
+            argument: 'Account'
+
           def handle
-            stream_print("ID" => 10, "Name" => 50, "Region" => 10, "Masters" => 7, "Nodes" => 7) do |printer|
-              core_environments(kubey: true).each_entry do |env|
-                servers_by_role = Hash.new{|h,k| h[k] = 0}
-                env.servers.each{ |s| servers_by_role[s.role] += 1 }
-                printer.print(env.id, env.name, env.region, servers_by_role["kubey_master"], servers_by_role["kubey_node"])
+            account = core_account if options[:account]
+            account_id = account && account.id
+            stream_print("ID" => 10, "Name" => 40, "Region" => 15, "Masters" => 7, "Nodes" => 7, "Databases" => 12) do |printer|
+              core_environments(kubey: true, account: account, per_page: 100).each_entry do |env|
+                printer.print(env.id, env.name, env.region,
+                  env.kubey_master_count, env.kubey_node_count, env.kubey_logical_database_count)
+                if env.kubey_master_count > 0 && env.upgrade_available
+                  puts "-- Upgrade Available, for details see: #{env.available_upgrade_web_uri}"
+                end
               end
             end
           end
         end
         mount List
 
-        class Create < Subcommand
+        class Create < KubeySubcommand
           title "create"
           summary "Create a Kubernetes clusters"
 
@@ -170,7 +223,7 @@ module Ey
         end
         mount Create
 
-        class Status < Subcommand
+        class Status < KubeySubcommand
           title "status"
           summary "Get status/info about a Kubernetes cluster"
 
@@ -180,30 +233,77 @@ module Ey
             description: "cluster name or ID",
             argument: "cluster"
 
+          option :account,
+            short: ['a','c'],
+            long: 'account',
+            description: 'Account name or ID',
+            argument: 'Account'
+
           def handle
-            environment = core_environment(kubey: true, arg_name: :cluster)
-            puts "Cluster: #{environment.name} (ID: #{environment.id})"
-            if environment.deleted_at
-              puts "deleted #{environment.deleted_at}"
-            else
-              relevant_requests = environment.requests.all(user: true, relevant: true)
-              relevant_requests.each_entry do |r|
-                puts r.request_status
+            account = core_account if options[:account]
+            account_id = account && account.id
+            environments = []
+            if options[:cluster]
+              search_opts = {kubey: true, arg_name: :cluster}
+              if account_id
+                search_opts[:account] = account_id
               end
-              if environment.servers.empty?
-                puts "(No Servers Running)"
+              environments = [core_environment(search_opts)]
+            elsif account
+              environments = core_environments(kubey: true, account: account)
+            end
+            if environments.empty?
+              raise "No Environments found"
+            end
+            environments.each_with_index do |environment, index|
+              if index > 0
+                puts
               end
-              environment.servers.each do |s|
-                puts [s.provisioned_id,
-                      s.flavor_id,
-                      s.state,
-                      s.role,
-                      s.location,
-                      s.private_hostname,
-                      s.public_hostname ].join(" -- ")
-                unless s.state.to_s == "running"
-                  s.chef_status.to_a.each do |chef_stat|
-                    puts "  " + chef_stat['message'] + " -- " + chef_stat['time_ago'] + " ago"
+              puts "Cluster: #{environment.name} (ID: #{environment.id})"
+              if environment.deleted_at
+                puts "deleted #{environment.deleted_at}"
+              else
+                relevant_requests = environment.requests.all(user: true, relevant: true)
+                relevant_requests.each_entry do |r|
+                  puts r.request_status
+                end
+                puts "Servers:"
+                no_servers = true
+                environment.servers.each_entry do |s|
+                  no_servers = false
+                  puts [s.provisioned_id,
+                        s.flavor_id,
+                        s.state,
+                        s.role,
+                        s.location,
+                        s.private_hostname,
+                        s.public_hostname ].join(" -- ")
+                  unless s.state.to_s == "running"
+                    s.chef_status.to_a.each do |chef_stat|
+                      puts "  " + chef_stat['message'] + " -- " + chef_stat['time_ago'] + " ago"
+                    end
+                  end
+                end
+                if no_servers
+                  puts "(none)"
+                end
+                puts "Connected Databases:"
+                grouped_by_db_services = Hash.new{|h,k| h[k] = []}
+                environment.logical_databases.each_entry do |db|
+                  db_service_info = [
+                    "#{db.db_service_name} (#{db.db_service_id})",
+                    db.db_engine_type,
+                    db.db_master_flavor.to_s + (db.db_master_multi_az && " (multi-az)" || ""),
+                    "#{db.db_replica_count} replicas",
+                  ].join(" -- ")
+                  grouped_by_db_services[db_service_info] << db.name
+                end
+                if grouped_by_db_services.empty?
+                  puts "(none)"
+                else
+                  grouped_by_db_services.each do |db_service_info, logical_dbs|
+                    puts "Service: " + db_service_info
+                    puts "  DBs: " + logical_dbs.join(", ")
                   end
                 end
               end
@@ -213,7 +313,7 @@ module Ey
         end
         mount Status
 
-        class GetCredentials < Subcommand
+        class GetCredentials < KubeySubcommand
           title "get-credentials"
           summary "Get credentials for a Kubernetes environment"
 
@@ -223,8 +323,16 @@ module Ey
             description: "cluster name or ID",
             argument: "cluster"
 
+          option :account,
+            short: ['a','c'],
+            long: 'account',
+            description: 'Account name or ID',
+            argument: 'Account'
+
           def handle
-            environment = core_environment(kubey: true, arg_name: :cluster)
+            account = core_account if options[:account]
+            account_id = account && account.id
+            environment = core_environment(kubey: true, account: account_id, arg_name: :cluster)
             puts "Cluster: #{environment.name} (ID: #{environment.id})"
             kubey_cluster = environment.kubey_cluster
             unless kubey_cluster
@@ -275,7 +383,7 @@ module Ey
         end
         mount GetCredentials
 
-        class Fix < Subcommand
+        class Fix < KubeySubcommand
           title "fix"
           summary "Attempt to fix a Kubernetes cluster (AKA re-run chef setup scripts on all instances in hopes it will 'do the right thing')"
 
@@ -285,9 +393,17 @@ module Ey
             description: "cluster name or ID",
             argument: "cluster"
 
+          option :account,
+            short: ['a','c'],
+            long: 'account',
+            description: 'Account name or ID',
+            argument: 'Account'
+
           def handle
+            account = core_account if options[:account]
+            account_id = account && account.id
+            environment = core_environment(kubey: true, account: account_id, arg_name: :cluster)
             #TODO: handle error of apply already in progress
-            environment = core_environment(kubey: true, arg_name: :cluster)
             environment.update(release_label: environment.release_label.gsub(/[^.]+$/,"latest")) #TODO: updating to latest release should be optional... command-line option to control it ... 
             #TODO: default should be DON'T update, but output a message about being outdated stack version if we are and name the optional command line arg to let the user also update to latest version
             environment.apply
@@ -296,7 +412,7 @@ module Ey
         end
         mount Fix
 
-        class Delete < Subcommand
+        class Delete < KubeySubcommand
           title "delete"
           summary "Delete a cluster, shut it down first if it's running"
 
@@ -306,8 +422,16 @@ module Ey
             description: "cluster name or ID",
             argument: "cluster"
 
+          option :account,
+            short: ['a','c'],
+            long: 'account',
+            description: 'Account name or ID',
+            argument: 'Account'
+
           def handle
-            environment = core_environment(kubey: true, arg_name: :cluster)
+            account = core_account if options[:account]
+            account_id = account && account.id
+            environment = core_environment(kubey: true, account: account_id, arg_name: :cluster)
             environment.destroy!
             puts "Deleted: #{environment.name} (ID: #{environment.id})"
             #TODO: deleting an environment returns immediately but doens't complete immediately, show pending-deletion status in list somehow
@@ -317,10 +441,10 @@ module Ey
 
         #TODO: add/remove command 
 
-        class DbListServices < Subcommand
+        class DbList < KubeySubcommand
           include Ey::Core::Cli::Helpers::StreamPrinter
-          title "db-list-services"
-          summary "list database services"
+          title "db-list"
+          summary "list RDS-backed databases"
 
           option :account,
             short: ['a','c'],
@@ -330,54 +454,78 @@ module Ey
 
           def handle
             account = core_account
-            stream_print("ID" => 40, "Name" => 30, "DB Type" => 10, "Region" => 10, "Instance Type" => 17, "Replicas" => 10) do |printer|
-              account.database_services.each_entry do |db_service|
-                master = db_service.servers.detect{|s| !s.replication_source_url }
-                replica_count = db_service.servers.select{|s| s.replication_source_url }.size
-                printer.print(db_service.id, db_service.name,
-                  master && master.engine,
-                  db_service.location,
-                  master && master.flavor,
-                  replica_count)
-                db_service.databases.each_entry do |db|
-                  puts " - Database #{db.name} (#{db.id})"
-                  connected_environments = []
-                  db.environments.all(kubey: true).each_entry{ |env| connected_environments << env }
-                  puts " -- #{connected_environments.size} Connected Kubernetes Clusters"
+            any_services = false
+            puts "Database Services:"
+            account.database_services.each_entry do |db_service|
+              any_services = true
+              puts [
+                "#{db_service.name} (#{db_service.id})",
+                db_service.db_engine_type,
+                db_service.db_master_flavor.to_s + (db_service.db_master_multi_az && " (multi-az)" || ""),
+                "#{db_service.db_replica_count} replicas",
+              ].join(" -- ")
+              # ap db_service
+              # ap db_service.connected_kubey_environments
+              if db_service.connected_kubey_cluster_count > 0
+                db_service.connected_kubey_environments.each_entry do |env|
+                  puts " Connected Cluster: #{env.name} (#{env.id})"
                 end
               end
             end
-          end
-        end
-        mount DbListServices
-
-        class DbList < Subcommand
-          include Ey::Core::Cli::Helpers::StreamPrinter
-          title "db-list"
-          summary "list databases"
-
-          option :account,
-            short: ['a','c'],
-            long: 'account',
-            description: 'Account name or ID',
-            argument: 'Account'
-
-          def handle
-            account = core_account
-            stream_print("ID" => 40, "Name" => 20, "DB Type" => 10, "Service" => 60, "Clusters" => 10) do |printer|
-              account.logical_databases.each_entry do |db|
-                db_service = db.service
-                master = db_service.servers.detect{|s| !s.replication_source_url }
-                connected_environments = []
-                db.environments.all(kubey: true).each_entry{ |env| connected_environments << env }
-                printer.print(db.id, db.name, master && master.engine, 
-                  "#{db_service.id} - #{db_service.name}",
-                  connected_environments.size)
-              end
+            unless any_services
+              "(none)"
+            end
+            puts
+            puts "Manage (and create new) database services at: #{account.rds_management_web_uri}"
+            if any_services
+              puts "Create and link logical databases using 'db-create' from the CLI"
             end
           end
         end
         mount DbList
+
+        class DbCreate < KubeySubcommand
+          title "db-create"
+          summary "create amazon RDS databases and link to a kubernetes cluster"
+
+          option :account,
+            short: ['a','c'],
+            long: 'account',
+            description: 'Account name or ID',
+            argument: 'Account'
+
+          option :cluster,
+            short: ["c","e"],
+            long: "cluster",
+            description: "cluster name or ID",
+            argument: "cluster"
+
+          option :db_service,
+            short: ['d','s'],
+            long: ["db-service","database-service", "service"],
+            description: 'database service name or ID',
+            argument: 'DB service'
+
+          option :name,
+            short: 'n',
+            long: "name",
+            description: "Name for the database, a kubernetes secret will be generated with the same name.",
+            argument: "database name"
+
+          def handle
+            account = core_account
+            db_service = core_db_service(account_id: account.id) || raise("please specify database service (--db-service)")
+            environment = core_environment(kubey: true, arg_name: :cluster) || raise("please specify a cluster (--cluster)")
+            name = options[:name] || raise("Please provide a name for your database (--name)")
+            req = core_client.logical_databases.create!({
+              service_id:        db_service.id,
+              name:              name,
+              kubey_environment: environment})
+            puts "Provisioning and Connecting Database: #{name} (Request ID: #{req.id})"
+            puts "monitor progress by checking status on the connected cluster: #{environment.name} (#{environment.id})"
+          end
+        end
+        mount DbCreate
 
 
       end

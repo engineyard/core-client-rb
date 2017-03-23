@@ -37,6 +37,11 @@ class Ey::Core::Client::Real
         options[:builder].call(builder)
       end
 
+      if ENV["DEBUG_CURL"]
+        require 'faraday_curl'
+        builder.request :curl, Logger.new(STDOUT), :warn
+      end
+
       builder.adapter(*adapter)
     end
   end
@@ -60,11 +65,22 @@ class Ey::Core::Client::Real
       "Accept"       => accept_type,
     }.merge(headers)
 
-    response = @connection.send(method) do |req|
-      req.url(url)
-      req.headers.merge!(headers)
-      req.params.merge!(params)
-      req.body = body
+    response = nil
+    request_proc = Proc.new do
+      response = @connection.send(method) do |req|
+        req.url(url)
+        req.headers.merge!(headers)
+        req.params.merge!(params)
+        req.body = body
+      end
+    end
+
+    if ENV["DEBUG_TIMINGS"]
+      require 'benchmark'
+      puts "REQUEST #{method} #{url} #{query} #{params}"
+      puts Benchmark.measure { request_proc.call }
+    else
+      request_proc.call
     end
 
     Ey::Core::Response.new(

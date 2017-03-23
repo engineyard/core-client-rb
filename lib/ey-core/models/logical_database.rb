@@ -11,8 +11,20 @@ class Ey::Core::Client::LogicalDatabase < Ey::Core::Model
   attribute :deleted_at, type: :time
   attribute :extensions, type: :array
 
+  attribute :db_service_id
+  attribute :db_service_name
+  attribute :db_engine_type
+  attribute :db_master_multi_az
+  attribute :db_master_flavor
+  attribute :db_replica_count
+  attribute :connected_kubey_cluster_count
+
   has_one :service, resource: :database_service
   has_many :environments
+
+  def kubey_environment=(arg)
+    @kubey_environment = arg
+  end
 
   def save!
     requires :name
@@ -22,6 +34,9 @@ class Ey::Core::Client::LogicalDatabase < Ey::Core::Model
       "database_service" => self.service_id,
       "logical_database" => Cistern::Hash.slice(attributes, :name, :extensions),
     }
+    if @kubey_environment
+      params.merge!("environment" => @kubey_environment.id, "kubey" => true)
+    end
 
     if new_record?
       self.connection.requests.new(self.connection.create_logical_database(params).body["request"])

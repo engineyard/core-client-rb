@@ -5,6 +5,8 @@ gemspec
 
 gem "rack", "<= 2.0"
 
+gem "faraday_curl"
+
 group :doc do
   gem 'yard'
   gem 'redcarpet'

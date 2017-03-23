@@ -119,8 +119,12 @@ module Ey
           def core_client
             @core_client ||= begin
               opts = {url: core_url, config_file: self.class.core_file}
+              opts.merge!(token: ENV["CORE_TOKEN"]) if ENV["CORE_TOKEN"]
               if ENV["DEBUG"]
                 opts[:logger] = ::Logger.new(STDOUT)
+              end
+              if ENV["CURL"]
+                opts[:adapter] = :curl
               end
               Ey::Core::Client.new(opts)
             end
@@ -133,52 +137,6 @@ module Ey
               abort "Missing credentials: Run 'ey login' to retrieve your Engine Yard Cloud API token.".yellow
             else
               raise e
-            end
-          end
-
-          def core_environment(opts = {})
-            @_core_environment ||= begin
-              argname = opts.delete(:arg_name) || :environment
-              env_arg = options[argname]
-              if env_arg
-                found = core_client.environments.all(opts).get(env_arg) ||
-                        core_client.users.current.environments.all(opts).first(name: env_arg)
-                if ENV["STAFF"]
-                  found ||= core_client.environments.all(opts).first(name: env_arg)
-                end
-                unless found
-                  error_message = "Couldn't find environment '#{env_arg}'"
-                  if core_client.users.current.staff && !ENV["STAFF"]
-                    error_message += " (set environment variable STAFF=1 to search all #{argname}s)"
-                  end
-                  raise error_message
-                end
-                found
-              else
-                if core_environments(opts).size == 1
-                  core_environments(opts).first
-                else
-                  raise "Please specify --#{argname} (options: #{core_environments(opts).map(&:name).join(', ')})"
-                end
-              end
-            end
-          end
-
-          def core_db_service(opts = {})
-            @_core_db_service ||= begin
-              argname = opts.delete(:arg_name) || :db_service
-              arg = options[argname]
-              if arg
-                found = core_client.database_services.all(opts).get(arg) ||
-                        core_client.users.current.database_services.all(opts).first(name: arg)
-                if ENV["STAFF"]
-                  found ||= core_client.database_services.all(opts).first(name: arg)
-                end
-                unless found
-                  raise "Couldn't find environment '#{arg}'"
-                end
-                found
-              end
             end
           end
 
@@ -204,17 +162,6 @@ module Ey
                 else
                   raise "Please specify --account (options: #{core_accounts.map(&:name).join(', ')})"
                 end
-              end
-            end
-          end
-
-          def core_environments(opts = {})
-            @_core_environments ||= {}
-            @_core_environments[opts] ||= begin
-              if ENV["STAFF"]
-                core_client.environments.all(opts)
-              else
-                core_client.users.current.environments.all(opts)
               end
             end
           end

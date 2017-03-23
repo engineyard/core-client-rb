@@ -527,6 +527,49 @@ module Ey
         end
         mount DbCreate
 
+        class DbDelete < KubeySubcommand
+          title "db-delete"
+          summary "delete RDS database and remove it's link to any kubernetes cluster"
+
+          option :account,
+            short: ['a','c'],
+            long: 'account',
+            description: 'Account name or ID',
+            argument: 'Account'
+
+          option :cluster,
+            short: ["c","e"],
+            long: "cluster",
+            description: "cluster name or ID",
+            argument: "cluster"
+
+          option :db_service,
+            short: ['d','s'],
+            long: ["db-service","database-service", "service"],
+            description: 'database service name or ID',
+            argument: 'DB service'
+
+          option :name,
+            short: 'n',
+            long: "name",
+            description: "Name for the database, a kubernetes secret of the same name will be deleted.",
+            argument: "database name"
+
+            def handle
+              account = core_account
+              db_service = core_db_service(account_id: account.id) || raise("please specify database service (--db-service)")
+              environment = core_environment(kubey: true, arg_name: :cluster) || raise("please specify a cluster (--cluster)")
+              name = options[:name] || raise("Please provide a name for your database (--name)")
+              if db_to_delete = environment.logical_databases.first(name: name)
+                req = db_to_delete.destroy
+                puts "De-Provisioning and Disconnecting Database: #{name} (Request ID: #{req.id})"
+                puts "monitor progress by checking status on the connected cluster: #{environment.name} (#{environment.id})"
+              else
+                raise "Database not found: '#{name}'"
+              end
+            end
+        end
+        mount DbDelete
 
       end
     end

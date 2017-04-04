@@ -8,6 +8,13 @@ module Ey
         summary "Perform Operations on Kubernetes clusters"
 
         class KubeySubcommand < Subcommand
+          def kubey_environment(opts = {})
+            if opts[:account].nil?
+              opts.delete(:account)
+            end
+            core_environment(opts.merge(kubey: true, arg_name: :cluster))
+          end
+
           def core_environment(opts = {})
             @_core_environment ||= begin
               argname = opts.delete(:arg_name) || :environment
@@ -132,15 +139,18 @@ module Ey
             description: "SSK key to install on all cluster instances",
             argument: "path to public key file"
 
-          option :no_key,
+          switch :no_key,
             long: ['no-key'],
-            description: "Skip installing SSH keys (boot cluster with no installed SSH keys)",
-            argument: "(none)"
+            description: "Skip installing SSH keys (boot cluster with no installed SSH keys)"
+
+          switch :bridge,
+            long: ['bridge'],
+            description: "Create a bridge instance too (for kubernetes training)"
 
           def handle
             if options[:key]
               keys = File.read(options[:key]).split("\n")
-            elsif options[:no_key]
+            elsif switch_active?(:no_key)
               keys = []
             else
               path = File.expand_path("~/.ssh/id_rsa.pub")
@@ -149,7 +159,7 @@ module Ey
               end
               keys = File.read(path).split("\n")
             end
-            name = options[:name] || "kubey_" + SecureRandom.hex(8)
+            name = options[:name] || raise("please specify a name for your cluster (--name)")
             if options[:availability_zone]
               expected_region = options[:availability_zone][0...-1]
               if region_given = options[:region]
@@ -177,6 +187,9 @@ module Ey
               kubey_node_count: num_nodes,
               instance_size: instance_size,
             }
+            if switch_active?(:bridge)
+              boot_configuration[:kubey_bridge] = true
+            end
             if ip_identifier = options[:ip]
               #TODO: avoid specifying an IP connected to an in-progress boot request.. If we do, will it fail appropriately?
               if found_ip = account.addresses.get(ip_identifier) ||
@@ -207,7 +220,6 @@ module Ey
               })
               puts "Booting cluster: #{name} (ID: #{e.id})"
             rescue Ey::Core::Response::Unprocessable => ex
-              puts ex.message
               if ex.message.match(/Too many provisioned addresses/)
                 existing_ips = account.addresses.all(location: region).select{|ip| ip.server.nil? }
                 puts "Try specifying an IP. e.g. --ip #{existing_ips.first.ip_address}"
@@ -244,11 +256,7 @@ module Ey
             account_id = account && account.id
             environments = []
             if options[:cluster]
-              search_opts = {kubey: true, arg_name: :cluster}
-              if account_id
-                search_opts[:account] = account_id
-              end
-              environments = [core_environment(search_opts)]
+              environments = [kubey_environment(account: account_id)]
             elsif account
               environments = core_environments(kubey: true, account: account)
             end
@@ -306,6 +314,9 @@ module Ey
                     puts "  DBs: " + logical_dbs.join(", ")
                   end
                 end
+                if environment.kubey_master_count > 0 && environment.upgrade_available
+                  puts "-- Upgrade Available, for details see: #{environment.available_upgrade_web_uri}"
+                end
               end
             end
           end
@@ -332,7 +343,17 @@ module Ey
           def handle
             account = core_account if options[:account]
             account_id = account && account.id
-            environment = core_environment(kubey: true, account: account_id, arg_name: :cluster)
+
+            environment = kubey_environment(account: account_id)
+
+            # environment = core_environment(account: account_id)
+            #
+            # if options[:cluster]
+            #   environments = [kubey_environment(account: account_id)]
+            # elsif account
+            #   environments = core_environments(kubey: true, account: account)
+            # end
+
             puts "Cluster: #{environment.name} (ID: #{environment.id})"
             kubey_cluster = environment.kubey_cluster
             unless kubey_cluster
@@ -402,7 +423,7 @@ module Ey
           def handle
             account = core_account if options[:account]
             account_id = account && account.id
-            environment = core_environment(kubey: true, account: account_id, arg_name: :cluster)
+            environment = kubey_environment(account: account_id)
             #TODO: handle error of apply already in progress
             environment.update(release_label: environment.release_label.gsub(/[^.]+$/,"latest")) #TODO: updating to latest release should be optional... command-line option to control it ... 
             #TODO: default should be DON'T update, but output a message about being outdated stack version if we are and name the optional command line arg to let the user also update to latest version
@@ -431,7 +452,7 @@ module Ey
           def handle
             account = core_account if options[:account]
             account_id = account && account.id
-            environment = core_environment(kubey: true, account: account_id, arg_name: :cluster)
+            environment = kubey_environment(account: account_id)
             environment.destroy!
             puts "Deleted: #{environment.name} (ID: #{environment.id})"
             #TODO: deleting an environment returns immediately but doens't complete immediately, show pending-deletion status in list somehow
@@ -515,7 +536,7 @@ module Ey
           def handle
             account = core_account
             db_service = core_db_service(account_id: account.id) || raise("please specify database service (--db-service)")
-            environment = core_environment(kubey: true, arg_name: :cluster) || raise("please specify a cluster (--cluster)")
+            environment = kubey_environment(account: account.id) || raise("please specify a cluster (--cluster)")
             name = options[:name] || raise("Please provide a name for your database (--name)")
             req = core_client.logical_databases.create!({
               service_id:        db_service.id,
@@ -558,7 +579,7 @@ module Ey
             def handle
               account = core_account
               db_service = core_db_service(account_id: account.id) || raise("please specify database service (--db-service)")
-              environment = core_environment(kubey: true, arg_name: :cluster) || raise("please specify a cluster (--cluster)")
+              environment = core_environment(account: account.id) || raise("please specify a cluster (--cluster)")
               name = options[:name] || raise("Please provide a name for your database (--name)")
               if db_to_delete = environment.logical_databases.first(name: name)
                 req = db_to_delete.destroy

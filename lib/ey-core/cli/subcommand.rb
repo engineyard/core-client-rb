@@ -38,7 +38,7 @@ module Ey
         #TODO: a lot more errors that would could handle with nice messages, eventually this should probably be it's own class
         def handle_core_error(e)
           stderr.puts "Error: #{e.error_type}".red
-          (e.response.body["errors"] || [e.message]).each do |message|
+          Array(e.response.body["errors"] || [e.message]).each do |message|
             stderr.puts Wrapomatic.wrap(message, indents: 1)
           end
           if e.is_a?(Ey::Core::Response::Unauthorized)

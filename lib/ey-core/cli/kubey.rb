@@ -213,6 +213,7 @@ module Ey
                   additional_availability_zones: additional_availability_zones,
                 },
                 region: region,
+                release_label: ENV.fetch('KUBEY_STACK', 'kubey-allan-0.1.4'),
                 boot_request: {
                   configuration: boot_configuration
                 },

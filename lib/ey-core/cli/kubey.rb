@@ -26,6 +26,8 @@ module Ey
                   raise "Couldn't find environment '#{arg}'"
                 end
                 found
+              else
+                core_client.environments.first
               end
             end
           end
@@ -267,11 +269,11 @@ module Ey
               if index > 0
                 puts
               end
-              puts "Cluster: #{environment.name} (ID: #{environment.id})"
+              puts "Cluster: #{environment.name} (ID: #{environment.id}) -- (VPC: #{environment.vpc_name} #{environment.vpc_provisioned_id})"
               if environment.deleted_at
                 puts "deleted #{environment.deleted_at}"
               else
-                relevant_requests = environment.requests.all(user: true, relevant: true)
+                relevant_requests = environment.requests.all(relevant: true)
                 relevant_requests.each_entry do |r|
                   puts r.request_status
                 end
@@ -344,7 +346,7 @@ module Ey
             account = core_account if options[:account]
             account_id = account && account.id
 
-            environment = kubey_environment(account: account_id)
+            environment = kubey_environment(account: account_id) || raise("cluster not found")
 
             # environment = core_environment(account: account_id)
             #
@@ -484,6 +486,7 @@ module Ey
                 db_service.db_engine_type,
                 db_service.db_master_flavor.to_s + (db_service.db_master_multi_az && " (multi-az)" || ""),
                 "#{db_service.db_replica_count} replicas",
+                "VPC: #{db_service.vpc_name} #{db_service.vpc_provisioned_id}",
               ].join(" -- ")
               # ap db_service
               # ap db_service.connected_kubey_environments

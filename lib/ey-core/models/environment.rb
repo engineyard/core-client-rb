@@ -24,6 +24,8 @@ class Ey::Core::Client::Environment < Ey::Core::Model
   attribute :kubey_logical_database_count
   attribute :kubey_master_count
   attribute :kubey_node_count
+  attribute :vpc_name
+  attribute :vpc_provisioned_id
 
   has_one :account
   has_one :database_service

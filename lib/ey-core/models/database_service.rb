@@ -15,6 +15,8 @@ class Ey::Core::Client::DatabaseService < Ey::Core::Model
   attribute :db_master_flavor
   attribute :db_replica_count
   attribute :connected_kubey_cluster_count
+  attribute :vpc_name
+  attribute :vpc_provisioned_id
 
   has_one :provider
 

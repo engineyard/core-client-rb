@@ -1,4 +1,6 @@
 require 'ey-core/cli/subcommand'
+require 'ey-core/cli/helpers/chef'
+require 'ey-core/cli/helpers/archive'
 
 module Ey
   module Core
@@ -8,6 +10,9 @@ module Ey
         summary "Perform Operations on Kubernetes clusters"
 
         class KubeySubcommand < Subcommand
+          include Ey::Core::Cli::Helpers::Archive
+          include Ey::Core::Cli::Helpers::Chef
+
           def kubey_environment(opts = {})
             if opts[:account].nil?
               opts.delete(:account)
@@ -149,6 +154,11 @@ module Ey
             long: ['bridge'],
             description: "Create a bridge instance too (for kubernetes training)"
 
+          option :upload_custom_recipes,
+            long: "upload-custom-recipes",
+            description: "Upload custom recipes that replace EY recipes, likely based on: https://github.com/engineyard/kubey_cookbooks",
+            argument: "path on local filesystem to recipes directory"
+
           def handle
             if options[:key]
               keys = File.read(options[:key]).split("\n")
@@ -221,6 +231,10 @@ module Ey
                 keypairs: keys.map{|k| {name: k.split(" ").last, public_key: k}},
               })
               puts "Booting cluster: #{name} (ID: #{e.id})"
+              if custom_recipe_path = options[:upload_custom_recipes]
+                upload_recipes(e, custom_recipe_path)
+                puts "Uploading custom recipes complete".green
+              end
             rescue Ey::Core::Response::Unprocessable => ex
               if ex.message.match(/Too many provisioned addresses/)
                 existing_ips = account.addresses.all(location: region).select{|ip| ip.server.nil? }
@@ -291,6 +305,11 @@ module Ey
                   unless s.state.to_s == "running"
                     s.chef_status.to_a.each do |chef_stat|
                       puts "  " + chef_stat['message'] + " -- " + chef_stat['time_ago'] + " ago"
+                    end
+                    if s.latest_chef_log
+                      puts "Fetch chef log contents with:".yellow
+                      puts "  ey-core logs -e #{environment.id} -s #{s.provisioned_id}"
+                      puts
                     end
                   end
                 end
@@ -412,7 +431,7 @@ module Ey
 
           option :cluster,
             short: ["c","e"],
-            long: "cluster",
+            long: ["cluster", "name"],
             description: "cluster name or ID",
             argument: "cluster"
 
@@ -422,6 +441,11 @@ module Ey
             description: 'Account name or ID',
             argument: 'Account'
 
+          option :upload_custom_recipes,
+            long: "upload-custom-recipes",
+            description: "Upload custom recipes that replace EY recipes, likely based on: https://github.com/engineyard/kubey_cookbooks",
+            argument: "path on local filesystem to recipes directory"
+
           def handle
             account = core_account if options[:account]
             account_id = account && account.id
@@ -429,6 +453,11 @@ module Ey
             #TODO: handle error of apply already in progress
             environment.update(release_label: environment.release_label.gsub(/[^.]+$/,"latest")) #TODO: updating to latest release should be optional... command-line option to control it ... 
             #TODO: default should be DON'T update, but output a message about being outdated stack version if we are and name the optional command line arg to let the user also update to latest version
+
+            if custom_recipe_path = options[:upload_custom_recipes]
+              upload_recipes(environment, custom_recipe_path)
+              puts "Uploading custom recipes complete".green
+            end
             environment.apply
             puts "Re-Running chef configuration scripts on #{environment.servers.size} servers on #{environment.name} (ID: #{environment.id}). Use status to command to poll for completion."
           end

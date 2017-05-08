@@ -49,7 +49,7 @@ DESC
           servers.each do |server|
             name = [server.provisioned_id, server.name, server.role].compact.join(" ")
 
-            if main_log = server.latest_main_log
+            if main_log = server.latest_chef_log || server.latest_main_log
               puts "Main logs for #{name}:".green
               puts main_log.contents
               if custom_log = server.latest_custom_log

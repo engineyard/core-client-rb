@@ -39,6 +39,12 @@ module Ey
             if recipes_path.exist? && recipes_path.to_s.match(/\.(tgz|tar\.gz)/)
               environment.upload_recipes(recipes_path)
             elsif recipes_path.exist?
+              possible_cookbooks_dir = File.join(path, "cookbooks")
+              if File.directory?(possible_cookbooks_dir)
+                puts "WARNING: I think maybe you meant to specify the path '#{possible_cookbooks_dir}' instead of '#{path}'".yellow
+                #The cookbooks repo has some stuff at the root directory related to the specification and documentations of the cookbooks and then has a folder "cookbooks" containing the actual cookbooks, so if that folder exists, you probably meant to specify THAT
+                puts "but, we're proceeding anyway just in case you know what you are doing....".yellow
+              end
               environment.upload_recipes(archive_directory(path))
             else
               raise RecipesNotFound, "Recipes not found, expected to find chef recipes in: #{File.expand_path(recipes_path)}, use --file to specify a different path"

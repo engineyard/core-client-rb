@@ -31,6 +31,7 @@ class Ey::Core::Client::Server < Ey::Core::Model
   has_one :address, collection: "addresses"
   has_one :environment
   has_one :provider
+  has_one :latest_chef_log, collection: "logs", resource: 'log'
 
   has_many :alerts
   has_many :volumes

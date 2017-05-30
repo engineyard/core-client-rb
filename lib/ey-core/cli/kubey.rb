@@ -182,10 +182,10 @@ module Ey
               options[:region] ||= expected_region
             end
             region = options[:region] || "us-east-1"
-            primary_availability_zone = options[:availability_zone] || (region + "a")
+            primary_availability_zone = options[:availability_zone] || (region + "b")
             additional_availability_zones = options[:additional_availability_zones].to_s.split(",")
-            instance_size = options[:instance_size] || "m3.large"
-            num_nodes = (options[:num_nodes] || 2).to_i * (additional_availability_zones.size + 1)
+            instance_size = options[:instance_size] || "t2.medium"
+            num_nodes = (options[:num_nodes] || 3).to_i * (additional_availability_zones.size + 1)
             account = core_account
             unless account
               raise "No Accounts"

@@ -24,7 +24,7 @@ Gem::Specification.new do |gem|
 
   gem.add_dependency "awesome_print"
   gem.add_dependency "belafonte"
-  gem.add_dependency "cistern", "~> 0.12"
+  gem.add_dependency "cistern", "~> 0.12.3"
   gem.add_dependency "colorize"
   gem.add_dependency "ey-hmac", "~> 2.0"
   gem.add_dependency "escape"

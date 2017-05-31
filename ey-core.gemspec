@@ -6,8 +6,8 @@ require 'ey-core/version'
 Gem::Specification.new do |gem|
   gem.name          = "ey-core"
   gem.version       = Ey::Core::VERSION
-  gem.authors       = ["Josh Lane"]
-  gem.email         = ["jlane@engineyard.com", "engineering@engineyard.com"]
+  gem.authors       = ["Engine Yard Engineering"]
+  gem.email         = ["engineering@engineyard.com"]
   gem.description   = %q{Engine Yard Core API Ruby Client}
   gem.summary       = %q{Client library providing real and mock functionality for accessing Engine Yard's Core API}
   gem.homepage      = ""
@@ -18,22 +18,23 @@ Gem::Specification.new do |gem|
   gem.require_paths = ["lib"]
   gem.licenses      = ["MIT"]
 
-  # The last version of addressable that works on ruby-1.9 is 2.4.0
-  gem.add_dependency "addressable", "= 2.4.0"
+  gem.required_ruby_version = ">= 2.2.2"
+
+  gem.add_dependency "addressable"
 
   gem.add_dependency "awesome_print"
   gem.add_dependency "belafonte"
-  gem.add_dependency "cistern", "~> 0.12"
+  gem.add_dependency "cistern", "~> 0.12.3"
   gem.add_dependency "colorize"
   gem.add_dependency "ey-hmac", "~> 2.0"
   gem.add_dependency "escape"
   gem.add_dependency "faraday", "~> 0.9"
   gem.add_dependency "faraday_middleware", "~> 0.9"
-  gem.add_dependency "rack", "= 1.6.4" #maintain ruby 1.9 - 2.2.(0|1) compatibility
+  gem.add_dependency "rack"
   gem.add_dependency "faye"
   gem.add_dependency "highline"
   gem.add_dependency "json", "< 2.0"
-  gem.add_dependency "mime-types", "~> 2.99.2" #maintain ruby 1.9 compatibility
+  gem.add_dependency "mime-types"
   gem.add_dependency "oj"
   gem.add_dependency "oj_mimic_json"
   gem.add_dependency "pry"

@@ -13,6 +13,9 @@ module Ey::Core::Subscribable
     gem 'faye', '~> 1.1'
     require 'faye' # soft dependency
 
+    # Use the same env variable as faraday to activate debug output
+    Faye.logger = Logger.new(STDOUT, level: "DEBUG") if ENV["DEBUG"]
+
     uri = read_channel_uri
 
     resource = self

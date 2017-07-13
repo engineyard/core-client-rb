@@ -117,6 +117,12 @@ module Ey
                 db_master: switch_active?(:db_master),
                 utilities: option(:utilities)
               )
+
+              # Reinstate default behavior: If no command is passed and no
+              # roles are passed, open a connection to the app master
+              if servers.empty?
+                servers += (environment.servers.all(role: "app_master") + environment.servers.all(role: "solo")).to_a
+              end
             end
           end
 

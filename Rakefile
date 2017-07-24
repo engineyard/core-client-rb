@@ -1,5 +1,6 @@
 #!/usr/bin/env rake
 require "bundler/gem_tasks"
+require 'cucumber/rake/task'
 
 namespace :spec do
   task :mocked do
@@ -12,4 +13,6 @@ end
 
 task :spec => ["spec:mocked", "spec:unmocked"]
 
-task default: "spec:mocked"
+Cucumber::Rake::Task.new
+
+task default: ["spec:mocked", :cucumber]

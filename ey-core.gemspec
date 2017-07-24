@@ -45,4 +45,7 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency "rspec", "~> 3.0"
   gem.add_development_dependency "ffaker"
   gem.add_development_dependency "rake"
+  gem.add_development_dependency "aruba", "~> 0.11"
+  gem.add_development_dependency "cucumber", "~> 2.1"
+  gem.add_development_dependency "factis", "~> 1.0"
 end

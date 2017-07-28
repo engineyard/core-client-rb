@@ -21,6 +21,7 @@ class Ey::Core::Client::Environment < Ey::Core::Model
   has_one :account
   has_one :database_service
   has_one :firewall
+  has_one :auto_scaling_group
   has_one :assignee, assoc_name: :user, resource: :user
 
   has_many :costs

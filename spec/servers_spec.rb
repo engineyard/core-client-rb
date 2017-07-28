@@ -10,6 +10,14 @@ describe 'servers' do
     let!(:environment) { create_environment(account: account, application: application, name: Faker::Name.first_name) }
     let!(:server)      { environment.servers.first }
 
+    context "discovering" do
+      it "discovers a server that it knows nothing about" do
+        expect {
+          client.servers.discover(provider: account.providers.first.identity, environment: environment.identity, server: {location: "us-east-1b", provisioned_id: "i-newserver"}).resource!
+        }.to change { client.servers.count }.by(1)
+      end
+    end
+
     context "with a second account" do
       let(:account2) { create_account(client: client) }
       let(:app2)     { create_application(account: account2) }

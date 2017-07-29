@@ -137,6 +137,7 @@ class Ey::Core::Client::Mock
                  :deployments                 => {},
                  :environment_plan_usages     => Hash.new { |h1,k1| h1[k1] = {} },
                  :environments                => {},
+                 :environment_variables       => {},
                  :features                    => {},
                  :firewall_rules              => {},
                  :firewalls                   => {},

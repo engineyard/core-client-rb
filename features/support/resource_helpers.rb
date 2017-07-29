@@ -127,6 +127,18 @@ module ResourceHelpers
     environment
   end
 
+  def create_environment_variable(options={})
+    application = options[:application] || create_application
+    environment = options[:environment] || create_environment
+
+    environment_variable = options[:environment_variable] || {}
+    environment_variable.merge!(application_id: application.id, environment: environment.id)
+    environment_variable[:name] ||= SecureRandom.hex(8)
+    environment_variable[:value] ||= SecureRandom.hex(32)
+
+    client.environment_variables.create!(environment_variable)
+  end
+
   def create_provider_location(client, attributes={})
     attributes = Cistern::Hash.stringify_keys(attributes)
 

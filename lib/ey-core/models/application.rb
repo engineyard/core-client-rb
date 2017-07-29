@@ -12,6 +12,7 @@ class Ey::Core::Client::Application < Ey::Core::Model
 
   has_many :archives, key: :application_archives
   has_many :keypairs
+  has_many :environment_variables
 
   def save!
     params = {

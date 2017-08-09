@@ -36,7 +36,7 @@ class Ey::Core::Client
             role_to_use = (type == 'app_instances' && index == 0) ? "app_master" : role
             server = server_hash(role: role_to_use, environment: environment, flavor: server_data["flavor"]["id"], name: server_data["name"])
             if role_to_use == "app_master"
-              if ip_id = params["cluster_configuration"]["ip_id"]
+              if ip_id = params["cluster_configuration"]["configuration"]["ip_id"]
                 if find(:addresses, ip_id)
                   server[:address] = url_for("/addresses/#{ip_id}")
                 end

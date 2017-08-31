@@ -4,6 +4,7 @@ ENV['CORE_URL'] ||= "http://api-development.localdev.engineyard.com:9292"
 require 'pry'
 require 'pry-nav'
 require 'tempfile'
+require 'netaddr'
 
 Bundler.require(:default, :test)
 

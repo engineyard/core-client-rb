@@ -48,4 +48,5 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency "aruba", "~> 0.11"
   gem.add_development_dependency "cucumber", "~> 2.1"
   gem.add_development_dependency "factis", "~> 1.0"
+  gem.add_development_dependency "netaddr", "1.5.1"
 end

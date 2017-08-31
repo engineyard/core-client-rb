@@ -42,6 +42,7 @@ class Ey::Core::Client < Cistern::Service
   collection :logs
   collection :memberships
   collection :messages
+  collection :networks
   collection :plan_usages
   collection :provider_locations
   collection :providers
@@ -53,6 +54,7 @@ class Ey::Core::Client < Cistern::Service
   collection :ssl_certificates
   collection :storage_users
   collection :storages
+  collection :subnets
   collection :tasks
   collection :tokens
   collection :untracked_addresses
@@ -99,6 +101,7 @@ class Ey::Core::Client < Cistern::Service
   model :logical_database
   model :membership
   model :message
+  model :network
   model :plan_usage
   model :provider
   model :provider_location
@@ -110,6 +113,7 @@ class Ey::Core::Client < Cistern::Service
   model :ssl_certificate
   model :storage
   model :storage_user
+  model :subnet
   model :support_trial
   model :task
   model :token
@@ -148,6 +152,7 @@ class Ey::Core::Client < Cistern::Service
   request :create_logical_database
   request :create_membership
   request :create_message
+  request :create_network
   request :create_password_reset
   request :create_provider
   request :create_server
@@ -171,6 +176,7 @@ class Ey::Core::Client < Cistern::Service
   request :destroy_firewall_rule
   request :destroy_load_balancer
   request :destroy_logical_database
+  request :destroy_network
   request :destroy_provider
   request :destroy_server
   request :destroy_ssl_certificate
@@ -258,6 +264,8 @@ class Ey::Core::Client < Cistern::Service
   request :get_message
   request :get_messages
   request :get_metadata
+  request :get_network
+  request :get_networks
   request :get_plan_usages
   request :get_possible_provider_locations
   request :get_provider
@@ -277,6 +285,8 @@ class Ey::Core::Client < Cistern::Service
   request :get_storage_user
   request :get_storage_users
   request :get_storages
+  request :get_subnet
+  request :get_subnets
   request :get_support_trial
   request :get_task
   request :get_tasks

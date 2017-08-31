@@ -22,6 +22,7 @@ class Ey::Core::Client::Environment < Ey::Core::Model
   has_one :database_service
   has_one :firewall
   has_one :assignee, assoc_name: :user, resource: :user
+  has_one :network
 
   has_many :costs
   has_many :keypairs

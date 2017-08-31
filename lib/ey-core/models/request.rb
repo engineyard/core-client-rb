@@ -76,6 +76,8 @@ class Ey::Core::Client::Request < Ey::Core::Model
       self.connection.firewall_rules.get!(resource_id)
     when /logical_database/
       self.connection.logical_databases.get!(resource_id)
+    when /network/
+      self.connection.networks.get!(resource_id)
     when /provider_location/
       self.connection.provider_locations.get!(resource_id)
     when /provider_storage_credential/
@@ -88,6 +90,8 @@ class Ey::Core::Client::Request < Ey::Core::Model
       self.connection.servers.get!(resource_id)
     when /snapshot/
       self.connection.snapshots.get!(resource_id)
+    when /subnet/
+      self.connection.subnets.get!(resource_id)
     when /task/
       self.connection.tasks.get!(resource_id)
     when /volume/

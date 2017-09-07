@@ -4,20 +4,21 @@ class Ey::Core::Client::Subnet < Ey::Core::Model
   identity :id
 
   attribute :cidr
-  attribute :location_id
+  attribute :location
+  attribute :primary, type: :boolean
   attribute :provisioned_id
 
   has_one :network
 
   def save!
-    requires :network_id, :location_id, :cidr
+    requires :network_id, :location, :cidr
 
     params = {
-      "url"      => self.collection.url,
-      "provider" => self.network,
-      "network"  => {
-        "cidr"        => self.cidr,
-        "location_id" => self.location_id,
+      "url"     => self.collection.url,
+      "network" => self.network_id,
+      "subnet"  => {
+        "cidr"     => self.cidr,
+        "location" => self.location,
       }
     }
 

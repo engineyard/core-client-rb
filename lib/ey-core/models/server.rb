@@ -27,6 +27,7 @@ class Ey::Core::Client::Server < Ey::Core::Model
   attribute :wait_for_chef,    type: :boolean
   attribute :release_label
 
+  has_one :subnet
   has_one :account
   has_one :address, collection: "addresses"
   has_one :environment
@@ -111,11 +112,12 @@ class Ey::Core::Client::Server < Ey::Core::Model
           "dedicated"       => self.dedicated,
           "flavor"          => self.flavor_id,
           "iops"            => self.iops,
-          "location"        => self.location || environment.region,
+          "location"        => self.location || subnet.location || environment.region,
           "mnt_volume_size" => self.mnt_volume_size,
           "name"            => self.name,
           "release_label"   => self.release_label,
           "role"            => self.role,
+          "subnet_id"       => self.subnet_id,
           "volume_size"     => self.volume_size,
         }
       }

@@ -1,27 +1,27 @@
 class Ey::Core::Client
   class Real
-    def destroy_network(options={})
+    def destroy_subnet(options={})
       id = options.delete("id")
       url = options.delete("url")
 
       request(
         :method => :delete,
-        :path   => "/networks/#{id}",
+        :path   => "/subnets/#{id}",
         :url    => url,
       )
     end
   end
 
   class Mock
-    def destroy_network(options={})
+    def destroy_subnet(options={})
       extract_url_params!(options)
       request_id = self.uuid
-      network_id = options["id"]
+      subnet_id = options["id"]
 
-      network = find(:networks, network_id)
+      subnet = find(:subnets, subnet_id)
 
       request = {
-        "type"        => "deprovision_network",
+        "type"        => "deprovision_subnet",
         "started_at"  => Time.now,
         "finished_at" => nil,
         "successful"  => true,
@@ -29,7 +29,7 @@ class Ey::Core::Client
       }
 
       self.data[:requests][request_id] = request.merge(
-        "resource" => [:networks, network_id, network.merge("deleted_at" => Time.now)],
+        "resource" => [:subnets, subnet_id, subnet.merge("deleted_at" => Time.now)],
       )
 
       response(

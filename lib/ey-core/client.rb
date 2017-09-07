@@ -159,6 +159,7 @@ class Ey::Core::Client < Cistern::Service
   request :create_ssl_certificate
   request :create_storage
   request :create_storage_user
+  request :create_subnet
   request :create_task
   request :create_token
   request :create_untracked_address
@@ -182,6 +183,7 @@ class Ey::Core::Client < Cistern::Service
   request :destroy_ssl_certificate
   request :destroy_storage
   request :destroy_storage_user
+  request :destroy_subnet
   request :destroy_user
   request :detach_address
   request :disable_feature

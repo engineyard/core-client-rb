@@ -4,6 +4,8 @@ class Ey::Core::Client::Subnet < Ey::Core::Model
   identity :id
 
   attribute :cidr
+  attribute :created_at
+  attribute :deleted_at
   attribute :location
   attribute :primary, type: :boolean
   attribute :provisioned_id

@@ -17,17 +17,31 @@ class Ey::Core::Client::AutoScalingGroup < Ey::Core::Model
   end
 
   def save!
-    requires :maximum_size, :minimum_size, :environment
+    if new_record?
+      requires :maximum_size, :minimum_size, :environment
 
-    params = {
-      "url"                => self.collection.url,
-      "environment"        => self.environment_id,
-      "auto_scaling_group" => {
-        "maximum_size" => self.maximum_size,
-        "minimum_size" => self.minimum_size,
+      params = {
+        "url"                => self.collection.url,
+        "environment"        => self.environment_id,
+        "auto_scaling_group" => {
+          "maximum_size" => self.maximum_size,
+          "minimum_size" => self.minimum_size,
+        }
       }
-    }
 
-    connection.requests.new(connection.create_auto_scaling_group(params).body["request"])
+      connection.requests.new(connection.create_auto_scaling_group(params).body["request"])
+    else
+      requires :identity
+
+      params = {
+        "id" => self.identity,
+        "auto_scaling_group" => {
+          "maximum_size" => self.maximum_size,
+          "minimum_size" => self.minimum_size
+        }
+      }
+
+      connection.requests.new(connection.update_auto_scaling_group(params).body["request"])
+    end
   end
 end

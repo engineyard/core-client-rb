@@ -14,6 +14,7 @@ class Ey::Core::Client < Cistern::Service
   collection :application_archives
   collection :application_deployments
   collection :applications
+  collection :auto_scaling_groups
   collection :backup_files
   collection :blueprints
   collection :components
@@ -70,6 +71,7 @@ class Ey::Core::Client < Cistern::Service
   model :application
   model :application_archive
   model :application_deployment
+  model :auto_scaling_group
   model :backup_file
   model :billing
   model :blueprint
@@ -134,6 +136,7 @@ class Ey::Core::Client < Cistern::Service
   request :create_alert
   request :create_application
   request :create_application_archive
+  request :create_auto_scaling_group
   request :create_backup_file
   request :create_database_server
   request :create_database_service
@@ -162,6 +165,7 @@ class Ey::Core::Client < Cistern::Service
   request :deploy_environment_application
   request :deprovision_environment
   request :destroy_addon
+  request :destroy_auto_scaling_group
   request :destroy_blueprint
   request :destroy_database_server
   request :destroy_database_server_snapshot
@@ -182,6 +186,7 @@ class Ey::Core::Client < Cistern::Service
   request :discover_database_server
   request :discover_database_server_snapshots
   request :discover_provider_location
+  request :discover_server
   request :download_file
   request :enable_feature
   request :get_account
@@ -203,6 +208,8 @@ class Ey::Core::Client < Cistern::Service
   request :get_application_deployment
   request :get_application_deployments
   request :get_applications
+  request :get_auto_scaling_group
+  request :get_auto_scaling_groups
   request :get_backup_file
   request :get_backup_files
   request :get_billing

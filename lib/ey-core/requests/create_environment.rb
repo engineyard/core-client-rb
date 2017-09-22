@@ -48,6 +48,7 @@ class Ey::Core::Client
         "stack_name"            => "nginx_passenger4",
         "updated_at"            => Time.now,
         "username"              => "deploy",
+        "service_level"         => "default"
       )
 
       self.data[:environments][resource_id] = resource

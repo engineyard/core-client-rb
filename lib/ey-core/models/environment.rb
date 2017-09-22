@@ -17,6 +17,7 @@ class Ey::Core::Client::Environment < Ey::Core::Model
   attribute :release_label
   attribute :stack_name
   attribute :username
+  attribute :service_level
 
   has_one :account
   has_one :database_service

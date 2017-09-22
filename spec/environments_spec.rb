@@ -173,6 +173,24 @@ describe 'as a user' do
         expect(account.environments.all.map(&:identity)).to contain_exactly(environment.identity)
       end
 
+      it 'gets the environment attributes' do
+        expect(client.environments.get(environment.id)).to have_attributes(
+          "account"               => account,
+          "classic"               => true,
+          "custom_recipes"        => nil,
+          "database_stack"        => "postgres9_4",
+          "deployments_url"       => client.url_for("/environments/#{environment.id}/deployments"),
+          "id"                    => environment.id,
+          "keypairs"              => environment.keypairs,
+          "logical_databases_url" => client.url_for("/environments/#{environment.id}/logical-databases"),
+          "release_label"         => "stable-v4-2.0.101",
+          "servers"               => environment.servers,
+          "stack_name"            => "nginx_passenger4",
+          "username"              => "deploy",
+          "service_level"         => "default"
+        )
+      end
+
       it "adds a keypair" do
         client.keypairs.create(name: SecureRandom.hex(6), public_key: SSHKey.generate.ssh_public_key)
       end

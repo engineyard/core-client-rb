@@ -24,12 +24,13 @@ class Ey::Core::Client
       now = Time.now
 
       resource.merge!(
-        "created_at"     => now,
-        "environment"    => url_for("/environments/#{environment_id}"),
-        "id"             => resource_id,
-        "location_id"    => environment["region"],
-        "provisioned_id" => "#{environment["name"]}#{SecureRandom.uuid}",
-        "resource_url"   => url_for("/auto_scaling_groups/#{resource_id}"),
+        "created_at"       => now,
+        "environment"      => url_for("/environments/#{environment_id}"),
+        "id"               => resource_id,
+        "location_id"      => environment["region"],
+        "provisioned_id"   => "#{environment["name"]}#{SecureRandom.uuid}",
+        "desired_capacity" => 1,
+        "resource_url"     => url_for("/auto_scaling_groups/#{resource_id}"),
       )
 
       self.data[:auto_scaling_groups][resource_id] = resource

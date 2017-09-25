@@ -9,6 +9,7 @@ class Ey::Core::Client::AutoScalingGroup < Ey::Core::Model
   attribute :provisioned_id
   attribute :minimum_size
   attribute :maximum_size
+  attribute :desired_capacity
 
   has_one :environment
 
@@ -37,7 +38,8 @@ class Ey::Core::Client::AutoScalingGroup < Ey::Core::Model
         "id" => self.identity,
         "auto_scaling_group" => {
           "maximum_size" => self.maximum_size,
-          "minimum_size" => self.minimum_size
+          "minimum_size" => self.minimum_size,
+          "desired_capacity" => self.desired_capacity
         }
       }
 

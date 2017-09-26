@@ -312,6 +312,7 @@ class Ey::Core::Client < Cistern::Service
   request :update_address
   request :update_alert
   request :update_application_archive
+  request :update_auto_scaling_group
   request :update_billing
   request :update_blueprint
   request :update_environment

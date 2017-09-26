@@ -1,5 +1,5 @@
 module Ey
   module Core
-    VERSION = "3.4.2.autoscaling1"
+    VERSION = "3.4.3"
   end
 end

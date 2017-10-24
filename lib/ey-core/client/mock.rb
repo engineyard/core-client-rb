@@ -122,6 +122,7 @@ class Ey::Core::Client::Mock
                  :billing                     => {},
                  :blueprints                  => {},
                  :cluster_firewalls           => [],
+                 :cdn_distributions           => {},
                  :components                  => components,
                  :contact_assignments         => [],
                  :contacts                    => {},

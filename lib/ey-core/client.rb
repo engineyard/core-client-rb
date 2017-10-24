@@ -17,6 +17,7 @@ class Ey::Core::Client < Cistern::Service
   collection :auto_scaling_groups
   collection :backup_files
   collection :blueprints
+  collection :cdn_distributions
   collection :components
   collection :contacts
   collection :costs
@@ -75,6 +76,7 @@ class Ey::Core::Client < Cistern::Service
   model :backup_file
   model :billing
   model :blueprint
+  model :cdn_distribution
   model :component
   model :contact
   model :cost
@@ -138,6 +140,7 @@ class Ey::Core::Client < Cistern::Service
   request :create_application_archive
   request :create_auto_scaling_group
   request :create_backup_file
+  request :create_cdn_distribution
   request :create_database_server
   request :create_database_service
   request :create_database_service_snapshot
@@ -167,6 +170,7 @@ class Ey::Core::Client < Cistern::Service
   request :destroy_addon
   request :destroy_auto_scaling_group
   request :destroy_blueprint
+  request :destroy_cdn_distribution
   request :destroy_database_server
   request :destroy_database_server_snapshot
   request :destroy_database_service
@@ -215,6 +219,8 @@ class Ey::Core::Client < Cistern::Service
   request :get_billing
   request :get_blueprint
   request :get_blueprints
+  request :get_cdn_distribution
+  request :get_cdn_distributions
   request :get_component
   request :get_components
   request :get_contacts
@@ -295,6 +301,7 @@ class Ey::Core::Client < Cistern::Service
   request :get_user
   request :get_users
   request :get_volumes
+  request :invalidate_cdn_distribution
   request :reboot_server
   request :reconcile_server
   request :request_callback
@@ -315,6 +322,7 @@ class Ey::Core::Client < Cistern::Service
   request :update_auto_scaling_group
   request :update_billing
   request :update_blueprint
+  request :update_cdn_distribution
   request :update_environment
   request :update_membership
   request :update_provider_location

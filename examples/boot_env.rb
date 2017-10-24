@@ -42,7 +42,7 @@ if !blueprint then
   exit
 end
   
-env_options = {"blueprint_id": blueprint.id}
+env_options = { "blueprint_id" => blueprint.id }
 puts "Booting environment using an specific blueprint...."
 provision_request = environment.boot(env_options)
 

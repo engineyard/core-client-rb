@@ -173,6 +173,35 @@ module Ey
             end
           end
 
+          # Fetches a list of environments by given name or ID.
+          #
+          # @param env_name_or_id [String] name or ID of environment.
+          #
+          # @return [Array<Ey::Core::Client::Environment>] list of environments.
+          def core_environments(env_name_or_id)
+            core_client.environments.all(name: env_name_or_id).tap do |result|
+              result << core_client.environments.get(env_name_or_id) if result.empty?
+            end.to_a.compact
+          end
+
+          # Fetches a list of applications by given name or ID.
+          #
+          # @param app_name_or_id [String] name or ID of application.
+          #
+          # @return [Array<Ey::Core::Client::Environment>] list of environments.
+          def core_applications(app_name_or_id)
+            core_client.applications.all(name: app_name_or_id).tap do |result|
+              result << core_client.applications.get(app_name_or_id) if result.empty?
+            end.to_a.compact
+          end
+
+          # Fetches a list of cdn distributions available for current user.
+          #
+          # @return [Array<Ey::Core::Client::CdnDistribution>] list of cdn distributions.
+          def core_cdn_distributions
+            core_client.cdn_distributions
+          end
+
           def write_core_yaml(token=nil)
             core_yaml[core_url] = token if token
             File.open(self.class.core_file, "w") {|file|

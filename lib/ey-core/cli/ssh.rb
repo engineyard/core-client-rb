@@ -107,7 +107,7 @@ module Ey
             end
 
             if option(:server)
-              servers += [core_server_for(server: option[:server], operator: environment)]
+              servers += [core_server_for(server: option(:server), operator: environment)]
             else
               servers += Ey::Core::Cli::Helpers::ServerSieve.filter(
                 environment.servers,

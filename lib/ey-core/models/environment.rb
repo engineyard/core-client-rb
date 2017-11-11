@@ -33,6 +33,7 @@ class Ey::Core::Client::Environment < Ey::Core::Model
   has_many :applications
   has_many :logical_databases
   has_many :deployments
+  has_many :cdn_distributions
 
   attr_accessor :application_id
 

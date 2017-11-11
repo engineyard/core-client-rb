@@ -9,6 +9,7 @@ class Ey::Core::Client::Application < Ey::Core::Model
   attribute :type
 
   has_one :account
+  has_one :cdn_distribution
 
   has_many :archives, key: :application_archives
   has_many :keypairs

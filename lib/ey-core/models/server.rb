@@ -26,6 +26,7 @@ class Ey::Core::Client::Server < Ey::Core::Model
   attribute :updated_at,       type: :time
   attribute :wait_for_chef,    type: :boolean
   attribute :release_label
+  attribute :ip_id
 
   has_one :account
   has_one :address, collection: "addresses"
@@ -117,6 +118,7 @@ class Ey::Core::Client::Server < Ey::Core::Model
           "release_label"   => self.release_label,
           "role"            => self.role,
           "volume_size"     => self.volume_size,
+          "ip_id"           => self.ip_id
         }
       }
       connection.requests.new(connection.create_server(server_attributes).body["request"])

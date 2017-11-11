@@ -18,6 +18,8 @@ class Ey::Core::Client::Environment < Ey::Core::Model
   attribute :stack_name
   attribute :username
   attribute :service_level
+  attribute :database_backup_limit
+  attribute :encrypted_ebs_for_everything
 
   has_one :account
   has_one :database_service
@@ -213,13 +215,15 @@ class Ey::Core::Client::Environment < Ey::Core::Model
         "url"         => self.collection.url,
         "account"     => self.account_id,
         "environment" => {
-          "name"                      => self.name,
-          "application_id"            => self.application_id,
-          "region"                    => self.region,
-          "stack_name"                => self.stack_name,
-          "database_stack"            => self.database_stack,
-          "release_label"             => self.release_label,
-          "language"                  => self.language,
+          "name"                         => self.name,
+          "application_id"               => self.application_id,
+          "region"                       => self.region,
+          "stack_name"                   => self.stack_name,
+          "database_stack"               => self.database_stack,
+          "release_label"                => self.release_label,
+          "language"                     => self.language,
+          "database_backup_limit"        => self.database_backup_limit,
+          "encrypted_ebs_for_everything" => self.encrypted_ebs_for_everything,
         },
       }
 

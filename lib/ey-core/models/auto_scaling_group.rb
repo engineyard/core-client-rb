@@ -11,6 +11,8 @@ class Ey::Core::Client::AutoScalingGroup < Ey::Core::Model
   attribute :maximum_size
   attribute :desired_capacity
 
+  has_many :auto_scaling_policies
+
   has_one :environment
 
   def destroy

@@ -10,8 +10,8 @@ class Ey::Core::Client::AutoScalingGroup < Ey::Core::Model
   attribute :minimum_size
   attribute :maximum_size
   attribute :desired_capacity
-
-  has_many :auto_scaling_policies
+  attribute :default_cooldown
+  attribute :grace_period
 
   has_one :environment
 
@@ -47,5 +47,27 @@ class Ey::Core::Client::AutoScalingGroup < Ey::Core::Model
 
       connection.requests.new(connection.update_auto_scaling_group(params).body["request"])
     end
+  end
+
+  def simple_auto_scaling_policies
+    auto_scaling_policies("simple")
+  end
+
+  def step_auto_scaling_policies
+    auto_scaling_policies("step")
+  end
+
+  def target_tracking_auto_scaling_policies
+    auto_scaling_policies("target")
+  end
+
+  def auto_scaling_policies(types = nil)
+    requires :identity
+    data = connection.get_auto_scaling_policies(
+      "auto_scaling_group_id" => identity,
+      "types" => [*types]
+    ).body["auto_scaling_policies"]
+
+    connection.auto_scaling_policies.load(data)
   end
 end

@@ -51,6 +51,7 @@ class Ey::Core::Client < Cistern::Service
   collection :server_usages
   collection :servers
   collection :services
+  collection :auto_scaling_policies
   collection :ssl_certificates
   collection :storage_users
   collection :storages
@@ -109,6 +110,7 @@ class Ey::Core::Client < Cistern::Service
   model :server_event
   model :server_usage
   model :service
+  model :auto_scaling_policy
   model :ssl_certificate
   model :storage
   model :storage_user
@@ -154,6 +156,7 @@ class Ey::Core::Client < Cistern::Service
   request :create_password_reset
   request :create_provider
   request :create_server
+  request :create_auto_scaling_policy
   request :create_ssl_certificate
   request :create_storage
   request :create_storage_user
@@ -177,6 +180,7 @@ class Ey::Core::Client < Cistern::Service
   request :destroy_logical_database
   request :destroy_provider
   request :destroy_server
+  request :destroy_auto_scaling_policy
   request :destroy_ssl_certificate
   request :destroy_storage
   request :destroy_storage_user
@@ -278,6 +282,8 @@ class Ey::Core::Client < Cistern::Service
   request :get_server_events
   request :get_server_usages
   request :get_servers
+  request :get_auto_scaling_policy
+  request :get_auto_scaling_policies
   request :get_ssl_certificate
   request :get_ssl_certificates
   request :get_storage
@@ -313,6 +319,7 @@ class Ey::Core::Client < Cistern::Service
   request :update_alert
   request :update_application_archive
   request :update_auto_scaling_group
+  request :update_auto_scaling_policy
   request :update_billing
   request :update_blueprint
   request :update_environment

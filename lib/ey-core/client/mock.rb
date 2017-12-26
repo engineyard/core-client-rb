@@ -159,6 +159,7 @@ class Ey::Core::Client::Mock
                  :server_events               => {},
                  :server_usages               => Hash.new { |h1,k1| h1[k1] = {} },
                  :servers                     => {},
+                 :simple_auto_scaling_policies => {},
                  :ssl_certificates            => {},
                  :storage_users               => {},
                  :storages                    => {},

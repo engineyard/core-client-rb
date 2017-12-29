@@ -23,25 +23,23 @@ class Ey::Core::Client
       params = Cistern::Hash.stringify_keys(options)
       url = params.delete("url")
 
-      auto_scaling_group_id = params.delete("auto_scaling_group")
+      auto_scaling_group_id = params.delete("auto_scaling_group_id")
       auto_scaling_group = find(:auto_scaling_groups, auto_scaling_group_id)
       id = self.uuid
       resource = params["auto_scaling_policy"].dup
-      arn = "scalingPolicy:00000000-0000-0000-0000-000000000000:autoScalingGroupName/#{auto_scaling_group['name']}:policyName/#{resource['name']}"
+      arn = "scalingPolicy:00000000-0000-0000-0000-000000000000:autoScalingGroupName/#{auto_scaling_group["name"]}:policyName/#{resource["name"]}"
 
       now = Time.now
 
       resource.merge!(
         "created_at"         => now,
-        "auto_scaling_group" => url_for("/auto_scaling_groups/#{auto_scaling_group_id}"),
+        "auto_scaling_group" => auto_scaling_group["id"],
         "id"                 => id,
         "arn"                => arn,
-        "resource_url"       => url_for("/auto_scaling_policies/#{id}")
+        "resource_url"       => url_for("/auto_scaling_policies/#{id}"),
       )
 
       self.data[:auto_scaling_policies][id] = resource
-      environment.merge!("auto_scaling_policy" => url_for("/auto_scaling_policies/#{id}"))
-
       self.data[:requests][id] = resource
 
       response(

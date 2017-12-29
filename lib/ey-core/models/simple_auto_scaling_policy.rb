@@ -1,4 +1,4 @@
-class Ey::Core::Client::AutoScalingPolicy < Ey::Core::Client::SimpleAutoScalingPolicy
+class Ey::Core::Client::SimpleAutoScalingPolicy < Ey::Core::Client::BaseAutoScalingPolicy
   identity :id
   attribute :auto_scaling_group_id, aliases: "auto_scaling_group", squash: ["id"]
   attribute :cooldown, type: :integer
@@ -7,10 +7,6 @@ class Ey::Core::Client::AutoScalingPolicy < Ey::Core::Client::SimpleAutoScalingP
   attribute :action_value
 
   def policy_params
-    requires :action_value
-  end
-
-  def policy_requires
     {
       "cooldown"     => cooldown,
       "action_unit"  => action_unit,
@@ -18,5 +14,9 @@ class Ey::Core::Client::AutoScalingPolicy < Ey::Core::Client::SimpleAutoScalingP
       "action_value" => action_value,
       "type"         => type
     }
+  end
+
+  def policy_requires
+    requires :action_value
   end
 end

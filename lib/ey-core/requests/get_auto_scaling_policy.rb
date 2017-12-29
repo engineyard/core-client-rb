@@ -10,7 +10,7 @@ class Ey::Core::Client
         :url    => url
       )
     end
-  end # Real
+  end
 
   class Mock
     def get_auto_scaling_policy(params={})

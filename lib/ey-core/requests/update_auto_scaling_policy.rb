@@ -19,8 +19,24 @@ class Ey::Core::Client
         .merge("updated_at" => Time.now)
       resource.merge!(params)
 
+      request = {
+        "id"           => self.uuid,
+        "type"         => "update_auto_scaling_policy",
+        "successful"   => true,
+        "created_at"   => now - 5,
+        "updated_at"   => now,
+        "started_at"   => now - 3,
+        "finished_at"  => now,
+        "message"      => nil,
+        "read_channel" => nil,
+        "resource"     => [:auto_scaling_policies, resource_id, resource],
+        "resource_url" => url_for("/auto_scaling_policies/#{resource_id}")
+      }
+
+      self.data[:requests][request["id"]] = request
+
       response(
-        :body   => { "auto_scaling_policy" => resource },
+        :body   => { "auto_scaling_policy" => request },
         :status => 200
       )
     end

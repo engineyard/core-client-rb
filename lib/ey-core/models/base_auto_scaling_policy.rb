@@ -19,18 +19,24 @@ class Ey::Core::Client::BaseAutoScalingPolicy < Ey::Core::Model
       "auto_scaling_policy" => {
         "name" => self.name
       }.merge(policy_params),
-      "auto_scaling_group"  => self.auto_scaling_group_id
+      "auto_scaling_group_id"  => self.auto_scaling_group_id
     }
 
     if new_record?
       policy_requires
       requires :name
-      connection.requests.new(connection.create_auto_scaling_group(params).body["auto_scaling_policy"])
+      merge_attributes(connection.create_auto_scaling_policy(params).body["auto_scaling_policy"])
     else
       requires :identity
       params.merge("id" => identity)
-      connection.requests.new(connection.update_auto_scaling_policy(params).body["auto_scaling_policy"])
+      merge_attributes(connection.update_auto_scaling_policy(params).body["auto_scaling_policy"])
     end
+  end
+
+  def destroy!
+    connection.requests.new(
+      self.connection.destroy_auto_scaling_policy("id" => self.id).body["auto_scaling_policy"]
+    )
   end
 
   private

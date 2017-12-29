@@ -19,7 +19,7 @@ class Ey::Core::Client
 
       auto_scaling_policy_id = params["id"] || url && url.split('/').last
 
-      auto_scaling_policy = self.data[:auto_scaling_policies][auto_scaling_policy_id].dup
+      auto_scaling_policy = self.data[:auto_scaling_policies][auto_scaling_policy_id]
       auto_scaling_policy.merge!(
         "deleted_at" => Time.now,
         "resource_url" => url_for("/auto_scaling_policies/#{auto_scaling_policy_id}")

@@ -15,6 +15,7 @@ class Ey::Core::Client < Cistern::Service
   collection :application_deployments
   collection :applications
   collection :auto_scaling_groups
+  collection :auto_scaling_policies
   collection :backup_files
   collection :blueprints
   collection :components
@@ -51,7 +52,6 @@ class Ey::Core::Client < Cistern::Service
   collection :server_usages
   collection :servers
   collection :services
-  collection :auto_scaling_policies
   collection :ssl_certificates
   collection :storage_users
   collection :storages
@@ -74,6 +74,7 @@ class Ey::Core::Client < Cistern::Service
   model :application_deployment
   model :auto_scaling_group
   model :backup_file
+  model :base_auto_scaling_policy
   model :billing
   model :blueprint
   model :component
@@ -110,11 +111,13 @@ class Ey::Core::Client < Cistern::Service
   model :server_event
   model :server_usage
   model :service
-  model :auto_scaling_policy
+  model :simple_auto_scaling_policy
   model :ssl_certificate
+  model :step_auto_scaling_policy
   model :storage
   model :storage_user
   model :support_trial
+  model :target_tracking_auto_scaling_policy
   model :task
   model :token
   model :untracked_address

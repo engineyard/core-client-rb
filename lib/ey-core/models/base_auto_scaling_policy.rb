@@ -25,11 +25,11 @@ class Ey::Core::Client::BaseAutoScalingPolicy < Ey::Core::Model
     if new_record?
       policy_requires
       requires :name
-      merge_attributes(connection.create_auto_scaling_policy(params).body["request"])
+      connection.requests.new(connection.create_auto_scaling_policy(params).body["request"])
     else
       requires :identity
       params.merge("id" => identity)
-      merge_attributes(connection.update_auto_scaling_policy(params).body["request"])
+      connection.requests.new(connection.update_auto_scaling_policy(params).body["request"])
     end
   end
 

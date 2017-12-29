@@ -16,7 +16,11 @@ RSpec.describe "Auto scaling policies" do
       }
     end
 
-    let!(:policy) { client.auto_scaling_policies.create!(params) }
+    before do
+      client.auto_scaling_policies.create!(params)
+    end
+
+    let!(:policy) { auto_scaling_group.simple_auto_scaling_policies.first }
 
     it "is able to retrieve auto scaling policy by it's id" do
       found_policy = client.auto_scaling_policies.get(policy.id)

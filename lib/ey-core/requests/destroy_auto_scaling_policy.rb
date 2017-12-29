@@ -41,8 +41,8 @@ class Ey::Core::Client
       }
 
       response(
-        :body   => { "auto_scaling_policy" => { id: request_id } },
-        :status => 201,
+        body:   { "request" => self.data[:requests][request_id] },
+        status: 201
       )
     end
   end

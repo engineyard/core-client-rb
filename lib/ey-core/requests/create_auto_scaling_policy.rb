@@ -12,7 +12,7 @@ class Ey::Core::Client
       request(
         :method => :post,
         :url    => url,
-        :path   => "/auto_scaling_groups",
+        :path   => "/auto_scaling_policies",
         :body   => body
       )
     end
@@ -21,11 +21,11 @@ class Ey::Core::Client
   class Mock
     def create_auto_scaling_policy(options = {})
       params = Cistern::Hash.stringify_keys(options)
-      url = params.delete("url")
+      request_id  = self.uuid
+      resource_id = self.serial_id
 
       auto_scaling_group_id = params.delete("auto_scaling_group_id")
       auto_scaling_group = find(:auto_scaling_groups, auto_scaling_group_id)
-      id = self.uuid
       resource = params["auto_scaling_policy"].dup
       arn = "scalingPolicy:00000000-0000-0000-0000-000000000000:autoScalingGroupName/#{auto_scaling_group["name"]}:policyName/#{resource["name"]}"
 
@@ -34,16 +34,25 @@ class Ey::Core::Client
       resource.merge!(
         "created_at"         => now,
         "auto_scaling_group" => auto_scaling_group["id"],
-        "id"                 => id,
+        "id"                 => resource_id,
         "arn"                => arn,
-        "resource_url"       => url_for("/auto_scaling_policies/#{id}"),
+        "resource_url"       => url_for("/auto_scaling_policies/#{resource_id}"),
       )
 
-      self.data[:auto_scaling_policies][id] = resource
-      self.data[:requests][id] = resource
+      request = {
+        "id"          => request_id,
+        "type"        => "auto_scaling_policy",
+        "successful"  => "true",
+        "started_at"  => Time.now,
+        "finished_at" => nil,
+        "resource"    => [:auto_scaling_policies, resource_id, resource],
+      }
+
+      self.data[:auto_scaling_policies][resource_id] = resource
+      self.data[:requests][resource_id] = resource
 
       response(
-        :body   => { "auto_scaling_policy" => resource },
+        :body   => { "request" => request },
         :status => 200
       )
     end

@@ -36,8 +36,8 @@ class Ey::Core::Client
       self.data[:requests][request["id"]] = request
 
       response(
-        :body   => { "auto_scaling_policy" => request },
-        :status => 200
+        body:   { "request" => request },
+        status: 200
       )
     end
   end

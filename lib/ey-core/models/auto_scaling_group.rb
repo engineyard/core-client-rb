@@ -61,6 +61,8 @@ class Ey::Core::Client::AutoScalingGroup < Ey::Core::Model
     auto_scaling_policies("target")
   end
 
+  private
+
   def auto_scaling_policies(types = nil)
     requires :identity
     data = connection.get_auto_scaling_policies(

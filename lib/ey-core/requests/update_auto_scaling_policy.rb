@@ -14,9 +14,11 @@ class Ey::Core::Client
   class Mock
     def update_auto_scaling_policy(params = {})
       resource_id = params.delete("id")
+      now = Time.now
+
       resource = find(:auto_scaling_policies, resource_id)
         .merge(params["auto_scaling_policy"])
-        .merge("updated_at" => Time.now)
+        .merge("updated_at" => now)
       resource.merge!(params)
 
       request = {

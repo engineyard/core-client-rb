@@ -1,6 +1,6 @@
 class Ey::Core::Client
   class Real
-    def get_auto_scaling_policy(params={})
+    def get_auto_scaling_policy(params = {})
       id  = params["id"]
       url = params["url"]
 
@@ -13,7 +13,7 @@ class Ey::Core::Client
   end
 
   class Mock
-    def get_auto_scaling_policy(params={})
+    def get_auto_scaling_policy(params = {})
       response(
         :body => {
           "auto_scaling_policy" => self.find(

@@ -6,6 +6,8 @@ class Ey::Core::Client::SimpleAutoScalingPolicy < Ey::Core::Client::BaseAutoScal
   attribute :action_type
   attribute :action_value
 
+  has_many :auto_scaling_alarms
+
   def policy_params
     {
       "cooldown"     => cooldown,

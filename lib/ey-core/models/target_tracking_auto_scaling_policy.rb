@@ -6,6 +6,8 @@ class Ey::Core::Client::TargetTrackingAutoScalingPolicy < Ey::Core::Client::Base
   attribute :disable_scale_in, type: :boolean
   attribute :metric_type
 
+  has_many :auto_scaling_alarms
+
   def policy_params
     {
       "estimated_warmup" => estimated_warmup,

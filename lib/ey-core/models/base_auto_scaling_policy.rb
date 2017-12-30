@@ -39,6 +39,16 @@ class Ey::Core::Client::BaseAutoScalingPolicy < Ey::Core::Model
     )
   end
 
+  def alarm
+    requires :identity
+
+    data = self.connection.get_auto_scaling_alarms(
+      "auto_scaling_policy_id" => identity
+    ).body["auto_scaling_alarms"]
+
+    self.connection.auto_scaling_alarms.load(data).first
+  end
+
   private
 
   def policy_params

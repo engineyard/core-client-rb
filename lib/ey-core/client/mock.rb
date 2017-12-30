@@ -116,6 +116,7 @@ class Ey::Core::Client::Mock
                  :application_archives        => {},
                  :application_deployments     => {},
                  :applications                => {},
+                 :auto_scaling_alarms         => {},
                  :auto_scaling_groups         => {},
                  :auto_scaling_policies       => {},
                  :backup_files                => {},

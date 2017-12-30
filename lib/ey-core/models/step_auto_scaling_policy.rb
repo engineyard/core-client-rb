@@ -6,6 +6,8 @@ class Ey::Core::Client::StepAutoScalingPolicy < Ey::Core::Client::BaseAutoScalin
   attribute :action_unit
   attribute :steps, type: :array
 
+  has_many :auto_scaling_alarms
+
   def policy_params
     {
       "estimated_warmup" => estimated_warmup,

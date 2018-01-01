@@ -119,7 +119,7 @@ class Ey::Core::Client < Cistern::Service
   model :storage
   model :storage_user
   model :support_trial
-  model :target_tracking_auto_scaling_policy
+  model :target_auto_scaling_policy
   model :task
   model :token
   model :untracked_address

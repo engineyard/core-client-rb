@@ -1,4 +1,4 @@
-class Ey::Core::Client::TargetTrackingAutoScalingPolicy < Ey::Core::Client::BaseAutoScalingPolicy
+class Ey::Core::Client::TargetAutoScalingPolicy < Ey::Core::Client::BaseAutoScalingPolicy
   identity :id
   attribute :auto_scaling_group_id, aliases: "auto_scaling_group", squash: ["id"]
   attribute :estimated_warmup, type: :integer
@@ -19,6 +19,6 @@ class Ey::Core::Client::TargetTrackingAutoScalingPolicy < Ey::Core::Client::Base
   end
 
   def policy_requires
-    requires :target_value
+    requires :target_value, :metric_type, :estimated_warmup
   end
 end

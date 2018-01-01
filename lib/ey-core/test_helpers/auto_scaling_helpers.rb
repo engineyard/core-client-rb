@@ -22,6 +22,8 @@ module Ey
             {
               auto_scaling_group_id: group.id,
               action_value: 2,
+              action_unit: "instances",
+              action_type: "add",
               name: SecureRandom.hex(16),
               type: "simple"
             }.merge(options)

@@ -13,7 +13,7 @@ class Ey::Core::Client::BaseAutoScalingPolicy < Ey::Core::Model
   has_one :auto_scaling_group
 
   def save!
-    requires :auto_scaling_group_id
+    requires :auto_scaling_group_id, :type
     params = {
       "url"                 => self.collection.url,
       "auto_scaling_policy" => {

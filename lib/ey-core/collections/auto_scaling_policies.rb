@@ -4,7 +4,7 @@ class Ey::Core::Client::AutoScalingPolicies < Ey::Core::Collection
   MODELS_TO_TYPE = {
     "simple" => Ey::Core::Client::SimpleAutoScalingPolicy,
     "step"   => Ey::Core::Client::StepAutoScalingPolicy,
-    "target" => Ey::Core::Client::TargetTrackingAutoScalingPolicy
+    "target" => Ey::Core::Client::TargetAutoScalingPolicy
   }.freeze
 
   self.model_root         = "auto_scaling_policy"

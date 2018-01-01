@@ -5,18 +5,19 @@ RSpec.describe "Auto scaling policies" do
   let!(:account) { create_account(client: client) }
   let!(:environment) { create_environment(account: account) }
   let(:auto_scaling_group) { create_auto_scaling_group(environment: environment.id) }
+  let(:simple_policy_params) do
+    {
+      name: SecureRandom.hex(16),
+      action_value: 2,
+      action_type: "add",
+      action_unit: "instances",
+      auto_scaling_group_id: auto_scaling_group.id,
+      type: "simple"
+    }
+  end
 
   describe "common requests for all policy types" do
-    let(:params) do
-      {
-        auto_scaling_group_id: auto_scaling_group.id,
-        action_value: 2,
-        name: SecureRandom.hex(16),
-        type: "simple"
-      }
-    end
-
-    let!(:policy) { client.auto_scaling_policies.create!(params).resource! }
+    let!(:policy) { client.auto_scaling_policies.create!(simple_policy_params).resource! }
 
     it "is able to retrieve auto scaling policy by it's id" do
       found_policy = client.auto_scaling_policies.get(policy.id)
@@ -38,21 +39,12 @@ RSpec.describe "Auto scaling policies" do
   end
 
   context "simple autoscaling policy" do
-    let(:params) do
-      {
-        auto_scaling_group_id: auto_scaling_group.id,
-        action_value: 2,
-        name: SecureRandom.hex(16),
-        type: "simple"
-      }
-    end
-
     it "adds one to autoscaling group" do
       expect {
-        client.auto_scaling_policies.create!(params)
+        client.auto_scaling_policies.create!(simple_policy_params)
       }.to change { auto_scaling_group.reload.simple_auto_scaling_policies.count }.from(0).to(1)
         .and not_change { auto_scaling_group.reload.step_auto_scaling_policies.count }
-        .and not_change { auto_scaling_group.reload.target_tracking_auto_scaling_policies.count }
+        .and not_change { auto_scaling_group.reload.target_auto_scaling_policies.count }
     end
   end
 
@@ -62,6 +54,7 @@ RSpec.describe "Auto scaling policies" do
         auto_scaling_group_id: auto_scaling_group.id,
         name: SecureRandom.hex(16),
         target_value: 0.7,
+        estimated_warmup: 200,
         metric_type: "avg_cup",
         disable_scale_in: false,
         type: "target"
@@ -71,7 +64,7 @@ RSpec.describe "Auto scaling policies" do
     it "adds one to autoscaling group" do
       expect {
         client.auto_scaling_policies.create!(params)
-      }.to change { auto_scaling_group.reload.target_tracking_auto_scaling_policies.count }.from(0).to(1)
+      }.to change { auto_scaling_group.reload.target_auto_scaling_policies.count }.from(0).to(1)
         .and not_change { auto_scaling_group.reload.simple_auto_scaling_policies.count }
         .and not_change { auto_scaling_group.reload.step_auto_scaling_policies.count }
     end
@@ -95,7 +88,7 @@ RSpec.describe "Auto scaling policies" do
         client.auto_scaling_policies.create!(params)
       }.to change { auto_scaling_group.reload.step_auto_scaling_policies.count }.from(0).to(1)
         .and not_change { auto_scaling_group.reload.simple_auto_scaling_policies.count }
-        .and not_change { auto_scaling_group.reload.target_tracking_auto_scaling_policies.count }
+        .and not_change { auto_scaling_group.reload.target_auto_scaling_policies.count }
     end
   end
 end

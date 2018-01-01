@@ -19,6 +19,6 @@ class Ey::Core::Client::StepAutoScalingPolicy < Ey::Core::Client::BaseAutoScalin
   end
 
   def policy_requires
-    requires :steps
+    requires :steps, :action_unit, :action_type, :estimated_warmup
   end
 end

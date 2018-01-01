@@ -57,7 +57,7 @@ class Ey::Core::Client::AutoScalingGroup < Ey::Core::Model
     auto_scaling_policies("step")
   end
 
-  def target_tracking_auto_scaling_policies
+  def target_auto_scaling_policies
     auto_scaling_policies("target")
   end
 

@@ -19,6 +19,6 @@ class Ey::Core::Client::SimpleAutoScalingPolicy < Ey::Core::Client::BaseAutoScal
   end
 
   def policy_requires
-    requires :action_value
+    requires :action_value, :action_type, :action_unit
   end
 end

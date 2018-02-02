@@ -6,12 +6,13 @@ describe 'addresses' do
   let!(:provider) { create_provider(account: account) }
 
   it "creates an address" do
-    request = client.addresses.create!(provider: provider, location: "us-west-2")
+    request = client.addresses.create!(provider: provider, location: "us-west-2", scope: "vpc")
     address = request.resource!
     expect(address.id).not_to be_nil
     expect(address.ip_address).not_to be_nil
     expect(address.provisioned_id).not_to be_nil
     expect(address.provider).to eq(provider)
+    expect(address.scope).to eq("vpc")
   end
 
   context "with an address" do

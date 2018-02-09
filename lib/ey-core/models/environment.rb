@@ -3,6 +3,8 @@ class Ey::Core::Client::Environment < Ey::Core::Model
 
   identity :id
 
+  attribute :alerting_enabled, type: :boolean
+  attribute :alert_email
   attribute :classic, type: :boolean
   attribute :created_at, type: :time
   attribute :custom_recipes

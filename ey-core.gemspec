@@ -41,7 +41,7 @@ Gem::Specification.new do |gem|
   gem.add_dependency "sshkey",  "~> 1.6"
   gem.add_dependency "table_print"
 
-  gem.add_development_dependency "pry-nav"
+  gem.add_development_dependency "pry-byebug"
   gem.add_development_dependency "rspec", "~> 3.0"
   gem.add_development_dependency "ffaker"
   gem.add_development_dependency "rake"

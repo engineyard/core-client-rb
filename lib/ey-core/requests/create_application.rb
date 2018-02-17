@@ -40,13 +40,14 @@ class Ey::Core::Client
       end
 
       resource.merge!(
-        "account"    => url_for("/accounts/#{account_id}"),
-        "archives"   => url_for("/applications/#{resource_id}/archives"),
-        "keypairs"   => url_for("/applications/#{resource_id}/keypairs"),
-        "language"   => language,
-        "created_at" => Time.now,
-        "updated_at" => Time.now,
-        "id"         => resource_id,
+        "account"               => url_for("/accounts/#{account_id}"),
+        "archives"              => url_for("/applications/#{resource_id}/archives"),
+        "keypairs"              => url_for("/applications/#{resource_id}/keypairs"),
+        "language"              => language,
+        "created_at"            => Time.now,
+        "updated_at"            => Time.now,
+        "id"                    => resource_id,
+        "environment_variables" => url_for("/applications/#{resource_id}/environment_variables")
       )
 
       key = mock_ssh_key

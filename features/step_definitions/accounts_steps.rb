@@ -15,6 +15,20 @@ Given %(I'm associated with several accounts) do
   memorize_fact(:accounts, [account1, account2])
 end
 
+Given %r(^I have the following accounts:$) do |account_names|
+  account_names.hashes.each do |account_hash|
+    known_accounts.push(
+      create_account(
+        client: client,
+        owner: current_user,
+        account: {
+          name: account_hash['Account Name']
+        }
+      )
+    )
+  end
+end
+
 Then %(I see the name and ID of each of my accounts) do
   recall_fact(:accounts).each do |account|
     expect(output_text).to include(account.id)

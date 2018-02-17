@@ -17,7 +17,7 @@ class Ey::Core::Client
     def get_applications(params={})
       extract_url_params!(params)
 
-      headers, applications_page = search_and_page(params, :applications, search_keys: %w[type repository account name environment])
+      headers, applications_page = search_and_page(params, :applications, search_keys: %w[id type repository account name environment])
 
       response(
         :body    => {"applications" => applications_page},

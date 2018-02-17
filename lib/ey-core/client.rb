@@ -29,6 +29,7 @@ class Ey::Core::Client < Cistern::Service
   collection :deployments
   collection :environment_plan_usages
   collection :environments
+  collection :environment_variables
   collection :features
   collection :firewall_rules
   collection :firewalls
@@ -87,6 +88,7 @@ class Ey::Core::Client < Cistern::Service
   model :deployment
   model :environment
   model :environment_plan_usage
+  model :environment_variable
   model :feature
   model :firewall
   model :firewall_rule
@@ -142,6 +144,7 @@ class Ey::Core::Client < Cistern::Service
   request :create_database_service
   request :create_database_service_snapshot
   request :create_environment
+  request :create_environment_variable
   request :create_firewall
   request :create_firewall_rule
   request :create_keypair
@@ -236,6 +239,8 @@ class Ey::Core::Client < Cistern::Service
   request :get_environment_database_services
   request :get_environment_logical_databases
   request :get_environment_plan_usages
+  request :get_environment_variable
+  request :get_environment_variables
   request :get_environments
   request :get_feature
   request :get_features
@@ -316,6 +321,7 @@ class Ey::Core::Client < Cistern::Service
   request :update_billing
   request :update_blueprint
   request :update_environment
+  request :update_environment_variable
   request :update_membership
   request :update_provider_location
   request :update_server

@@ -1,17 +1,3 @@
-Given %r(^I have the following accounts:$) do |account_names|
-  account_names.hashes.each do |account_hash|
-    known_accounts.push(
-      create_account(
-        client: client,
-        owner: current_user,
-        account: {
-          name: account_hash['Account Name']
-        }
-      )
-    )
-  end
-end
-
 Given %(each of my accounts has several applications) do
   known_accounts.each do |account|
     known_apps.push(
@@ -21,6 +7,13 @@ Given %(each of my accounts has several applications) do
     known_apps.push(
       create_application(account: account, name: "#{account.name}_2")
     )
+  end
+end
+
+Given(/^I have the following applications:$/) do |applications|
+  applications.hashes.each do |application_hash|
+    account = known_accounts.find { |acc| acc.name == application_hash['Account Name'] }
+    known_apps.push(create_application(account: account, name: application_hash['Application Name']))
   end
 end
 

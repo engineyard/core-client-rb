@@ -19,6 +19,12 @@ module Ey
           description: 'Filter by environment.',
           argument: 'environment'
 
+        option :role,
+          short: 'r',
+          long: 'role',
+          description: 'Filter by server role.',
+          argument: 'role'
+
         def handle
           puts TablePrint::Printer.
             new(servers, [{id: {width: 10}}, :role, :provisioned_id]).
@@ -37,6 +43,7 @@ module Ey
               core_client
             end
 
+          filter_opts[:role] = option(:role).split(',') if option(:role)
           operator ? operator.servers.all(filter_opts) : nil
         end
       end

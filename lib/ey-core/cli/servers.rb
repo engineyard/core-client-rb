@@ -26,9 +26,15 @@ module Ey
           argument: 'role'
 
         def handle
-          puts TablePrint::Printer.
-            new(servers, [{id: {width: 10}}, :role, :provisioned_id]).
-            table_print
+          puts TablePrint::Printer.new(
+            servers,
+            [
+              { id: { width: 10 } },
+              :role,
+              :provisioned_id,
+              { public_hostname: { width: 50 } }
+            ]
+          ).table_print
         end
 
         private

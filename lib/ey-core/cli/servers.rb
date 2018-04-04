@@ -4,36 +4,53 @@ module Ey
   module Core
     module Cli
       class Servers < Subcommand
-        title "servers"
-        summary "List servers you have access to"
+        title 'servers'
+        summary 'List servers you have access to'
 
         option :account,
           short: 'c',
           long: 'account',
           description: 'Filter by account name or id',
-          argument: 'Account'
+          argument: 'account'
 
         option :environment,
-          short: "-e",
-          long: "environment",
-          description: "Filter by environment.",
-          argument: "environment"
+          short: 'e',
+          long: 'environment',
+          description: 'Filter by environment.',
+          argument: 'environment'
+
+        option :role,
+          short: 'r',
+          long: 'role',
+          description: 'Filter by server role.',
+          argument: 'role'
 
         def handle
-          puts TablePrint::Printer.
-            new(servers, [{id: {width: 10}}, :role, :provisioned_id]).
-            table_print
+          puts TablePrint::Printer.new(
+            servers,
+            [
+              { id: { width: 10 } },
+              :role,
+              :provisioned_id,
+              { public_hostname: { width: 50 } }
+            ]
+          ).table_print
         end
 
         private
         def servers
-          if option(:account)
-            core_client.servers.all(account: core_account)
-          elsif environment = option(:environment)
-            (core_client.environments.get(environment) || core_client.environments.first(name: environment)).servers.all
-          else
-            core_client.servers.all
-          end
+          filter_opts = {}
+
+          operator =
+            if option(:environment)
+              core_account.environments.first(name: option(:environment))
+            else
+              filter_opts[:account] = core_account.id if option(:account)
+              core_client
+            end
+
+          filter_opts[:role] = option(:role).split(',') if option(:role)
+          operator ? operator.servers.all(filter_opts) : nil
         end
       end
     end

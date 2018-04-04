@@ -14,7 +14,9 @@ class Ey::Core::Client < Cistern::Service
   collection :application_archives
   collection :application_deployments
   collection :applications
+  collection :auto_scaling_alarms
   collection :auto_scaling_groups
+  collection :auto_scaling_policies
   collection :backup_files
   collection :blueprints
   collection :components
@@ -72,8 +74,10 @@ class Ey::Core::Client < Cistern::Service
   model :application
   model :application_archive
   model :application_deployment
+  model :auto_scaling_alarm
   model :auto_scaling_group
   model :backup_file
+  model :base_auto_scaling_policy
   model :billing
   model :blueprint
   model :component
@@ -111,10 +115,13 @@ class Ey::Core::Client < Cistern::Service
   model :server_event
   model :server_usage
   model :service
+  model :simple_auto_scaling_policy
   model :ssl_certificate
+  model :step_auto_scaling_policy
   model :storage
   model :storage_user
   model :support_trial
+  model :target_auto_scaling_policy
   model :task
   model :token
   model :untracked_address
@@ -138,6 +145,7 @@ class Ey::Core::Client < Cistern::Service
   request :create_alert
   request :create_application
   request :create_application_archive
+  request :create_auto_scaling_alarm
   request :create_auto_scaling_group
   request :create_backup_file
   request :create_database_server
@@ -157,6 +165,7 @@ class Ey::Core::Client < Cistern::Service
   request :create_password_reset
   request :create_provider
   request :create_server
+  request :create_auto_scaling_policy
   request :create_ssl_certificate
   request :create_storage
   request :create_storage_user
@@ -168,6 +177,7 @@ class Ey::Core::Client < Cistern::Service
   request :deploy_environment_application
   request :deprovision_environment
   request :destroy_addon
+  request :destroy_auto_scaling_alarm
   request :destroy_auto_scaling_group
   request :destroy_blueprint
   request :destroy_database_server
@@ -180,6 +190,7 @@ class Ey::Core::Client < Cistern::Service
   request :destroy_logical_database
   request :destroy_provider
   request :destroy_server
+  request :destroy_auto_scaling_policy
   request :destroy_ssl_certificate
   request :destroy_storage
   request :destroy_storage_user
@@ -211,6 +222,8 @@ class Ey::Core::Client < Cistern::Service
   request :get_application_deployment
   request :get_application_deployments
   request :get_applications
+  request :get_auto_scaling_alarm
+  request :get_auto_scaling_alarms
   request :get_auto_scaling_group
   request :get_auto_scaling_groups
   request :get_backup_file
@@ -283,6 +296,8 @@ class Ey::Core::Client < Cistern::Service
   request :get_server_events
   request :get_server_usages
   request :get_servers
+  request :get_auto_scaling_policy
+  request :get_auto_scaling_policies
   request :get_ssl_certificate
   request :get_ssl_certificates
   request :get_storage
@@ -317,7 +332,9 @@ class Ey::Core::Client < Cistern::Service
   request :update_address
   request :update_alert
   request :update_application_archive
+  request :update_auto_scaling_alarm
   request :update_auto_scaling_group
+  request :update_auto_scaling_policy
   request :update_billing
   request :update_blueprint
   request :update_environment

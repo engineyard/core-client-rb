@@ -55,6 +55,10 @@ class Ey::Core::Client::Request < Ey::Core::Model
       self.connection.addresses.get!(resource_id)
     when /auto_scaling_group/
       self.connection.auto_scaling_groups.get!(resource_id)
+    when /auto_scaling_policy/
+      self.connection.auto_scaling_policies.get(resource_id)
+    when /auto_scaling_alarm/
+      self.connection.auto_scaling_alarms.get(resource_id)
     when /cluster_update/
       self.connection.cluster_updates.get!(resource_id)
     when /database_server_snapshot/

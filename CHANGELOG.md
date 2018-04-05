@@ -2,12 +2,20 @@
 
 ## [Unreleased](https://github.com/engineyard/core-client-rb/tree/HEAD)
 
-[Full Changelog](https://github.com/engineyard/core-client-rb/compare/v2.8.4...HEAD)
+[Full Changelog](https://github.com/engineyard/core-client-rb/compare/v3.5.0...HEAD)
 
 **Merged pull requests:**
 
-- \[ENG-193\] Create untracked addresses via smithy [\#34](https://github.com/engineyard/core-client-rb/pull/34) ([omgitsads](https://github.com/omgitsads))
-- remove usage of hmac client in specs [\#33](https://github.com/engineyard/core-client-rb/pull/33) ([lanej](https://github.com/lanej))
+## [v3.5.0](https://github.com/engineyard/core-client-rb/tree/v3.5.0) (2018-04-04)
+[Full Changelog](https://github.com/engineyard/core-client-rb/compare/v3.4.4...v3.5.0)
+
+**Merged pull requests:**
+
+- Add support for autoscaling policies [\#110](https://github.com/engineyard/core-client-rb/pull/101) ([thorn](https://github.com/thorn))
+- Add support for environment variables [\#90](https://github.com/engineyard/core-client-rb/pull/90) ([rzaharenkov](https://github.com/rzaharenkov))
+- Add ability to send configuration options together with blueprint [\#104](https://github.com/engineyard/core-client-rb/pull/104) ([ramonpm](https://github.com/ramonpm))
+- Add support for address.scope parameter for EIP [\#102](https://github.com/engineyard/core-client-rb/pull/102) ([thorn](https://github.com/thorn))
+- Various fixes for `servers` command [\#103](https://github.com/engineyard/core-client-rb/pull/103) ([binarypaladin](https://github.com/binarypaladin))
 
 ## [v2.8.4](https://github.com/engineyard/core-client-rb/tree/v2.8.4) (2015-08-12)
 [Full Changelog](https://github.com/engineyard/core-client-rb/compare/v2.8.3...v2.8.4)

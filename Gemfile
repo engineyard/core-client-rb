@@ -4,6 +4,7 @@ source 'https://rubygems.org'
 gemspec
 
 gem "rack", "<= 2.0"
+gem "json", "> 1.8.5", '< 2.2'
 
 group :doc do
   gem 'yard'

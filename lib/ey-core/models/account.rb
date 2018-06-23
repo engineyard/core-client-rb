@@ -67,4 +67,12 @@ class Ey::Core::Client::Account < Ey::Core::Model
     else raise NotImplementedError # update
     end
   end
+
+  # Get authorization data for an Amazon ECR registry.
+  # @param [String] location_id Aws region
+  # @return [Ey::Core::Client::DockerRegistryCredentials]
+  def retrieve_docker_registry_credentials(location_id)
+    result = self.connection.retrieve_docker_registry_credentials(self.id, location_id).body
+    Ey::Core::Client::DockerRegistryCredentials.new(result['docker_registry_credentials'])
+  end
 end

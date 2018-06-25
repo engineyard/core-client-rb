@@ -90,7 +90,6 @@ class Ey::Core::Client < Cistern::Service
   model :database_server_usage
   model :database_service
   model :deployment
-  model :docker_registry_credentials
   model :environment
   model :environment_plan_usage
   model :environment_variable

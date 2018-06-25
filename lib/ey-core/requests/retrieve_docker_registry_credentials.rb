@@ -15,7 +15,7 @@ class Ey::Core::Client
             'username'          => 'foo',
             'password'          => 'bar',
             'registry_endpoint' => "https://012345678901.dkr.ecr.#{location_id}.amazonaws.com",
-            'expires_at'        => Time.now + 8 * 3600
+            'expires_at'        => (Time.now + 8 * 3600).to_i
           }
         }
       )

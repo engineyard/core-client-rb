@@ -11,6 +11,6 @@ describe 'as a user' do
     expect(credentials.username).to be
     expect(credentials.password).to be
     expect(credentials.registry_endpoint).to match(/#{location}/)
-    expect(credentials.expires_at).to be > Time.now + 6 * 3600
+    expect(credentials.expires_at).to be > (Time.now + 6 * 3600).to_i
   end
 end

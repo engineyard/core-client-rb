@@ -21,6 +21,7 @@ class Ey::Core::Client < Cistern::Service
   collection :blueprints
   collection :components
   collection :contacts
+  collection :container_service_deployments
   collection :costs
   collection :database_plan_usages
   collection :database_server_revisions
@@ -82,6 +83,7 @@ class Ey::Core::Client < Cistern::Service
   model :blueprint
   model :component
   model :contact
+  model :container_service_deployment
   model :cost
   model :database_plan_usage
   model :database_server
@@ -197,6 +199,7 @@ class Ey::Core::Client < Cistern::Service
   request :destroy_user
   request :detach_address
   request :disable_feature
+  request :discover_container_service_deployments
   request :discover_database_server
   request :discover_database_server_snapshots
   request :discover_provider_location

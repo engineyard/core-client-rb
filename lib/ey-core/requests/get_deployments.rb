@@ -7,7 +7,7 @@ class Ey::Core::Client
       request(
         :params => params,
         :path   => "/deployments",
-        :query  => params,
+        :query  => query,
         :url    => url,
       )
     end

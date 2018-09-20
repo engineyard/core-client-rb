@@ -321,6 +321,7 @@ class Ey::Core::Client < Cistern::Service
   request :reset_password
   request :reset_server_state
   request :restart_environment_app_servers
+  request :retrieve_docker_registry_credentials
   request :run_cluster_application_action
   request :run_environment_application_action
   request :signup

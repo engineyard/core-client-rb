@@ -127,6 +127,7 @@ class Ey::Core::Client::Mock
                  :components                  => components,
                  :contact_assignments         => [],
                  :contacts                    => {},
+                 :container_service_deployments => {},
                  :costs                       => [],
                  :database_plan_usages        => Hash.new { |h1,k1| h1[k1] = {} },
                  :database_server_firewalls   => [],

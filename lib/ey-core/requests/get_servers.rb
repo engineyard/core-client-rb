@@ -1,6 +1,7 @@
 class Ey::Core::Client
   class Real
     def get_servers(params={})
+      params['per_page'] = ENV['CORE_SERVERS_PER_PAGE'] || 100
       request(
         :params => params,
         :query  => Ey::Core.paging_parameters(params),

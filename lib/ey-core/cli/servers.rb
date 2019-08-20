@@ -32,7 +32,8 @@ module Ey
               { id: { width: 10 } },
               :role,
               :provisioned_id,
-              { public_hostname: { width: 50 } }
+              { public_hostname: { width: 50 } },
+              :name,
             ]
           ).table_print
         end

@@ -48,6 +48,11 @@ class Ey::Core::Client::Alert < Ey::Core::Model
     (type == "database-servers" || nil) && self.connection.database_servers.get!(identity)
   end
 
+  def acknowledge!
+    requires :id
+    merge_attributes(self.connection.acknowledge_alert("id" => self.id).body["legacy_alert"])
+  end
+
   def save!
     response = if new_record?
                  params = {

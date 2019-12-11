@@ -42,6 +42,7 @@ class Ey::Core::Client
         "account"          => url_for("/accounts/#{account}"),
         "alerts"           => url_for("/servers/#{resource_id}/alerts"),
         "created_at"       => Time.now.to_s,
+        "dedicated"        => !!server["dedicated"],
         "deprovisioned_at" => nil,
         "devices"          => block_device_map(server),
         "enabled"          => true,
@@ -63,6 +64,7 @@ class Ey::Core::Client
         "updated_at"       => Time.now.to_s,
         "volumes"          => url_for("/servers/#{resource_id}/volumes"),
         "role"             => server["role"],
+        "resource_url"     => url_for("/servers/#{resource_id}"),
       }
 
       request = {

@@ -25,7 +25,11 @@ class Ey::Core::Client
         self.data[:environments][environment_id]
       end.compact.uniq.inject({}) {|hash, env| hash[env["id"]] = env; hash}
 
-      headers, environments_page = search_and_page(params, :environments, search_keys: %w[account project name], resources: resources)
+      if params.delete("exclude_ignored")
+        resources.reject! { |id,hash| hash["permanently_ignored"] }
+      end
+
+      headers, environments_page = search_and_page(params, :environments, search_keys: %w[account project name assignee_id], resources: resources)
 
       response(
         :body    => {"environments" => environments_page},

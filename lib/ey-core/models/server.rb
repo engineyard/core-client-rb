@@ -4,6 +4,7 @@ class Ey::Core::Client::Server < Ey::Core::Model
   identity :id, type: :integer
 
   attribute :created_at,       type: :time
+  attribute :dedicated,        type: :boolean
   attribute :deleted_at,       type: :time
   attribute :deprovisioned_at, type: :time
   attribute :devices,          type: :array
@@ -17,12 +18,15 @@ class Ey::Core::Client::Server < Ey::Core::Model
   attribute :provisioned_at,   type: :time
   attribute :provisioned_id
   attribute :public_hostname
+  attribute :public_key
   attribute :role
   attribute :ssh_port,         type: :integer
   attribute :state
+  attribute :token
   attribute :updated_at,       type: :time
   attribute :wait_for_chef,    type: :boolean
   attribute :release_label
+  attribute :ip_id
 
   has_one :account
   has_one :address, collection: "addresses"
@@ -59,6 +63,42 @@ class Ey::Core::Client::Server < Ey::Core::Model
     )
   end
 
+  def stop
+    requires :identity
+
+    connection.requests.new(
+      self.connection.stop_server("id" => self.identity).body["request"]
+    )
+  end
+
+  def start
+    requires :identity
+
+    connection.requests.new(
+      self.connection.start_server("id" => self.identity).body["request"]
+    )
+  end
+
+  def reconcile
+    requires :identity
+
+    connection.requests.new(
+      self.connection.reconcile_server("id" => self.identity).body["request"]
+    )
+  end
+
+  def reset_state(state)
+    params = {
+      "url"   => self.collection.url,
+      "id"    => self.id,
+      "state" => state
+    }
+
+    unless new_record?
+      merge_attributes(self.connection.reset_server_state(params).body["server"])
+    end
+  end
+
   def save!
     if new_record?
       requires :flavor_id, :role, :environment
@@ -69,14 +109,16 @@ class Ey::Core::Client::Server < Ey::Core::Model
         "snapshot"    => self.snapshot_id,
         "force"       => self.force,
         "server"      => {
+          "dedicated"       => self.dedicated,
           "flavor"          => self.flavor_id,
           "iops"            => self.iops,
           "location"        => self.location || environment.region,
           "mnt_volume_size" => self.mnt_volume_size,
           "name"            => self.name,
+          "release_label"   => self.release_label,
           "role"            => self.role,
           "volume_size"     => self.volume_size,
-          "release_label"   => self.release_label,
+          "ip_id"           => self.ip_id
         }
       }
       connection.requests.new(connection.create_server(server_attributes).body["request"])
@@ -91,15 +133,19 @@ class Ey::Core::Client::Server < Ey::Core::Model
     end
   end
 
-  def destroy!
+  def destroy!(skip_snapshot="false")
     if environment.servers.count == 1
       raise Ey::Core::Client::NotPermitted, "Terminating the last server in an environment is not allowed.  You must deprovision or destroy the environment instead."
     end
 
     requires :identity
 
+    params = {
+       :skip_snapshot => skip_snapshot
+    }
+
     connection.requests.new(
-      self.connection.destroy_server(self.identity).body["request"]
+      self.connection.destroy_server(self.identity, params).body["request"]
     )
   end
 end

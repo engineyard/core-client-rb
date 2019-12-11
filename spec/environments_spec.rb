@@ -45,7 +45,6 @@ describe 'as a user' do
       let(:other_environment)    { create_environment(enviroment: { name: Faker::Name.first_name}, application: app, account: account) }
 
       before do
-        pending "adding servers to environments not yet implemented"
         create_server(client,
                        provisioned_id: "i-a1000fce",
                              provider: provider,
@@ -64,11 +63,67 @@ describe 'as a user' do
         expect(environments).to include(alerting_environment)
         expect(environments).not_to include(other_environment)
       end
+
+      context "and the environment is permanently ignored", mock_only: true do
+        before(:each) do
+          client.data[:environments][alerting_environment.id]["permanently_ignored"] = true
+        end
+
+        it "returns the ignored environment by default" do
+          expect(client.environments.alerting).to contain_exactly(alerting_environment)
+        end
+
+        it "filters it if you tell it to" do
+          expect(client.environments.alerting("exclude_ignored" => true)).to be_empty
+        end
+      end
     end
 
     context "with an environment" do
       let!(:name)        { Faker::Name.first_name }
       let!(:environment) { create_environment(account: account, application: app, environment: {name: name}, configuration: {type: "production"}) }
+
+      describe '#assignee' do
+        let(:assignee) {client.environments.get(environment.id).assignee}
+
+        context 'for an environment with an assignee' do
+          let(:user) {create_user(client: client, creator: client)}
+
+          before(:each) do
+            # Since we can't set an assignee directly ...
+            client.data[:environments][environment.id]['assignee_id'] = user.id
+          end
+
+          it 'is the user assigned to the environment' do
+            expect(assignee).to eql(user)
+          end
+        end
+
+        context 'for an environment without an assignee' do
+          it 'is nil' do
+            expect(assignee).to be_nil
+          end
+        end
+      end
+
+      describe '#unassign!' do
+        let(:user) {create_user(client: client, creator: client)}
+
+        let(:test_env) {account.environments.get(environment.id)}
+
+        before(:each) do
+          # Since we can't set an assignee directly ...
+          client.data[:environments][environment.id]['assignee_id'] = user.id
+        end
+
+        it 'removes the assignment from the environment' do
+          expect(test_env.assignee).not_to be_nil
+
+          test_env.unassign!
+
+          expect(test_env.assignee).to be_nil
+        end
+      end
 
       it "has the right number of servers" do
         expect(environment.servers.count).to eq(5)
@@ -116,6 +171,24 @@ describe 'as a user' do
 
       it "gets an account's environments" do
         expect(account.environments.all.map(&:identity)).to contain_exactly(environment.identity)
+      end
+
+      it 'gets the environment attributes' do
+        expect(client.environments.get(environment.id)).to have_attributes(
+          "account"               => account,
+          "classic"               => true,
+          "custom_recipes"        => nil,
+          "database_stack"        => "postgres9_4",
+          "deployments_url"       => client.url_for("/environments/#{environment.id}/deployments"),
+          "id"                    => environment.id,
+          "keypairs"              => environment.keypairs,
+          "logical_databases_url" => client.url_for("/environments/#{environment.id}/logical-databases"),
+          "release_label"         => "stable-v4-2.0.101",
+          "servers"               => environment.servers,
+          "stack_name"            => "nginx_passenger4",
+          "username"              => "deploy",
+          "service_level"         => "default"
+        )
       end
 
       it "adds a keypair" do

@@ -24,6 +24,11 @@ class Ey::Core::Client
 
       self.data[:accounts][resource_id] = resource.merge(:account_users => [owner_id], :account_owners => [owner_id])
 
+      resource.merge!(
+        :environments_url => url_for("/accounts/#{resource_id}/environments"),
+        :applications_url => url_for("/accounts/#{resource_id}/applications")
+      )
+
       response(
         :body    => {"account" => resource},
         :status  => 201,

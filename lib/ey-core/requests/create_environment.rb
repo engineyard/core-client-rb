@@ -48,6 +48,8 @@ class Ey::Core::Client
         "stack_name"            => "nginx_passenger4",
         "updated_at"            => Time.now,
         "username"              => "deploy",
+        "service_level"         => "default",
+        "environment_variables" => url_for("/environments/#{resource_id}/environment_variables")
       )
 
       self.data[:environments][resource_id] = resource

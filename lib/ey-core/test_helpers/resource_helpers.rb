@@ -23,11 +23,14 @@ module Ey
 
         def create_server(client, options={})
           options = Cistern::Hash.stringify_keys(options)
+          environment = options["environment"]
 
-          request = environment.servers.create(
-            "flavor" => "m3.medium",
-            "role"   => "util",
-          )
+          request = client.servers.create!({
+            :environment => environment,
+            :flavor_id   => 'm3.medium',
+            :role        => 'util',
+            :name        => 'resque',
+          }.merge(options["server"] || {}))
 
           request.resource!
         end

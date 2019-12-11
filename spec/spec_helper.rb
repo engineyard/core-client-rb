@@ -17,4 +17,11 @@ RSpec.configure do |config|
     $stdin = STDIN
     $stderr = STDERR
   end
+
+  #
+  # This allows to have not_change matcher, i.e.
+  #
+  #   expect { something }.to change { other_thing }
+  #     .and not_change { completely_other_things }
+  RSpec::Matchers.define_negated_matcher :not_change, :change
 end

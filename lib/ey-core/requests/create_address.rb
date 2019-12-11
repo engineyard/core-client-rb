@@ -14,6 +14,7 @@ class Ey::Core::Client
       request_id  = self.uuid
       resource_id = self.serial_id
       provider_id = params["provider"]
+      scope       = params["scope"] || "standard"
 
       self.find(:providers, provider_id)
 

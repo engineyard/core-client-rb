@@ -17,7 +17,7 @@ class Ey::Core::Client
     def get_environments(params={})
       extract_url_params!(params)
 
-      headers, environments_page = search_and_page(params, :environments, search_keys: %w[account name])
+      headers, environments_page = search_and_page(params, :environments, search_keys: %w[id account name])
 
       response(
         :body    => {"environments" => environments_page},

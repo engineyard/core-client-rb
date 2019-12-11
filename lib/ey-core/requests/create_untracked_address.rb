@@ -30,12 +30,14 @@ class Ey::Core::Client
           :status => 409,
         )
       else
-        tracked_address = self.addresses.create!(resource.merge("provider" => provider_id)).resource!
+        resource_id = self.serial_id
+        self.data[:addresses][resource_id] = resource.merge(
+          "provider" => provider_id, "id" => resource_id, "resource_url" => "/addresses/#{resource_id}")
 
         resource.merge!(
           "provider" => url_for("/providers/#{provider_id}"),
           "location" => resource['location'],
-          "address" => url_for("/addresses/#{tracked_address.id}"),
+          "address" => url_for("/addresses/#{resource_id}"),
         )
 
         response(

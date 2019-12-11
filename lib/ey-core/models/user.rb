@@ -3,6 +3,7 @@ class Ey::Core::Client::User < Ey::Core::Model
 
   identity :id
 
+  attribute :token, aliases: ["api_token"]
   attribute :name
   attribute :email
   attribute :staff

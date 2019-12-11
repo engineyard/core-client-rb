@@ -91,7 +91,7 @@ EOF
               raise "--ref is required (HEAD is the typical choice)"
             end
           end
-          if (options[:migrate] || options[:no_migrate])
+          if (option(:migrate) || switch_active?(:no_migrate))
             deploy_options.merge!(migrate_command: option(:migrate)) if option(:migrate)
             deploy_options.merge!(migrate_command: '') if switch_active?(:no_migrate)
           else

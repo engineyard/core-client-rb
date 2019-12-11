@@ -144,5 +144,12 @@ describe 'alerts' do
       }.to  change { alert.reload.finished_at }.from(nil).
         and change { database_server.alerts.all.size }.by(-1)
     end
+
+    it 'acknowledges the alert' do
+      alert = alerts.first
+      expect {
+        alert.acknowledge!
+      }.to change { alert.acknowledged }.from(false).to(true)
+    end
   end
 end

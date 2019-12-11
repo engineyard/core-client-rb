@@ -1,15 +1,17 @@
 class Ey::Core::Client
   class Real
-    def destroy_server(id)
+    def destroy_server(id,options={})
+
       request(
         :method => :delete,
-        :path => "/servers/#{id}"
+        :path => "/servers/#{id}",
+        :query => options
       )
     end
   end
 
   class Mock
-    def destroy_server(id)
+    def destroy_server(id,options={})
       deprovision_procedure = lambda do |_|
         server = self.data[:servers][id]
 

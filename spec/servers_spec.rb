@@ -10,6 +10,14 @@ describe 'servers' do
     let!(:environment) { create_environment(account: account, application: application, name: Faker::Name.first_name) }
     let!(:server)      { environment.servers.first }
 
+    context "discovering" do
+      it "discovers a server that it knows nothing about" do
+        expect {
+          client.servers.discover(provider: account.providers.first.identity, environment: environment.identity, server: {location: "us-east-1b", provisioned_id: "i-newserver"}).resource!
+        }.to change { client.servers.count }.by(1)
+      end
+    end
+
     context "with a second account" do
       let(:account2) { create_account(client: client) }
       let(:app2)     { create_application(account: account2) }
@@ -34,12 +42,36 @@ describe 'servers' do
       expect(reboot_request.successful).to be true
     end
 
+    it "stops" do
+      request = server.stop
+      request.ready!
+      expect(request.successful).to be true
+    end
+
+    it "starts" do
+      request = server.start
+      request.ready!
+      expect(request.successful).to be true
+    end
+
+    it "reconciles" do
+      request = server.reconcile
+      request.ready!
+      expect(request.successful).to be true
+    end
+
     it "applies" do
       expect(server.apply.ready!).to be_successful
 
       if Ey::Core::Client.mocking?
         expect(client.data[:instance_updates].count).to eq(1)
       end
+    end
+
+    it "should reset the server state" do
+      expect {
+        server.reset_state('error')
+      }.to change { server.reload.state }.from('running').to('error')
     end
 
     it "does not destroy" do
@@ -56,6 +88,16 @@ describe 'servers' do
       expect {
         environment.servers.all(role: "solo").to contain_exactly(server)
       }
+    end
+
+    it "adds a dedicated app server" do
+      server = client.servers.create!(
+        :environment => environment,
+        :role        => "app",
+        :flavor_id   => "m3.large",
+        :dedicated   => true,
+      ).resource!
+      expect(server.dedicated).to be_truthy
     end
 
     it "adds an app server" do

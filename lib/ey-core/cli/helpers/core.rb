@@ -119,6 +119,7 @@ module Ey
           def core_client
             @core_client ||= begin
               opts = {url: core_url, config_file: self.class.core_file}
+              opts.merge!(token: ENV["CORE_TOKEN"]) if ENV["CORE_TOKEN"]
               if ENV["DEBUG"]
                 opts[:logger] = ::Logger.new(STDOUT)
               end
@@ -170,6 +171,35 @@ module Ey
                 core_client.users.current.accounts
               end
             end
+          end
+
+          # Fetches a list of environments by given name or ID.
+          #
+          # @param environment_name_or_id [String] name or ID of environment.
+          #
+          # @return [Array<Ey::Core::Client::Environment>] list of environments.
+          def core_environments(environment_name_or_id)
+            core_client.environments.all(name: environment_name_or_id).tap do |result|
+              result << core_client.environments.get(environment_name_or_id) if result.empty?
+            end.to_a.compact
+          end
+
+          # Fetches a list of applications by given name or ID.
+          #
+          # @param application_name_or_id [String] name or ID of application.
+          #
+          # @return [Array<Ey::Core::Client::Environment>] list of environments.
+          def core_applications(application_name_or_id)
+            core_client.applications.all(name: application_name_or_id).tap do |result|
+              result << core_client.applications.get(application_name_or_id) if result.empty?
+            end.to_a.compact
+          end
+
+          # Fetches a list of environment variables available for current user.
+          #
+          # @return [Array<Ey::Core::Client::EnvironmentVariable>] list of environment variables.
+          def core_environment_variables
+            core_client.environment_variables
           end
 
           def write_core_yaml(token=nil)

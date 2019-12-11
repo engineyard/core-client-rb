@@ -17,7 +17,7 @@ class Ey::Core::Client
     def get_memberships(params={})
       extract_url_params!(params)
 
-      headers, memberships_page = page(params, :memberships)
+      headers, memberships_page = search_and_page(params, :memberships, search_keys: %w[account email])
 
       response(
         :body    => {"memberships" => memberships_page},

@@ -7,6 +7,7 @@ class Ey::Core::Client::Address < Ey::Core::Model
   attribute :ip_address
   attribute :provisioned_id
   attribute :location
+  attribute :scope
   attribute :disappeared_at, type: :time
 
   has_one :provider
@@ -37,6 +38,7 @@ class Ey::Core::Client::Address < Ey::Core::Model
         "provider" => self.provider_id,
         "address"  => {
           "location"       => self.location,
+          "scope"          => self.scope,
         },
       }
 

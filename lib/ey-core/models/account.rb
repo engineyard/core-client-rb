@@ -1,3 +1,5 @@
+require 'hashie'
+
 class Ey::Core::Client::Account < Ey::Core::Model
   extend Ey::Core::Associations
 
@@ -5,12 +7,15 @@ class Ey::Core::Client::Account < Ey::Core::Model
 
   attribute :cancelled_at, type: :time
   attribute :created_at, type: :time
-  attribute :updated_at, type: :time
+  attribute :emergency_contact
+  attribute :fraudulent
+  attribute :legacy_id
   attribute :name
-  attribute :support_plan
-  attribute :signup_via
   attribute :plan_type
+  attribute :signup_via
+  attribute :support_plan
   attribute :type
+  attribute :updated_at, type: :time
 
   has_many :addresses
   has_many :applications
@@ -25,6 +30,7 @@ class Ey::Core::Client::Account < Ey::Core::Model
   has_many :ssl_certificates
   has_many :referrals, key: :account_referrals
   has_many :costs
+  has_many :memberships
 
   has_one :cancellation, assoc_name: 'account_cancellation', collection: :account_cancellations
   has_one :account_trial
@@ -62,5 +68,13 @@ class Ey::Core::Client::Account < Ey::Core::Model
       merge_attributes(self.connection.create_account(params).body["account"])
     else raise NotImplementedError # update
     end
+  end
+
+  # Get authorization data for an Amazon ECR registry.
+  # @param [String] location_id Aws region
+  # @return [Hashie::Mash]
+  def retrieve_docker_registry_credentials(location_id)
+    result = self.connection.retrieve_docker_registry_credentials(self.id, location_id).body
+    ::Hashie::Mash.new(result['docker_registry_credentials'])
   end
 end

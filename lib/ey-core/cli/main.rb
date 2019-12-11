@@ -13,7 +13,9 @@ require 'ey-core/cli/applications'
 require 'ey-core/cli/console'
 require 'ey-core/cli/current_user'
 require 'ey-core/cli/deploy'
+require 'ey-core/cli/docker_registry_login'
 require 'ey-core/cli/environments'
+require 'ey-core/cli/environment_variables'
 require 'ey-core/cli/help'
 require 'ey-core/cli/init'
 require 'ey-core/cli/login'
@@ -44,7 +46,9 @@ module Ey
         mount Console
         mount CurrentUser
         mount Deploy
+        mount DockerRegistryLogin
         mount Environments
+        mount EnvironmentVariables
         mount Help
         mount Init
         mount Login

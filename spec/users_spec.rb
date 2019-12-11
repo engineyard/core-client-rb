@@ -78,5 +78,31 @@ describe 'users' do
       expect(client.users.all(deleted: true)).to include(user)
       expect(client.users.all(with_deleted: true)).to include(user)
     end
+
+    context "for the current user" do
+      let!(:user) { client.users.current }
+
+      describe '#token' do
+        subject { user.token }
+
+        context 'for my own user' do
+          it { is_expected.not_to be_nil }
+        end
+
+        context 'for another user' do
+          context 'as a staff user' do
+            before(:each) do
+              client.data[:users][user.id][:staff] = true
+            end
+
+            it { is_expected.not_to be_nil }
+          end
+
+          context 'as a non-staff user' do
+            it { is_expected.not_to be_nil }
+          end
+        end
+      end
+    end
   end
 end

@@ -14,10 +14,14 @@ class Ey::Core::Client < Cistern::Service
   collection :application_archives
   collection :application_deployments
   collection :applications
+  collection :auto_scaling_alarms
+  collection :auto_scaling_groups
+  collection :auto_scaling_policies
   collection :backup_files
   collection :blueprints
   collection :components
   collection :contacts
+  collection :container_service_deployments
   collection :costs
   collection :database_plan_usages
   collection :database_server_revisions
@@ -28,6 +32,7 @@ class Ey::Core::Client < Cistern::Service
   collection :deployments
   collection :environment_plan_usages
   collection :environments
+  collection :environment_variables
   collection :features
   collection :firewall_rules
   collection :firewalls
@@ -70,11 +75,15 @@ class Ey::Core::Client < Cistern::Service
   model :application
   model :application_archive
   model :application_deployment
+  model :auto_scaling_alarm
+  model :auto_scaling_group
   model :backup_file
+  model :base_auto_scaling_policy
   model :billing
   model :blueprint
   model :component
   model :contact
+  model :container_service_deployment
   model :cost
   model :database_plan_usage
   model :database_server
@@ -85,6 +94,7 @@ class Ey::Core::Client < Cistern::Service
   model :deployment
   model :environment
   model :environment_plan_usage
+  model :environment_variable
   model :feature
   model :firewall
   model :firewall_rule
@@ -107,10 +117,13 @@ class Ey::Core::Client < Cistern::Service
   model :server_event
   model :server_usage
   model :service
+  model :simple_auto_scaling_policy
   model :ssl_certificate
+  model :step_auto_scaling_policy
   model :storage
   model :storage_user
   model :support_trial
+  model :target_auto_scaling_policy
   model :task
   model :token
   model :untracked_address
@@ -118,6 +131,7 @@ class Ey::Core::Client < Cistern::Service
   model :user
   model :volume
 
+  request :acknowledge_alert
   request :apply_environment_updates
   request :apply_server_updates
   request :attach_address
@@ -133,11 +147,14 @@ class Ey::Core::Client < Cistern::Service
   request :create_alert
   request :create_application
   request :create_application_archive
+  request :create_auto_scaling_alarm
+  request :create_auto_scaling_group
   request :create_backup_file
   request :create_database_server
   request :create_database_service
   request :create_database_service_snapshot
   request :create_environment
+  request :create_environment_variable
   request :create_firewall
   request :create_firewall_rule
   request :create_keypair
@@ -150,6 +167,7 @@ class Ey::Core::Client < Cistern::Service
   request :create_password_reset
   request :create_provider
   request :create_server
+  request :create_auto_scaling_policy
   request :create_ssl_certificate
   request :create_storage
   request :create_storage_user
@@ -161,6 +179,8 @@ class Ey::Core::Client < Cistern::Service
   request :deploy_environment_application
   request :deprovision_environment
   request :destroy_addon
+  request :destroy_auto_scaling_alarm
+  request :destroy_auto_scaling_group
   request :destroy_blueprint
   request :destroy_database_server
   request :destroy_database_server_snapshot
@@ -172,15 +192,18 @@ class Ey::Core::Client < Cistern::Service
   request :destroy_logical_database
   request :destroy_provider
   request :destroy_server
+  request :destroy_auto_scaling_policy
   request :destroy_ssl_certificate
   request :destroy_storage
   request :destroy_storage_user
   request :destroy_user
   request :detach_address
   request :disable_feature
+  request :discover_container_service_deployments
   request :discover_database_server
   request :discover_database_server_snapshots
   request :discover_provider_location
+  request :discover_server
   request :download_file
   request :enable_feature
   request :get_account
@@ -202,6 +225,10 @@ class Ey::Core::Client < Cistern::Service
   request :get_application_deployment
   request :get_application_deployments
   request :get_applications
+  request :get_auto_scaling_alarm
+  request :get_auto_scaling_alarms
+  request :get_auto_scaling_group
+  request :get_auto_scaling_groups
   request :get_backup_file
   request :get_backup_files
   request :get_billing
@@ -228,6 +255,8 @@ class Ey::Core::Client < Cistern::Service
   request :get_environment_database_services
   request :get_environment_logical_databases
   request :get_environment_plan_usages
+  request :get_environment_variable
+  request :get_environment_variables
   request :get_environments
   request :get_feature
   request :get_features
@@ -253,6 +282,7 @@ class Ey::Core::Client < Cistern::Service
   request :get_logical_databases
   request :get_logs
   request :get_membership
+  request :get_memberships
   request :get_message
   request :get_messages
   request :get_metadata
@@ -269,6 +299,8 @@ class Ey::Core::Client < Cistern::Service
   request :get_server_events
   request :get_server_usages
   request :get_servers
+  request :get_auto_scaling_policy
+  request :get_auto_scaling_policies
   request :get_ssl_certificate
   request :get_ssl_certificates
   request :get_storage
@@ -287,21 +319,32 @@ class Ey::Core::Client < Cistern::Service
   request :get_users
   request :get_volumes
   request :reboot_server
+  request :reconcile_server
   request :request_callback
   request :reset_password
+  request :reset_server_state
   request :restart_environment_app_servers
+  request :retrieve_docker_registry_credentials
   request :run_cluster_application_action
   request :run_environment_application_action
   request :signup
+  request :start_server
+  request :stop_server
   request :timeout_deployment
+  request :unassign_environment
   request :update_addon
   request :update_address
   request :update_alert
   request :update_application_archive
+  request :update_auto_scaling_alarm
+  request :update_auto_scaling_group
+  request :update_auto_scaling_policy
   request :update_billing
   request :update_blueprint
   request :update_environment
+  request :update_environment_variable
   request :update_membership
+  request :update_provider_location
   request :update_server
   request :update_ssl_certificate
   request :update_untracked_server
@@ -332,7 +375,9 @@ class Ey::Core::Client < Cistern::Service
                end
 
       @authentication = nil
-      @token = if options.has_key?(:token) && options[:token].nil?
+      @token = if ENV["CORE_TOKEN"]
+                 ENV["CORE_TOKEN"]
+               elsif options.has_key?(:token) && options[:token].nil?
                  @authentication = :none
                else
                  options[:token] || token_dotfile[@url] || token_dotfile[@url.gsub(/\/$/, "")] # matching with or without trailing slash

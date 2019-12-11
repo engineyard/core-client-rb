@@ -17,10 +17,15 @@ class Ey::Core::Client::Environment < Ey::Core::Model
   attribute :release_label
   attribute :stack_name
   attribute :username
+  attribute :service_level
+  attribute :database_backup_limit
+  attribute :encrypted_ebs_for_everything
 
   has_one :account
   has_one :database_service
   has_one :firewall
+  has_one :auto_scaling_group
+  has_one :assignee, assoc_name: :user, resource: :user
 
   has_many :costs
   has_many :keypairs
@@ -28,6 +33,7 @@ class Ey::Core::Client::Environment < Ey::Core::Model
   has_many :applications
   has_many :logical_databases
   has_many :deployments
+  has_many :environment_variables
 
   attr_accessor :application_id
 
@@ -124,21 +130,70 @@ class Ey::Core::Client::Environment < Ey::Core::Model
 
   def boot(options={})
     options = Cistern::Hash.stringify_keys(options)
+    connection.requests.new(self.connection.boot_environment(boot_params(options)).body["request"])
+  end
+
+  def unassign!
+    requires :id
+    merge_attributes(self.connection.unassign_environment("id" => self.id).body["environment"])
+  end
+
+  def save!
+    if new_record?
+      requires :application_id, :account_id, :region
+
+      params = {
+        "url"         => self.collection.url,
+        "account"     => self.account_id,
+        "environment" => {
+          "name"                         => self.name,
+          "application_id"               => self.application_id,
+          "region"                       => self.region,
+          "stack_name"                   => self.stack_name,
+          "database_stack"               => self.database_stack,
+          "release_label"                => self.release_label,
+          "language"                     => self.language,
+          "database_backup_limit"        => self.database_backup_limit,
+          "encrypted_ebs_for_everything" => self.encrypted_ebs_for_everything,
+        },
+      }
+
+      params["environment"].merge!("database_service" => self.database_service.id) if self.database_service
+
+      merge_attributes(self.connection.create_environment(params).body["environment"])
+    else
+      requires :identity
+      attributes = Cistern::Hash.slice(Cistern::Hash.stringify_keys(self.attributes), "nane", "release_label")
+      connection.update_environment(
+        "id"     => self.identity,
+        "environment" => attributes,
+      )
+    end
+  end
+
+  private
+
+  def boot_params(options)
+    params = {
+      "cluster_configuration" => {}
+    }
+    
     if options["blueprint_id"]
       params = {
         "cluster_configuration" => {
-          "blueprint_id" => options["blueprint_id"]
+          "blueprint_id" => options["blueprint_id"],
+          "configuration" => {}
         }
       }
       if ip_id = options["ip_id"]
-        params["cluster_configuration"]["ip_id"] = ip_id
+        params["cluster_configuration"]["configuration"]["ip_id"] = ip_id
       end
-
-      self.connection.requests.new(self.connection.boot_environment(params.merge("id" => self.id)).body["request"])
     else
       raise "configuration is a required key" unless options["configuration"]
       raise "configuration['type'] is required" unless options["configuration"]["type"]
+    end
 
+    if options['configuration']
       missing_keys = []
 
       configuration = options["configuration"]
@@ -186,44 +241,8 @@ class Ey::Core::Client::Environment < Ey::Core::Model
         raise "Invalid configuration - The following keys are missing from the configuration:\n#{missing_keys.join(",\n")}"
       end
 
-      params = {
-        "cluster_configuration" => {
-          "configuration" => configuration
-        }
-      }
-
-      connection.requests.new(self.connection.boot_environment(params.merge("id" => self.id)).body["request"])
+      params["cluster_configuration"]["configuration"] = configuration
     end
-  end
-
-  def save!
-    if new_record?
-      requires :application_id, :account_id, :region
-
-      params = {
-        "url"         => self.collection.url,
-        "account"     => self.account_id,
-        "environment" => {
-          "name"                      => self.name,
-          "application_id"            => self.application_id,
-          "region"                    => self.region,
-          "stack_name"                => self.stack_name,
-          "database_stack"            => self.database_stack,
-          "release_label"             => self.release_label,
-          "language"                  => self.language,
-        },
-      }
-
-      params["environment"].merge!("database_service" => self.database_service.id) if self.database_service
-
-      merge_attributes(self.connection.create_environment(params).body["environment"])
-    else
-      requires :identity
-      attributes = Cistern::Hash.slice(Cistern::Hash.stringify_keys(self.attributes), "nane", "release_label")
-      connection.update_environment(
-        "id"     => self.identity,
-        "environment" => attributes,
-      )
-    end
+    params.merge("id" => self.id)
   end
 end

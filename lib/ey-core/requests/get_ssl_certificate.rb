@@ -5,7 +5,7 @@ class Ey::Core::Client
       url = params["url"]
 
       request(
-        :path => "ssl_certificates/#{id}",
+        :path => "ssl-certificates/#{id}",
         :url  => url,
       )
     end

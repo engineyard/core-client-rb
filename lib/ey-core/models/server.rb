@@ -14,6 +14,7 @@ class Ey::Core::Client::Server < Ey::Core::Model
   attribute :keymaster_id
   attribute :location
   attribute :name
+  attribute :no_deploy
   attribute :private_hostname
   attribute :provisioned_at,   type: :time
   attribute :provisioned_id
@@ -112,6 +113,7 @@ class Ey::Core::Client::Server < Ey::Core::Model
           "dedicated"       => self.dedicated,
           "flavor"          => self.flavor_id,
           "iops"            => self.iops,
+          "no_deploy"       => self.no_deploy,
           "location"        => self.location || environment.region,
           "mnt_volume_size" => self.mnt_volume_size,
           "name"            => self.name,

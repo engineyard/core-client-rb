@@ -93,12 +93,12 @@ EOF
           end
           if (option(:migrate) || switch_active?(:no_migrate))
             deploy_options.merge!(migrate_command: option(:migrate)) if option(:migrate)
-            deploy_options.merge!(migrate_command: '') if switch_active?(:no_migrate)
+            deploy_options.merge!(migrate_command: nil) if switch_active?(:no_migrate)
           else
             puts "missing migrate option (--migrate or --no-migrate), checking latest deploy...".yellow
             latest_deploy ||= environment.latest_deploy(app)
             if latest_deploy
-              deploy_options.merge!(migrate_command: (latest_deploy.migrate && latest_deploy.migrate_command) || '')
+              deploy_options.merge!(migrate_command: (latest_deploy.migrate && latest_deploy.migrate_command) || nil)
             else
               raise "either --migrate or --no-migrate needs to be specified"
             end

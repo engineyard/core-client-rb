@@ -31,9 +31,6 @@ require 'ey-core/cli/version'
 require 'ey-core/cli/web'
 require 'ey-core/cli/whoami'
 
-Cistern.formatter = Cistern::Formatter::AwesomePrint
-
-
 module Ey
   module Core
     module Cli

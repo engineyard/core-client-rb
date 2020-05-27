@@ -28,6 +28,7 @@ Gem::Specification.new do |gem|
   gem.add_dependency "colorize"
   gem.add_dependency "ey-hmac", "~> 2.0"
   gem.add_dependency "escape"
+  gem.add_dependency "hashie", "~> 4.1.0"
   gem.add_dependency "faraday", "~> 0.9"
   gem.add_dependency "faraday_middleware", "~> 0.9"
   gem.add_dependency "rack"

@@ -2,7 +2,7 @@
 #require 'ostruct'
 #require 'ey-core'
 require 'ey-core/cli'
-require 'awesome_print'
+require 'amazing_print'
 require 'belafonte'
 require 'rubygems/package'
 require 'escape'

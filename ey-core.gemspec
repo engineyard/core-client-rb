@@ -22,7 +22,7 @@ Gem::Specification.new do |gem|
 
   gem.add_dependency "addressable"
 
-  gem.add_dependency "awesome_print"
+  gem.add_dependency "amazing_print", "~> 1.1.0"
   gem.add_dependency "belafonte"
   gem.add_dependency "cistern", "~> 0.12.3"
   gem.add_dependency "colorize"

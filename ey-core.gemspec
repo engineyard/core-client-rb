@@ -18,7 +18,7 @@ Gem::Specification.new do |gem|
   gem.require_paths = ["lib"]
   gem.licenses      = ["MIT"]
 
-  gem.required_ruby_version = ">= 2.2.2"
+  gem.required_ruby_version = ">= 2.5"
 
   gem.add_dependency "addressable"
 

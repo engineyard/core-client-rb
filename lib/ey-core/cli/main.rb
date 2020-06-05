@@ -2,7 +2,7 @@
 #require 'ostruct'
 #require 'ey-core'
 require 'ey-core/cli'
-require 'awesome_print'
+require 'amazing_print'
 require 'belafonte'
 require 'rubygems/package'
 require 'escape'
@@ -30,9 +30,6 @@ require 'ey-core/cli/timeout_deploy'
 require 'ey-core/cli/version'
 require 'ey-core/cli/web'
 require 'ey-core/cli/whoami'
-
-Cistern.formatter = Cistern::Formatter::AwesomePrint
-
 
 module Ey
   module Core

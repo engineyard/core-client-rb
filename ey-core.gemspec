@@ -18,22 +18,23 @@ Gem::Specification.new do |gem|
   gem.require_paths = ["lib"]
   gem.licenses      = ["MIT"]
 
-  gem.required_ruby_version = ">= 2.2.2"
+  gem.required_ruby_version = ">= 2.5"
 
   gem.add_dependency "addressable"
 
-  gem.add_dependency "awesome_print"
+  gem.add_dependency "amazing_print", "~> 1.1.0"
   gem.add_dependency "belafonte"
   gem.add_dependency "cistern", "~> 0.12.3"
   gem.add_dependency "colorize"
   gem.add_dependency "ey-hmac", "~> 2.0"
   gem.add_dependency "escape"
-  gem.add_dependency "faraday", "~> 0.9"
-  gem.add_dependency "faraday_middleware", "~> 0.9"
+  gem.add_dependency "hashie", "~> 4.1.0"
+  gem.add_dependency "faraday", "~> 1.0.1"
+  gem.add_dependency "faraday_middleware", "~> 1.0.0"
   gem.add_dependency "rack"
   gem.add_dependency "faye"
   gem.add_dependency "highline"
-  gem.add_dependency "json", "< 2.0"
+  gem.add_dependency "json", "~> 2.3.0"
   gem.add_dependency "mime-types"
   gem.add_dependency "oj"
   gem.add_dependency "oj_mimic_json"

@@ -1,5 +1,3 @@
-Cistern.formatter = Cistern::Formatter::AwesomePrint
-
 if ENV['MOCK_CORE'] == 'true'
   Ey::Core::Client.mock!
 end

@@ -1,7 +1,6 @@
 require 'cucumber/rspec/doubles'
 
 # Set up the mocks. Ookla would approve.
-Cistern.formatter = Cistern::Formatter::AwesomePrint
 Ey::Core::Client.mock!
 Ey::Core::Client::Mock.timeout = 0.1
 Ey::Core::Client::Mock.poll_interval = 0

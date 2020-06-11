@@ -1,10 +1,24 @@
 # Change Log
 
-## [Unreleased](https://github.com/engineyard/core-client-rb/tree/HEAD)
+## [Unreleased](https://github.com/engineyard/core-client-rb/tree/develop)
 
-[Full Changelog](https://github.com/engineyard/core-client-rb/compare/v3.5.0...HEAD)
+[Full Changelog](https://github.com/engineyard/core-client-rb/compare/v3.6.1...develop)
 
 **Merged pull requests:**
+
+## [v3.6.1](https://github.com/engineyard/core-client-rb/tree/v3.6.1) (2020-06-11)
+
+[Full Changelog](https://github.com/engineyard/core-client-rb/compare/v3.5.0...v3.6.1)
+
+**Merged pull requests:**
+
+- Adds support for Docker credentials [\#106](https://github.com/engineyard/core-client-rb/pull/106) ([nodecarter](https://github.com/nodecarter))
+- Adds support for container discovery [\#107](https://github.com/engineyard/core-client-rb/pull/107) ([thorn](https://github.com/thorn))
+- Fixes `get_deployment` request parameters [\#108](https://github.com/engineyard/core-client-rb/pull/108) ([lucis-fluxum](https://github.com/lucis-fluxum))
+- Adds server names to server list output [\#112](https://github.com/engineyard/core-client-rb/pull/112) ([glennr](https://github.com/glennr))
+- Fixes the `--no-migrate` flag for `ey-core deploy` [\#114](https://github.com/engineyard/core-client-rb/pull/114) ([mushyy](https://github.com/mushyy))
+- Upgrades dependencies and adds ruby-2.7 support for the gem [\#120](https://github.com/engineyard/core-client-rb/pull/120) ([ssuttner](https://github.com/ssuttner))
+- Adds a bit of CLI documentation [\#121](https://github.com/engineyard/core-client-rb/pull/121) ([ess](https://github.com/ess))
 
 ## [v3.5.0](https://github.com/engineyard/core-client-rb/tree/v3.5.0) (2018-04-04)
 [Full Changelog](https://github.com/engineyard/core-client-rb/compare/v3.4.4...v3.5.0)

@@ -131,7 +131,7 @@ module Ey
               write_core_yaml(legacy_token)
               retry
             elsif e.message.match(/missing token/i)
-              abort "Missing credentials: Run 'ey login' to retrieve your Engine Yard Cloud API token.".yellow
+              abort "Missing credentials: Run 'ey-core login' to retrieve your Engine Yard Cloud API token.".yellow
             else
               raise e
             end

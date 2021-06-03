@@ -46,11 +46,6 @@ module Ey
         switch :verbose,
           short: "v",
           long: "verbose",
-          description: "Deploy with verbose output"
-
-        switch :verbose,
-          short: "v",
-          long: "verbose",
           description: "Stream deploy output to this console. Alias to stream for backwards compatibility."
 
         switch :no_migrate,
@@ -78,7 +73,7 @@ EOF
 
           app = core_application_for(environment, self.options)
 
-          deploy_options = {verbose: options[:verbose], cli_args: ARGV}
+          deploy_options = {verbose: switch_active?(:verbose), cli_args: ARGV}
           latest_deploy = nil
           if options[:ref]
             deploy_options.merge!(ref: option(:ref))

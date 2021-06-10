@@ -9,7 +9,8 @@ class Ey::Core::Model < Cistern::Model
 
   def to_s
     shortname = self.class.name.split("::").last
-    "#{shortname}:#{id}"
+    self_id = self.respond_to?(:id) && id
+    [shortname, self_id].join(":")
   end
 
   def self.range_parser(v)

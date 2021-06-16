@@ -6,6 +6,7 @@ module Ey
           ROLES = [
             :app_servers,
             :db_servers,
+            :app_master,
             :db_master,
             :utilities
           ]
@@ -55,6 +56,12 @@ module Ey
 
           def db_servers
             db_master + servers_api.all(role: 'db_slave').to_a
+          end
+          
+          def app_master
+            ['app_master', 'solo'].
+              map {|role| servers_api.all(role:role).to_a}.
+              flatten
           end
 
           def db_master

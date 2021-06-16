@@ -54,6 +54,10 @@ module Ey
           long: "app_servers",
           description: "Run command on all application servers"
 
+	switch :app_master,
+	  long: "app_master",
+	  description: "Run command on app master"
+
         switch :db_servers,
           long: "db_servers",
           description: "Run command on all database servers"
@@ -97,6 +101,7 @@ module Ey
               environment.servers,
               all: switch_active?(:all),
               app_servers: switch_active?(:app_servers),
+              app_master: switch_active?(:app_master),
               db_servers: switch_active?(:db_servers),
               db_master: switch_active?(:db_master),
               utilities: option(:utilities)
@@ -113,6 +118,7 @@ module Ey
                 environment.servers,
                 all: switch_active?(:all),
                 app_servers: switch_active?(:app_servers),
+                app_master: switch_active?(:app_master),
                 db_servers: switch_active?(:db_servers),
                 db_master: switch_active?(:db_master),
                 utilities: option(:utilities)

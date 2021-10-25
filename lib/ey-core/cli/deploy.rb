@@ -35,7 +35,7 @@ module Ey
         option :serverside_version,
           short: "S",
           long: "serverside_version",
-          description: "The servside version must match our released gem.",
+          description: "Override the default version of engineyard-serverside. The version must match a released version. Use with care.",
           argument: "serverside_version"
 
         option :app,

@@ -30,6 +30,7 @@ class Ey::Core::Client
         "migrate_command" => options["deploy"]["migrate"] ? (options["deploy"]["migrate_command"] || "rake db:migrate") : nil,
         "migrate"         => options["deploy"]["migrate"] || false,
         "resolved_ref"    => options["deploy"]["ref"],
+        "serverside_version"    => options["deploy"]["serverside_version"],
         "started_at"      => Time.now,
         "successful"      => true
       }

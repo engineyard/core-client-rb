@@ -45,7 +45,7 @@ module Ey
 
           def core_operator_and_environment_for(options={})
             unless options[:environment]
-              raise "--environment is required (for a list of environments, try `ey environments`)"
+              raise "--environment is required (for a list of environments, try `ey-core environments`)"
             end
             operator = operator(options)
             environment = nil
@@ -61,7 +61,7 @@ module Ey
               end
             end
             unless environment
-              raise "environment '#{options[:environment]}' not found (for a list of environments, try `ey environments`)"
+              raise "environment '#{options[:environment]}' not found (for a list of environments, try `ey-core environments`)"
             end
             [operator, environment]
           end
@@ -131,7 +131,7 @@ module Ey
               write_core_yaml(legacy_token)
               retry
             elsif e.message.match(/missing token/i)
-              abort "Missing credentials: Run 'ey login' to retrieve your Engine Yard Cloud API token.".yellow
+              abort "Missing credentials: Run 'ey-core login' to retrieve your Engine Yard Cloud API token.".yellow
             else
               raise e
             end

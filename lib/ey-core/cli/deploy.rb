@@ -58,7 +58,7 @@ module Ey
             abort <<-EOF
 Found account #{operator.name} but requested account #{option(:account)}.
 Use the ID of the account instead of the name.
-This can be retrieved by running "ey accounts".
+This can be retrieved by running "ey-core accounts".
 EOF
             .red unless operator.name == option(:account) || operator.id == option(:account)
           end

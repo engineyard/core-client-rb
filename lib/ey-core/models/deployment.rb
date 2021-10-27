@@ -9,6 +9,7 @@ class Ey::Core::Client::Deployment < Ey::Core::Model
   attribute :migrate_command
   attribute :ref
   attribute :resolved_ref
+  attribute :serverside_version
   attribute :started_at,     type: :time
   attribute :successful,     type: :boolean
   attribute :verbose

@@ -32,6 +32,11 @@ module Ey
           long: "migrate",
           description: "The migration command to run.  This option has a 50 character limit.",
           argument: "migrate"
+        option :serverside_version,
+          short: "S",
+          long: "serverside_version",
+          description: "Override the default version of engineyard-serverside. The version must match a released version. Use with care.",
+          argument: "serverside_version"
 
         option :app,
           short: "a",
@@ -75,6 +80,9 @@ EOF
 
           deploy_options = {verbose: switch_active?(:verbose), cli_args: ARGV}
           latest_deploy = nil
+	  if options[:serverside_version]
+            deploy_options.merge!(serverside_version: option(:serverside_version))
+          end
           if options[:ref]
             deploy_options.merge!(ref: option(:ref))
           else

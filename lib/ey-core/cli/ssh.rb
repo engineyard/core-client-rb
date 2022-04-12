@@ -142,7 +142,7 @@ module Ey
             host = server.public_hostname
             name = server.name ? "#{server.role} (#{server.name})" : server.role
             puts "\nConnecting to #{name} #{host}".green
-            sshcmd = Escape.shell_command((ssh_cmd + ["#{user}@#{host}"] + [cmd]).compact)
+            sshcmd = Escape.shell_command((ssh_cmd + ssh_opts + ["#{user}@#{host}"] + [cmd]).compact)
             puts "Running command: #{sshcmd}".green
             system sshcmd
             exits << $?.exitstatus

@@ -40,29 +40,11 @@ module Ey
                                     else
                                         core_environment_variables
                                     end
-
-                                    # puts environment_variables
-                                    # puts environment_variables.first.name
-                                    # puts environment_variables.first.value
-                                    # puts environment_variables.first.environment_name
-                                    # puts environment_variables.first.application_name
-                                    
-                                    # .each_entry would fetch new 20 set of env var and enumerate over
-                                    # .each will simply just loop over the initial 20 set
-                                    # environment_variables.each do |ev|
-                                    #   puts "#{ev.id}, #{ev.name}, #{ev.value}, #{ev.environment_name}, #{ev.application_name}}"
-                                    # end
-                                    puts "print some environment_variables here..."
-                                    puts environment_variables.count # 20
-            # stream_print("ID" => 10, "Name" => 30, "Value" => 50, "Environment" => 30, "Application" => 30) do |printer|
-            #   environment_variables.each_entry do |ev|
-            #     printer.print(ev.id, ev.name, ev.value, ev.environment_name, ev.application_name)
-            #   end
-            # end
-            end
-
-            def print_variable_value(environemnt_variable)
-              printer.print(ev.id,.ev.name, ev.value , ev.environment_name, ev.application_Name)
+              stream_print("ID" => 10, "Name" => 30, "Value" => 50, "Environment" => 30, "Application" => 30) do |printer|
+                environment_variables.each_entry do |ev|
+                  printer.print(ev.id, ev.name, ev.value, ev.environment_name, ev.application_name)
+                end
+              end
             end
 
             private

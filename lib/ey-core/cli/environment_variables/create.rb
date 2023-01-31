@@ -26,26 +26,36 @@ module Ey
             description: 'Filter by application name or id',
             argument: 'Application'
 
-            switch :display_sensitive,
+            option :display_sensitive,
             short: 's',
             long: 'display_sensitive',
             description: 'Determines whether values of sensitive variables should be printed',
             argument: 'Display Sensitive'
             
+            
+            option :key,
+            short: 'k',
+            long: 'key',
+            description: 'Key',
+            argument: 'Key'
+
+            option :value,
+            short: 'v',
+            long: 'value',
+            description: 'Value',
+            argument: 'Value'
+
             def handle
-            environment_variables = if option(:application)
-                                        core_applications(option(:application)).flat_map(&:environment_variables)
-                                    elsif option(:environment)
-                                        core_environments(option(:environment)).flat_map(&:environment_variables)
-                                    else
-                                        core_environment_variables
-                                    end
-                                    
-              stream_print("ID" => 10, "Name" => 30, "Value" => 50, "Environment" => 30, "Application" => 30) do |printer|
-                environment_variables.each_entry do |ev|
-                  printer.print(ev.id, ev.name, ev.value, ev.environment_name, ev.application_name)
-                end
-              end
+              application_name = option(:application)
+              environment_name = option(:environment)
+              key = option(:key)
+              value = option(:value)
+
+              puts "Create Environment Variable"
+
+              env = core_client.environments.filter{ |env| env.name == environment_name }&.first
+
+              puts core_client.environment_variables.create(name:key,value:value,environment_id:env.id, application_id: env.application.id)
             end
 
             private

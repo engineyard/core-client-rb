@@ -11,7 +11,7 @@ module Ey
 
             include Ey::Core::Cli::Helpers::StreamPrinter
 
-            title "Update"
+            title "update"
             summary "Update Engine Yard environment variable "
 
             option :environment,

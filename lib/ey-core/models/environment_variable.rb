@@ -26,4 +26,8 @@ class Ey::Core::Client::EnvironmentVariable < Ey::Core::Model
       merge_attributes(self.connection.update_environment_variable(params).body["environment_variable"])
     end
   end
+
+  def destroy!
+    connection.requests.new(self.connection.destroy_environment_variable("id" => self.id).body["request"])
+  end
 end

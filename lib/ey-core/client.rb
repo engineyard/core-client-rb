@@ -186,6 +186,7 @@ class Ey::Core::Client < Cistern::Service
   request :destroy_database_server_snapshot
   request :destroy_database_service
   request :destroy_environment
+  request :destroy_environment_variable
   request :destroy_firewall
   request :destroy_firewall_rule
   request :destroy_load_balancer

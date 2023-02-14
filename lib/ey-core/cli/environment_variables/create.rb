@@ -53,9 +53,16 @@ module Ey
 
               puts "Create Environment Variable"
 
-              env = core_client.environments.filter{ |env| env.name == environment_name }&.first
+              puts application_name
+              puts environment_name
 
-              puts core_client.environment_variables.create(name:key,value:value,environment_id:env.id, application_id: env.application.id)
+              env = core_client.environments.filter{ |env| env.name == environment_name }&.first
+              app = core_client.applications.filter{ |app| app.name == application_name }&.first
+              puts env
+              puts env.application
+              # puts app.environments
+
+              puts core_client.environment_variables.create(name:key,value:value,environment_id:env.id, application_id: app.id)
             end
 
             private

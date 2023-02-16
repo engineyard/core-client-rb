@@ -52,23 +52,14 @@ module Ey
               value = option(:value)
 
               puts "Create Environment Variable"
-
-              puts application_name
-              puts environment_name
-
               env = core_client.environments.filter{ |env| env.name == environment_name }&.first
               app = core_client.applications.filter{ |app| app.name == application_name }&.first
-              puts env
-              puts env.application
-              # puts app.environments
-
               puts core_client.environment_variables.create(name:key,value:value,environment_id:env.id, application_id: app.id)
             end
 
             private
 
             def print_variable_value(environment_variable)
-              puts "in print_variable_value"
               if environment_variable.sensitive && !switch_active?(:display_sensitive)
                   hide_sensitive_data(environment_variable.value)
               else

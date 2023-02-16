@@ -28,6 +28,6 @@ class Ey::Core::Client::EnvironmentVariable < Ey::Core::Model
   end
 
   def destroy!
-    connection.requests.new(self.connection.destroy_environment_variable("id" => self.id).body["request"])
+    connection.requests.new(self.connection.destroy_environment_variable("id" => self.id).request)
   end
 end

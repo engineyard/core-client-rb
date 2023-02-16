@@ -3,10 +3,11 @@ class Ey::Core::Client
     def destroy_environment_variable(params={})
       id  = params["id"]
 
-      request(
+      response = request(
         :path   => "/environment_variables/#{id}",
         :method => :delete,
       )
+      response
     end
   end
 

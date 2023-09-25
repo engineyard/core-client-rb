@@ -5,6 +5,12 @@ gemspec
 
 gem "rack", "<= 2.1.4"
 
+# We build the cookiejar from sources because of the following reason.
+# The rubygems.org repository contains the latest cookiejar of the version 0.3.3. 
+# It is the latest published version. But the gem sources have several unpublished fixes.
+# One of them is about the support of the 'samesite' cookie which is used when we work with AWS ALB.
+gem "cookiejar", git: 'https://github.com/dwaite/cookiejar', branch: 'master'
+
 group :doc do
   gem 'yard'
   gem 'redcarpet'

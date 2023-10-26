@@ -45,7 +45,7 @@ module Ey
         mount Deploy
         mount DockerRegistryLogin
         mount Environments
-        mount EnvironmentVariables
+        mount EnvironmentVariables::Main
         mount Help
         mount Init
         mount Login

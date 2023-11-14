@@ -1,5 +1,5 @@
 module Ey
   module Core
-    VERSION = "3.6.5.debug"
+    VERSION = "3.6.6"
   end
 end

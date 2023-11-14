@@ -21,3 +21,6 @@ tmp
 .rspec
 .gemrelease
 tags
+
+# Idea IDE files
+/.idea

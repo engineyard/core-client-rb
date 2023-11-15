@@ -1,7 +1,6 @@
 class Ey::Core::Client
   class Real
     def get_alerts(params={})
-
       url   = params.delete("url")
       query = Ey::Core.paging_parameters(params)
 

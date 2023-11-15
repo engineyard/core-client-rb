@@ -2,8 +2,6 @@ class Ey::Core::Client
   class Real
     def get_alerts(params={})
 
-      puts "DEBUG - #{self.class}#get_alerts - Hey! I'm runngin"
-
       url   = params.delete("url")
       query = Ey::Core.paging_parameters(params)
 

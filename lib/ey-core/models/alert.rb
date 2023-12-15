@@ -15,6 +15,7 @@ class Ey::Core::Client::Alert < Ey::Core::Model
   attribute :severity
   attribute :started_at, type: :time
   attribute :updated_at, type: :time
+  attribute :type
 
   attr_writer :database_server, :server, :agent, :resource
 

@@ -69,7 +69,7 @@ EOF
           end
 
           unless environment
-            abort "Unable to locate environment #{option[:environment]} in #{operator.name}".red
+            abort "Unable to locate environment #{options[:environment]} in #{operator.name}".red
           end
 
           unless option(:account)

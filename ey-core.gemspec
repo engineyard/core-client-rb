@@ -10,7 +10,7 @@ Gem::Specification.new do |gem|
   gem.email         = ["engineering@engineyard.com"]
   gem.description   = %q{Engine Yard Core API Ruby Client}
   gem.summary       = %q{Client library providing real and mock functionality for accessing Engine Yard's Core API}
-  gem.homepage      = ""
+  gem.homepage      = "https://github.com/engineyard/core-client-rb"
 
   gem.files         = `git ls-files`.split($/)
   gem.executables   = gem.files.grep(%r{^bin/}).map{ |f| File.basename(f) }

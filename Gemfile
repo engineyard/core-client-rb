@@ -3,7 +3,7 @@ source 'https://rubygems.org'
 # Specify your gem's dependencies in ey-core.gemspec
 gemspec
 
-gem "rack", "<= 2.1.4"
+gem "rack", ">= 2.1.4"
 
 # We build the cookiejar from sources because of the following reason.
 # The rubygems.org repository contains the latest cookiejar of the version 0.3.3. 

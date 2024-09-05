@@ -134,7 +134,7 @@ class Ey::Core::Client::Server < Ey::Core::Model
   end
 
   def destroy!(skip_snapshot="false")
-    if environment.servers.count == 1
+    if environment.servers.reject { |server| server.id == self.id }.count == 0
       raise Ey::Core::Client::NotPermitted, "Terminating the last server in an environment is not allowed.  You must deprovision or destroy the environment instead."
     end
 

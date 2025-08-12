@@ -27,6 +27,35 @@ Like the `git` command, `ey-core` is like a gateway to other commands.
 
 Rather than attempting to provide an exhaustive writeup of all of the commands provided by `ey-core`, this document will instead describe what are likely the most common use cases and leave you to read up on the remainder via the `help` command.
 
+#### Docker-based setup ####
+
+You can use Docker to work with the `ey-core` CLI app. Here's how to set it up:
+
+1. Build the Docker image:
+
+```bash
+docker build --platform linux/amd64 -t ey-core-cli .
+```
+
+2. Run the Docker container with your local directory mounted:
+
+```bash
+docker run --platform linux/amd64 -v $(pwd):/app -it ey-core-cli
+```
+
+3. Inside the container, set up authentication via environment variables:
+
+```bash
+export CORE_URL=<core api url>
+export CORE_TOKEN=<core api token>
+```
+
+4. Now you can use the ey-core CLI:
+
+```bash
+ey-core help
+```
+
 #### Use Case: Getting Help ####
 
 Arguably the most important command in the app is `ey-core help`. Given no arguments, it provides the list of second-level commands avaiable for use. From that point, each argument is expected to be a command from the next level of the hierarchy.

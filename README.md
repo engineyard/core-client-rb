@@ -46,8 +46,8 @@ docker run --platform linux/amd64 -v $(pwd):/app -it ey-core-cli
 3. Inside the container, set up authentication via environment variables:
 
 ```bash
-export CORE_URL=https://api-meta.engineyard.com
-export CORE_TOKEN=<token from https://meta.engineyard.com/cli>
+export CORE_URL=<core api url>
+export CORE_TOKEN=<core api token>
 ```
 
 4. Now you can use the ey-core CLI:
